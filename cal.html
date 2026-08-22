@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سه تقویم | Three Calendars</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Noto+Naskh+Arabic:wght@500;600;700&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="shortcut icon" href="./pictures/logo cal.png" type="image/x-icon"/>
+<style>
+  :root{
+    --bg:#12162b;
+    --bg-deep:#0c0f21;
+    --surface:#1b2140;
+    --surface-2:#232a4d;
+    --line:rgba(242,240,232,0.10);
+    --text:#f2f0e8;
+    --muted:#8a90b3;
+    --sun:#e8a33d;
+    --sun-soft:rgba(232,163,61,0.14);
+    --moon:#9fb4d9;
+    --moon-soft:rgba(159,180,217,0.14);
+    --nowruz:#e85d4e;
+    --nowruz-soft:rgba(232,93,78,0.14);
+    --shadow-sm:0 2px 8px -2px rgba(0,0,0,0.35);
+    --shadow-md:0 10px 30px -10px rgba(0,0,0,0.55);
+    --shadow-glow:0 0 0 1px rgba(232,163,61,0.18), 0 8px 24px -8px rgba(232,163,61,0.25);
+    --r-sm:10px; --r-md:14px; --r-lg:18px; --r-xl:22px;
+    --font-display-rtl:'Noto Naskh Arabic','Vazirmatn',serif;
+    --font-body-rtl:'Vazirmatn','Inter',sans-serif;
+    --font-display-ltr:'Space Grotesk','Inter',sans-serif;
+    --font-body-ltr:'Inter',sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 120% 60% at 50% -10%, #1a2044 0%, var(--bg) 55%, var(--bg-deep) 100%);
+    color:var(--text);
+    font-family:var(--font-body-ltr);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  ::selection{background:var(--sun); color:#1b1206;}
+  :focus-visible{outline:2px solid var(--sun); outline-offset:2px; border-radius:6px;}
+  body::before{
+    content:"";
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.5) 0, transparent 60%),
+      radial-gradient(1px 1px at 70% 15%, rgba(255,255,255,0.4) 0, transparent 60%),
+      radial-gradient(1.5px 1.5px at 85% 45%, rgba(255,255,255,0.35) 0, transparent 60%),
+      radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.3) 0, transparent 60%),
+      radial-gradient(1px 1px at 10% 80%, rgba(255,255,255,0.35) 0, transparent 60%),
+      radial-gradient(1.5px 1.5px at 60% 90%, rgba(255,255,255,0.3) 0, transparent 60%),
+      radial-gradient(1px 1px at 90% 75%, rgba(255,255,255,0.4) 0, transparent 60%);
+    opacity:0.6;
+  }
+  [lang-mode="fa"] body, [lang-mode="ar"] body {}
+  body[dir="rtl"]{ font-family:var(--font-body-rtl); }
+  body[dir="rtl"] .brand h1,
+  body[dir="rtl"] .cal-card .big-date,
+  body[dir="rtl"] .picker-trigger,
+  body[dir="rtl"] .result-row .value{ font-family:var(--font-display-rtl); }
+  body[dir="ltr"] .brand h1,
+  body[dir="ltr"] .cal-card .big-date,
+  body[dir="ltr"] .result-row .value{ font-family:var(--font-display-ltr); }
+
+  .wrap{position:relative; z-index:1; max-width:920px; margin:0 auto; padding:24px 18px 70px;}
+
+  header.top{display:flex; align-items:center; justify-content:space-between; gap:14px; padding:6px 2px 24px; flex-wrap:wrap; border-bottom:1px solid var(--line); margin-bottom:22px;}
+  .brand{display:flex; align-items:center; gap:12px;}
+  .logo-slot{width:42px; height:42px; flex-shrink:0; position:relative;}
+  .logo-slot .logo-img{
+    width:42px; height:42px; border-radius:50%; object-fit:cover; display:block;
+    box-shadow:0 0 0 1px var(--line), var(--shadow-glow); background:var(--surface);
+  }
+  .brand .glyph{
+    width:42px;height:42px;border-radius:50%; flex-shrink:0;
+    background:conic-gradient(from 220deg, var(--sun), var(--nowruz), var(--moon), var(--sun));
+    display:none;align-items:center;justify-content:center;
+    box-shadow:0 0 0 1px var(--line), var(--shadow-glow);
+  }
+  .brand .glyph span{font-size:18px; filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4));}
+  .brand h1{font-size:21px; font-weight:600; margin:0; letter-spacing:0.2px; line-height:1.3;}
+  .brand p{margin:2px 0 0; font-size:12.5px; color:var(--muted); font-weight:500;}
+
+  .langbar{display:flex; gap:3px; background:var(--surface); padding:4px; border-radius:var(--r-md); border:1px solid var(--line); box-shadow:var(--shadow-sm);}
+  .langbar button{
+    border:none; background:transparent; color:var(--muted); font-size:12.5px; padding:8px 12px;
+    border-radius:9px; cursor:pointer; font-weight:600; font-family:inherit; transition:all .18s ease;
+  }
+  .langbar button.active{background:var(--surface-2); color:var(--text); box-shadow:inset 0 0 0 1px rgba(232,163,61,0.4);}
+  .langbar button:hover:not(.active){color:var(--text); background:rgba(255,255,255,0.04);}
+
+  nav.tabs{display:flex; gap:4px; margin-bottom:22px; border-bottom:1px solid var(--line); padding-bottom:0;}
+  nav.tabs button{
+    flex:1; border:none; background:transparent; color:var(--muted); font-family:inherit;
+    font-size:14px; font-weight:600; padding:13px 8px; cursor:pointer; position:relative; transition:color .18s ease; border-radius:8px 8px 0 0;
+  }
+  nav.tabs button:hover:not(.active){color:#c4c9e8; background:rgba(255,255,255,0.03);}
+  nav.tabs button.active{color:var(--text);}
+  nav.tabs button.active::after{
+    content:""; position:absolute; left:10px; right:10px; bottom:-1px; height:2.5px; border-radius:2px;
+    background:linear-gradient(90deg,var(--sun),var(--nowruz),var(--moon));
+  }
+
+  .panel{display:none; animation:fadeIn .35s ease;}
+  .panel.active{display:block;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+
+  .card{
+    background:linear-gradient(180deg, var(--surface), var(--surface-2));
+    border:1px solid var(--line); border-radius:var(--r-lg); padding:22px;
+    box-shadow:var(--shadow-sm);
+  }
+  .card + .card{margin-top:16px;}
+
+  /* ---- TODAY PANEL ---- */
+  .clock-hero{text-align:center; padding:34px 20px 28px;}
+  .clock-hero .city-label{font-size:12px; color:var(--muted); font-weight:700; margin-bottom:12px; letter-spacing:.5px; text-transform:uppercase;}
+  .clock-hero .digits{
+    font-family:'JetBrains Mono',monospace; font-size:clamp(42px,10vw,66px); font-weight:700;
+    letter-spacing:1px; line-height:1; background:linear-gradient(90deg,#fff,var(--sun) 60%,var(--nowruz));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .clock-hero .digits .sec{opacity:.5; font-size:0.55em; vertical-align:baseline;}
+  .clock-hero .greg-line{margin-top:12px; color:var(--muted); font-size:13px; font-weight:500; letter-spacing:.2px;}
+
+  .cal-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:13px; margin-top:16px;}
+  @media (max-width:640px){ .cal-grid{grid-template-columns:1fr;} }
+  .cal-card{
+    border-radius:var(--r-md); padding:18px; border:1px solid var(--line); position:relative; overflow:hidden;
+    box-shadow:var(--shadow-sm); transition:transform .18s ease;
+  }
+  .cal-card:hover{transform:translateY(-2px);}
+  .cal-card.gregorian{background:var(--sun-soft); border-color:rgba(232,163,61,0.25);}
+  .cal-card.jalali{background:var(--nowruz-soft); border-color:rgba(232,93,78,0.25);}
+  .cal-card.hijri{background:var(--moon-soft); border-color:rgba(159,180,217,0.25);}
+  .cal-card .tag{display:flex; align-items:center; gap:7px; font-size:11.5px; font-weight:700; margin-bottom:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.4px;}
+  .cal-card .dot{width:8px;height:8px;border-radius:50%;}
+  .cal-card.gregorian .dot{background:var(--sun);}
+  .cal-card.jalali .dot{background:var(--nowruz);}
+  .cal-card.hijri .dot{background:var(--moon);}
+  .cal-card .big-date{font-size:22px; font-weight:700; line-height:1.35;}
+  .cal-card .weekday{font-size:13px; color:var(--muted); margin-top:6px; font-weight:500;}
+
+  /* ---- CONVERTER PANEL ---- */
+  .cal-switch{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+  .cal-switch button{
+    flex:1; min-width:110px; padding:12px 10px; border-radius:var(--r-sm); cursor:pointer; font-family:inherit;
+    font-weight:700; font-size:13.5px; border:1px solid var(--line); background:var(--surface-2); color:var(--muted);
+    transition:all .18s ease; display:flex; align-items:center; justify-content:center; gap:7px;
+  }
+  .cal-switch button:hover:not(.active){border-color:rgba(255,255,255,0.2); color:#c4c9e8;}
+  .cal-switch button .dot{width:7px;height:7px;border-radius:50%;background:var(--muted); transition:background .18s ease;}
+  .cal-switch button[data-cal="gregorian"].active{background:var(--sun-soft); color:var(--text); border-color:var(--sun);}
+  .cal-switch button[data-cal="gregorian"].active .dot{background:var(--sun);}
+  .cal-switch button[data-cal="jalali"].active{background:var(--nowruz-soft); color:var(--text); border-color:var(--nowruz);}
+  .cal-switch button[data-cal="jalali"].active .dot{background:var(--nowruz);}
+  .cal-switch button[data-cal="hijri"].active{background:var(--moon-soft); color:var(--text); border-color:var(--moon);}
+  .cal-switch button[data-cal="hijri"].active .dot{background:var(--moon);}
+
+  .picker-trigger{
+    width:100%; text-align:start; background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r-md);
+    padding:15px 17px; color:var(--text); font-size:16.5px; font-weight:600; cursor:pointer;
+    display:flex; justify-content:space-between; align-items:center; gap:10px; transition:all .18s ease;
+  }
+  .picker-trigger:hover{border-color:var(--sun); background:var(--surface);}
+  .picker-trigger .arrow{color:var(--muted); font-size:11px; transition:transform .2s ease;}
+  .picker-trigger.is-open .arrow{transform:rotate(180deg); color:var(--sun);}
+
+  .datepicker{margin-top:14px; display:none; background:var(--bg-deep); border:1px solid var(--line);
+    border-radius:var(--r-md); padding:16px; box-shadow:var(--shadow-md);}
+  .datepicker.open{display:block; animation:fadeIn .2s ease;}
+  .dp-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; gap:8px;}
+  .dp-head .navbtn{
+    width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--surface);
+    color:var(--text); cursor:pointer; font-size:15px; display:flex;align-items:center;justify-content:center;
+  }
+  .dp-head .navbtn:hover{border-color:var(--sun);}
+  .dp-head select{
+    background:var(--surface); color:var(--text); border:1px solid var(--line); border-radius:9px;
+    padding:7px 8px; font-family:inherit; font-size:13.5px; font-weight:600;
+  }
+  .dp-weekdays{display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:6px;}
+  .dp-weekdays div{text-align:center; font-size:11px; color:var(--muted); font-weight:700; padding:4px 0;}
+  .dp-days{display:grid; grid-template-columns:repeat(7,1fr); gap:4px;}
+  .dp-days button{
+    aspect-ratio:1; border:none; background:transparent; color:var(--text); border-radius:9px; cursor:pointer;
+    font-family:'JetBrains Mono',monospace; font-size:13.5px; transition:all .12s ease; font-weight:500;
+  }
+  .dp-days button:not(.empty):hover{background:var(--surface-2); transform:scale(1.06);}
+  .dp-days button.empty{cursor:default; pointer-events:none;}
+  .dp-days button.today{box-shadow:inset 0 0 0 1.5px var(--sun); font-weight:700;}
+  .dp-days button.selected{background:linear-gradient(135deg,var(--sun),var(--nowruz)); color:#1b1206; font-weight:700; box-shadow:var(--shadow-glow);}
+
+  .result-row{display:flex; align-items:center; justify-content:space-between; padding:15px 4px; border-top:1px solid var(--line);}
+  .result-row:first-child{border-top:none; padding-top:6px;}
+  .result-row:last-child{padding-bottom:6px;}
+  .result-row .label{display:flex; align-items:center; gap:8px; color:var(--muted); font-size:13px; font-weight:600;}
+  .result-row .dot{width:8px;height:8px;border-radius:50%;}
+  .result-row .value{font-size:17px; font-weight:700; text-align:end;}
+  .result-row .sub{display:block; font-size:11.5px; color:var(--muted); font-weight:500; margin-top:3px;}
+
+  /* ---- WORLD CLOCK PANEL ---- */
+  .add-city{display:flex; gap:10px; margin-bottom:18px;}
+  .add-city select{
+    flex:1; background:var(--surface-2); color:var(--text); border:1px solid var(--line); border-radius:var(--r-md);
+    padding:13px 14px; font-family:inherit; font-size:14px; font-weight:600; transition:border-color .15s ease;
+  }
+  .add-city select:hover{border-color:rgba(255,255,255,0.25);}
+  .add-city button{
+    background:linear-gradient(135deg,var(--sun),var(--nowruz)); border:none; color:#1b1206; font-weight:800;
+    border-radius:var(--r-md); padding:0 22px; cursor:pointer; font-size:14px; font-family:inherit;
+    box-shadow:var(--shadow-glow); transition:transform .15s ease, filter .15s ease;
+  }
+  .add-city button:hover{transform:translateY(-1px); filter:brightness(1.06);}
+  .add-city button:active{transform:translateY(0);}
+  .city-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:13px;}
+  @media (max-width:560px){ .city-grid{grid-template-columns:1fr;} }
+  .city-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:17px; position:relative;
+    box-shadow:var(--shadow-sm); transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .city-card:hover{transform:translateY(-2px); box-shadow:var(--shadow-md);}
+  .city-card .remove{
+    position:absolute; top:10px; inset-inline-end:10px; background:none; border:none; color:var(--muted);
+    cursor:pointer; font-size:15px; line-height:1; padding:5px; border-radius:6px; transition:all .15s ease;
+  }
+  .city-card .remove:hover{color:var(--nowruz); background:rgba(232,93,78,0.12);}
+  .city-card .name{font-weight:700; font-size:14.5px; margin-bottom:2px;}
+  .city-card .offset{font-size:11.5px; color:var(--muted); margin-bottom:10px;}
+  .city-card .time{
+    font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:700;
+    color:var(--text);
+  }
+  .city-card .time .sec{font-size:0.6em; opacity:.5;}
+  .city-card .date{font-size:12px; color:var(--muted); margin-top:4px;}
+  .city-card.daytime{border-color:rgba(232,163,61,0.35);}
+  .city-card.nighttime{border-color:rgba(159,180,217,0.35);}
+
+  footer.note{text-align:center; color:var(--muted); font-size:11.5px; margin-top:32px; line-height:1.9; padding:0 20px; opacity:.75;}
+</style>
+</head>
+<body dir="rtl">
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <div class="logo-slot">
+        <img class="logo-img" src="./pictures/logo cal.png" alt="Logo"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="glyph"><span>🌗</span></div>
+      </div>
+      <div>
+        <h1 data-i18n="appTitle">سه تقویم</h1>
+        <p data-i18n="appSubtitle">میلادی · شمسی · قمری</p>
+      </div>
+    </div>
+    <div class="langbar" id="langbar">
+      <button data-lang="fa">فارسی</button>
+      <button data-lang="en">English</button>
+      <button data-lang="ar">العربية</button>
+      <button data-lang="fr">Français</button>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button data-tab="today" class="active" data-i18n="tabToday">امروز</button>
+    <button data-tab="converter" data-i18n="tabConverter">تبدیل تاریخ</button>
+    <button data-tab="worldclock" data-i18n="tabWorld">ساعت جهانی</button>
+  </nav>
+
+  <!-- TODAY -->
+  <section class="panel active" id="panel-today">
+    <div class="card clock-hero">
+      <div class="city-label" data-i18n="localTime">زمان محلی شما</div>
+      <div class="digits" id="heroClock">--:--<span class="sec">--</span></div>
+      <div class="greg-line" id="heroDateLine">—</div>
+    </div>
+    <div class="cal-grid" id="todayCalGrid"></div>
+  </section>
+
+  <!-- CONVERTER -->
+  <section class="panel" id="panel-converter">
+    <div class="card">
+      <div class="cal-switch" id="fromCalSwitch">
+        <button data-cal="gregorian" class="active"><span class="dot"></span><span data-i18n="calGregorian">میلادی</span></button>
+        <button data-cal="jalali"><span class="dot"></span><span data-i18n="calJalali">شمسی</span></button>
+        <button data-cal="hijri"><span class="dot"></span><span data-i18n="calHijri">قمری</span></button>
+      </div>
+
+      <button class="picker-trigger" id="pickerTrigger">
+        <span id="pickerTriggerLabel">—</span>
+        <span class="arrow">▾</span>
+      </button>
+
+      <div class="datepicker" id="datepicker">
+        <div class="dp-head">
+          <button class="navbtn" id="dpPrev">‹</button>
+          <div style="display:flex; gap:6px;">
+            <select id="dpMonthSel"></select>
+            <select id="dpYearSel"></select>
+          </div>
+          <button class="navbtn" id="dpNext">›</button>
+        </div>
+        <div class="dp-weekdays" id="dpWeekdays"></div>
+        <div class="dp-days" id="dpDays"></div>
+      </div>
+    </div>
+
+    <div class="card" id="resultsCard">
+      <div class="result-row" data-cal="gregorian">
+        <div class="label"><span class="dot" style="background:var(--sun)"></span><span data-i18n="calGregorian">میلادی</span></div>
+        <div class="value">—</div>
+      </div>
+      <div class="result-row" data-cal="jalali">
+        <div class="label"><span class="dot" style="background:var(--nowruz)"></span><span data-i18n="calJalali">شمسی</span></div>
+        <div class="value">—</div>
+      </div>
+      <div class="result-row" data-cal="hijri">
+        <div class="label"><span class="dot" style="background:var(--moon)"></span><span data-i18n="calHijri">قمری</span></div>
+        <div class="value">—</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORLD CLOCK -->
+  <section class="panel" id="panel-worldclock">
+    <div class="add-city">
+      <select id="citySelect"></select>
+      <button id="addCityBtn" data-i18n="addCity">افزودن</button>
+    </div>
+    <div class="city-grid" id="cityGrid"></div>
+  </section>
+
+  <footer class="note" data-i18n="footerNote">
+    تقویم قمری بر اساس محاسبه جدولی (تبویری) است و ممکن است با رؤیت هلال محلی یک روز اختلاف داشته باشد.
+  </footer>
+</div>
+
+<script>
+/* ===================== CALENDAR MATH (verified against known reference dates) ===================== */
+function div(a, b) { return Math.floor(a / b); }
+function mod(a, b) { return a - Math.floor(a / b) * b; }
+
+function g2jdn(gy, gm, gd) {
+  const a = Math.floor((14 - gm) / 12);
+  const y = gy + 4800 - a;
+  const m = gm + 12 * a - 3;
+  return gd + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
+}
+function jdn2g(jdn) {
+  const a = jdn + 32044;
+  const b = Math.floor((4 * a + 3) / 146097);
+  const c = a - Math.floor((146097 * b) / 4);
+  const d = Math.floor((4 * c + 3) / 1461);
+  const e = c - Math.floor((1461 * d) / 4);
+  const m = Math.floor((5 * e + 2) / 153);
+  const gd = e - Math.floor((153 * m + 2) / 5) + 1;
+  const gm = m + 3 - 12 * Math.floor(m / 10);
+  const gy = 100 * b + d - 4800 + Math.floor(m / 10);
+  return [gy, gm, gd];
+}
+function jalCal(jy) {
+  const breaks = [-61,9,38,199,426,686,756,818,1111,1181,1210,1635,2060,2097,2192,2262,2324,2394,2456,3178];
+  const bl = breaks.length;
+  const gy = jy + 621;
+  let leapJ = -14, jp = breaks[0];
+  if (jy < jp || jy >= breaks[bl - 1]) throw new Error('Jalali year out of range');
+  let jump = 0;
+  for (let i = 1; i < bl; i += 1) {
+    const jm_ = breaks[i];
+    jump = jm_ - jp;
+    if (jy < jm_) break;
+    leapJ = leapJ + div(jump, 33) * 8 + div(mod(jump, 33), 4);
+    jp = jm_;
+  }
+  let n = jy - jp;
+  leapJ = leapJ + div(n, 33) * 8 + div(mod(n, 33) + 3, 4);
+  if (mod(jump, 33) === 4 && jump - n === 4) leapJ += 1;
+  const leapG = div(gy, 4) - div((div(gy, 100) + 1) * 3, 4) - 150;
+  const march = 20 + leapJ - leapG;
+  if (jump - n < 6) n = n - jump + div(jump + 4, 33) * 33;
+  let leap = mod(mod(n + 1, 33) - 1, 4);
+  if (leap === -1) leap = 4;
+  return { leap, gy, march };
+}
+function jalaliToJdn(jy, jm, jd) {
+  const r = jalCal(jy);
+  return g2jdn(r.gy, 3, r.march) + (jm - 1) * 31 - div(jm, 7) * (jm - 7) + jd - 1;
+}
+function jdnToJalali(jdn) {
+  const gy = jdn2g(jdn)[0];
+  let jy = gy - 621;
+  let r = jalCal(jy);
+  let jdn1f = g2jdn(r.gy, 3, r.march);
+  let k = jdn - jdn1f;
+  if (k >= 0) {
+    if (k <= 185) return [jy, 1 + div(k, 31), mod(k, 31) + 1];
+    k -= 186;
+  } else {
+    jy -= 1;
+    k += 179;
+    if (r.leap === 1) k += 1;
+  }
+  return [jy, 7 + div(k, 30), mod(k, 30) + 1];
+}
+const ISLAMIC_EPOCH = 1948440;
+function islamicToJdn(iy, im, id) {
+  return id + Math.ceil(29.5 * (im - 1)) + (iy - 1) * 354 + Math.floor((3 + 11 * iy) / 30) + ISLAMIC_EPOCH - 1;
+}
+function jdnToIslamic(jdn) {
+  jdn = Math.floor(jdn) + 0.5;
+  const iy = Math.floor((30 * (jdn - ISLAMIC_EPOCH) + 10646) / 10631);
+  let im = Math.min(12, Math.ceil((jdn - (29 + islamicToJdn(iy, 1, 1))) / 29.5) + 1);
+  if (im < 1) im = 1;
+  const id = Math.floor(jdn - islamicToJdn(iy, im, 1)) + 1;
+  return [iy, im, id];
+}
+function toJdn(cal, y, m, d) {
+  if (cal === 'gregorian') return g2jdn(y, m, d);
+  if (cal === 'jalali') return jalaliToJdn(y, m, d);
+  if (cal === 'hijri') return islamicToJdn(y, m, d);
+}
+function fromJdn(cal, jdn) {
+  if (cal === 'gregorian') return jdn2g(jdn);
+  if (cal === 'jalali') return jdnToJalali(jdn);
+  if (cal === 'hijri') return jdnToIslamic(jdn);
+}
+function convertDate(fromCal, y, m, d, toCal) { return fromJdn(toCal, toJdn(fromCal, y, m, d)); }
+function daysInMonth(cal, y, m) {
+  const nextM = m === 12 ? 1 : m + 1;
+  const nextY = m === 12 ? y + 1 : y;
+  return toJdn(cal, nextY, nextM, 1) - toJdn(cal, y, m, 1);
+}
+function weekdayMon0(jdn) { return mod(jdn, 7); } // 0=Mon..6=Sun (calibrated: JDN 2451545 = Sat 2000-01-01)
+function weekdaySun0(jdn) { return mod(weekdayMon0(jdn) + 1, 7); } // 0=Sun..6=Sat
+function gregorianFromJSDate(dt) { return [dt.getFullYear(), dt.getMonth() + 1, dt.getDate()]; }
+
+/* ===================== TRANSLATIONS ===================== */
+const I18N = {
+  fa: {
+    dir:'rtl', locale:'fa-IR',
+    appTitle:'سه تقویم', appSubtitle:'میلادی · شمسی · قمری',
+    tabToday:'امروز', tabConverter:'تبدیل تاریخ', tabWorld:'ساعت جهانی',
+    localTime:'زمان محلی شما', addCity:'افزودن شهر', removeCity:'حذف',
+    calGregorian:'میلادی', calJalali:'شمسی', calHijri:'قمری',
+    footerNote:'تقویم قمری بر اساس محاسبهٔ جدولی (تبویری) است و ممکن است با رؤیت هلال محلی یک روز تفاوت داشته باشد.',
+    weekFull:['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'],
+    weekShort:['ی','د','س','چ','پ','ج','ش'],
+    gregMonths:['ژانویه','فوریه','مارس','آوریل','مه','ژوئن','ژوئیه','اوت','سپتامبر','اکتبر','نوامبر','دسامبر'],
+    jalaliMonths:['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'],
+    hijriMonths:['محرم','صفر','ربیع‌الاول','ربیع‌الثانی','جمادی‌الاول','جمادی‌الثانی','رجب','شعبان','رمضان','شوال','ذوالقعده','ذوالحجه'],
+    choosePicker:'برای انتخاب تاریخ ضربه بزنید'
+  },
+  en: {
+    dir:'ltr', locale:'en-US',
+    appTitle:'Three Calendars', appSubtitle:'Gregorian · Persian · Hijri',
+    tabToday:'Today', tabConverter:'Convert', tabWorld:'World Clock',
+    localTime:'Your local time', addCity:'Add city', removeCity:'Remove',
+    calGregorian:'Gregorian', calJalali:'Persian (Jalali)', calHijri:'Hijri',
+    footerNote:'The Hijri date uses the tabular (civil) calculation and may differ by a day from local moon-sighting calendars.',
+    weekFull:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+    weekShort:['Su','Mo','Tu','We','Th','Fr','Sa'],
+    gregMonths:['January','February','March','April','May','June','July','August','September','October','November','December'],
+    jalaliMonths:['Farvardin','Ordibehesht','Khordad','Tir','Mordad','Shahrivar','Mehr','Aban','Azar','Dey','Bahman','Esfand'],
+    hijriMonths:['Muharram','Safar',"Rabi' I","Rabi' II",'Jumada I','Jumada II','Rajab',"Sha'ban",'Ramadan','Shawwal',"Dhu al-Qi'dah","Dhu al-Hijjah"],
+    choosePicker:'Tap to pick a date'
+  },
+  ar: {
+    dir:'rtl', locale:'ar-SA',
+    appTitle:'ثلاثة تقاويم', appSubtitle:'ميلادي · شمسي فارسي · هجري',
+    tabToday:'اليوم', tabConverter:'تحويل التاريخ', tabWorld:'الساعة العالمية',
+    localTime:'توقيتك المحلي', addCity:'إضافة مدينة', removeCity:'إزالة',
+    calGregorian:'ميلادي', calJalali:'شمسي (فارسي)', calHijri:'هجري',
+    footerNote:'يعتمد التاريخ الهجري على الحساب الجدولي (المدني) وقد يختلف يوماً واحداً عن التقويم القائم على رؤية الهلال المحلية.',
+    weekFull:['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],
+    weekShort:['ح','ن','ث','ر','خ','ج','س'],
+    gregMonths:['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'],
+    jalaliMonths:['فروردين','ارديبهشت','خرداد','تير','مرداد','شهريور','مهر','آبان','آذر','دي','بهمن','اسفند'],
+    hijriMonths:['محرم','صفر','ربيع الأول','ربيع الثاني','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'],
+    choosePicker:'اضغط لاختيار التاريخ'
+  },
+  fr: {
+    dir:'ltr', locale:'fr-FR',
+    appTitle:'Trois Calendriers', appSubtitle:'Grégorien · Persan · Hégirien',
+    tabToday:"Aujourd'hui", tabConverter:'Convertir', tabWorld:'Horloge mondiale',
+    localTime:'Votre heure locale', addCity:'Ajouter une ville', removeCity:'Retirer',
+    calGregorian:'Grégorien', calJalali:'Persan (Jalali)', calHijri:'Hégirien',
+    footerNote:"La date hégirienne utilise le calcul tabulaire (civil) et peut différer d'un jour des calendriers basés sur l'observation locale de la lune.",
+    weekFull:['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
+    weekShort:['Di','Lu','Ma','Me','Je','Ve','Sa'],
+    gregMonths:['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
+    jalaliMonths:['Farvardin','Ordibehesht','Khordad','Tir','Mordad','Shahrivar','Mehr','Aban','Azar','Dey','Bahman','Esfand'],
+    hijriMonths:['Muharram','Safar',"Rabi' I","Rabi' II",'Joumada I','Joumada II','Rajab',"Cha'ban",'Ramadan','Chawwal',"Dhou al-Qi'da","Dhou al-Hijja"],
+    choosePicker:'Touchez pour choisir une date'
+  }
+};
+
+const CALS = ['gregorian','jalali','hijri'];
+function monthsFor(cal, lang) {
+  const t = I18N[lang];
+  if (cal === 'gregorian') return t.gregMonths;
+  if (cal === 'jalali') return t.jalaliMonths;
+  return t.hijriMonths;
+}
+function toPersianDigits(str, lang) {
+  if (lang !== 'fa') return str;
+  const map = {'0':'۰','1':'۱','2':'۲','3':'۳','4':'۴','5':'۵','6':'۶','7':'۷','8':'۸','9':'۹'};
+  return String(str).replace(/[0-9]/g, ch => map[ch]);
+}
+function formatDate(cal, y, m, d, lang) {
+  const months = monthsFor(cal, lang);
+  const dayStr = toPersianDigits(d, lang);
+  const yearStr = toPersianDigits(y, lang);
+  return `${dayStr} ${months[m - 1]} ${yearStr}`;
+}
+
+/* ===================== CITY DATA ===================== */
+const CITIES = [
+  { id:'tehran', tz:'Asia/Tehran', names:{fa:'تهران',en:'Tehran',ar:'طهران',fr:'Téhéran'} },
+  { id:'riyadh', tz:'Asia/Riyadh', names:{fa:'ریاض',en:'Riyadh',ar:'الرياض',fr:'Riyad'} },
+  { id:'mecca', tz:'Asia/Riyadh', names:{fa:'مکه',en:'Mecca',ar:'مكة المكرمة',fr:'La Mecque'} },
+  { id:'cairo', tz:'Africa/Cairo', names:{fa:'قاهره',en:'Cairo',ar:'القاهرة',fr:'Le Caire'} },
+  { id:'istanbul', tz:'Europe/Istanbul', names:{fa:'استانبول',en:'Istanbul',ar:'إسطنبول',fr:'Istanbul'} },
+  { id:'dubai', tz:'Asia/Dubai', names:{fa:'دبی',en:'Dubai',ar:'دبي',fr:'Dubaï'} },
+  { id:'baghdad', tz:'Asia/Baghdad', names:{fa:'بغداد',en:'Baghdad',ar:'بغداد',fr:'Bagdad'} },
+  { id:'london', tz:'Europe/London', names:{fa:'لندن',en:'London',ar:'لندن',fr:'Londres'} },
+  { id:'paris', tz:'Europe/Paris', names:{fa:'پاریس',en:'Paris',ar:'باريس',fr:'Paris'} },
+  { id:'berlin', tz:'Europe/Berlin', names:{fa:'برلین',en:'Berlin',ar:'برلين',fr:'Berlin'} },
+  { id:'moscow', tz:'Europe/Moscow', names:{fa:'مسکو',en:'Moscow',ar:'موسكو',fr:'Moscou'} },
+  { id:'newyork', tz:'America/New_York', names:{fa:'نیویورک',en:'New York',ar:'نيويورك',fr:'New York'} },
+  { id:'losangeles', tz:'America/Los_Angeles', names:{fa:'لس‌آنجلس',en:'Los Angeles',ar:'لوس أنجلوس',fr:'Los Angeles'} },
+  { id:'toronto', tz:'America/Toronto', names:{fa:'تورنتو',en:'Toronto',ar:'تورنتو',fr:'Toronto'} },
+  { id:'saopaulo', tz:'America/Sao_Paulo', names:{fa:'سائوپائولو',en:'São Paulo',ar:'ساو باولو',fr:'São Paulo'} },
+  { id:'tokyo', tz:'Asia/Tokyo', names:{fa:'توکیو',en:'Tokyo',ar:'طوكيو',fr:'Tokyo'} },
+  { id:'beijing', tz:'Asia/Shanghai', names:{fa:'پکن',en:'Beijing',ar:'بكين',fr:'Pékin'} },
+  { id:'delhi', tz:'Asia/Kolkata', names:{fa:'دهلی نو',en:'New Delhi',ar:'نيودلهي',fr:'New Delhi'} },
+  { id:'sydney', tz:'Australia/Sydney', names:{fa:'سیدنی',en:'Sydney',ar:'سيدني',fr:'Sydney'} },
+  { id:'singapore', tz:'Asia/Singapore', names:{fa:'سنگاپور',en:'Singapore',ar:'سنغافورة',fr:'Singapour'} },
+  { id:'jakarta', tz:'Asia/Jakarta', names:{fa:'جاکارتا',en:'Jakarta',ar:'جاكرتا',fr:'Jakarta'} },
+  { id:'lagos', tz:'Africa/Lagos', names:{fa:'لاگوس',en:'Lagos',ar:'لاغوس',fr:'Lagos'} },
+  { id:'johannesburg', tz:'Africa/Johannesburg', names:{fa:'ژوهانسبورگ',en:'Johannesburg',ar:'جوهانسبرغ',fr:'Johannesburg'} }
+];
+
+/* ===================== APP STATE ===================== */
+const state = {
+  lang: 'fa',
+  activeTab: 'today',
+  fromCal: 'gregorian',
+  pickerOpen: false,
+  viewCal: 'gregorian',
+  viewYear: null,
+  viewMonth: null,
+  selected: null,     // {y,m,d} in state.fromCal terms, absolute via jdn
+  selectedJdn: null,
+  activeCities: ['tehran','london','newyork','tokyo']
+};
+
+function nowParts() {
+  const dt = new Date();
+  return { dt, jdn: g2jdn(...gregorianFromJSDate(dt)) };
+}
+
+/* ===================== RENDER: i18n static text + direction ===================== */
+function applyStaticI18n() {
+  const t = I18N[state.lang];
+  document.documentElement.lang = state.lang;
+  document.documentElement.dir = t.dir;
+  document.body.dir = t.dir;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) el.textContent = t[key];
+  });
+  document.querySelectorAll('#langbar button').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-lang') === state.lang);
+  });
+}
+
+/* ===================== RENDER: TODAY PANEL ===================== */
+let heroTimeZoneLabel = null;
+function renderToday() {
+  const t = I18N[state.lang];
+  const { dt, jdn } = nowParts();
+
+  const hh = String(dt.getHours()).padStart(2, '0');
+  const mm = String(dt.getMinutes()).padStart(2, '0');
+  const ss = String(dt.getSeconds()).padStart(2, '0');
+  document.getElementById('heroClock').innerHTML =
+    `${toPersianDigits(hh, state.lang)}:${toPersianDigits(mm, state.lang)}<span class="sec">:${toPersianDigits(ss, state.lang)}</span>`;
+
+  if (!heroTimeZoneLabel) {
+    try { heroTimeZoneLabel = Intl.DateTimeFormat().resolvedOptions().timeZone; }
+    catch (e) { heroTimeZoneLabel = ''; }
+  }
+  document.getElementById('heroDateLine').textContent = heroTimeZoneLabel || '';
+
+  const grid = document.getElementById('todayCalGrid');
+  grid.innerHTML = '';
+  CALS.forEach(cal => {
+    const [y, m, d] = fromJdn(cal, jdn);
+    const wIdx = weekdaySun0(jdn);
+    const div = document.createElement('div');
+    div.className = 'cal-card ' + cal;
+    div.innerHTML = `
+      <div class="tag"><span class="dot"></span><span>${t['cal' + cap(cal)]}</span></div>
+      <div class="big-date">${formatDate(cal, y, m, d, state.lang)}</div>
+      <div class="weekday">${t.weekFull[wIdx]}</div>`;
+    grid.appendChild(div);
+  });
+}
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+/* ===================== RENDER: CONVERTER PANEL ===================== */
+function initSelectedIfNeeded() {
+  if (state.selectedJdn === null) {
+    const { jdn } = nowParts();
+    state.selectedJdn = jdn;
+    state.viewCal = state.fromCal;
+    const [y, m] = fromJdn(state.fromCal, jdn);
+    state.viewYear = y;
+    state.viewMonth = m;
+  }
+}
+
+function renderPickerTrigger() {
+  const [y, m, d] = fromJdn(state.fromCal, state.selectedJdn);
+  document.getElementById('pickerTriggerLabel').textContent = formatDate(state.fromCal, y, m, d, state.lang);
+}
+
+function renderResults() {
+  const t = I18N[state.lang];
+  document.querySelectorAll('#resultsCard .result-row').forEach(row => {
+    const cal = row.getAttribute('data-cal');
+    const [y, m, d] = fromJdn(cal, state.selectedJdn);
+    const jdnW = weekdaySun0(state.selectedJdn);
+    row.querySelector('.label span:last-child').textContent = t['cal' + cap(cal)];
+    row.querySelector('.value').innerHTML = `${formatDate(cal, y, m, d, state.lang)}<span class="sub">${t.weekFull[jdnW]}</span>`;
+  });
+}
+
+function populateDatepickerSelectors() {
+  const t = I18N[state.lang];
+  const monthSel = document.getElementById('dpMonthSel');
+  const yearSel = document.getElementById('dpYearSel');
+  const months = monthsFor(state.viewCal, state.lang);
+  monthSel.innerHTML = months.map((mn, i) => `<option value="${i + 1}">${mn}</option>`).join('');
+  monthSel.value = state.viewMonth;
+
+  const centerYear = state.viewYear;
+  let years = [];
+  for (let y = centerYear - 100; y <= centerYear + 100; y++) years.push(y);
+  yearSel.innerHTML = years.map(y => `<option value="${y}">${toPersianDigits(y, state.lang)}</option>`).join('');
+  yearSel.value = state.viewYear;
+}
+
+function renderDatepickerWeekdays() {
+  const t = I18N[state.lang];
+  const startIdx = state.viewCal === 'gregorian' ? 0 : 6; // Sun=0 start for gregorian, Sat start otherwise
+  const wrap = document.getElementById('dpWeekdays');
+  wrap.innerHTML = '';
+  for (let i = 0; i < 7; i++) {
+    const idx = (startIdx + i) % 7;
+    const d = document.createElement('div');
+    d.textContent = t.weekShort[idx];
+    wrap.appendChild(d);
+  }
+}
+
+function renderDatepickerDays() {
+  const startIdx = state.viewCal === 'gregorian' ? 0 : 6;
+  const firstJdn = toJdn(state.viewCal, state.viewYear, state.viewMonth, 1);
+  const firstWeekday = weekdaySun0(firstJdn);
+  const leading = (firstWeekday - startIdx + 7) % 7;
+  const total = daysInMonth(state.viewCal, state.viewYear, state.viewMonth);
+  const { jdn: todayJdn } = nowParts();
+
+  const [selY, selM, selD] = fromJdn(state.fromCal, state.selectedJdn);
+  const selInThisCal = state.fromCal === state.viewCal;
+
+  const wrap = document.getElementById('dpDays');
+  wrap.innerHTML = '';
+  for (let i = 0; i < leading; i++) {
+    const b = document.createElement('button');
+    b.className = 'empty';
+    wrap.appendChild(b);
+  }
+  for (let d = 1; d <= total; d++) {
+    const b = document.createElement('button');
+    b.textContent = toPersianDigits(d, state.lang);
+    const thisJdn = toJdn(state.viewCal, state.viewYear, state.viewMonth, d);
+    if (thisJdn === todayJdn) b.classList.add('today');
+    if (selInThisCal && selY === state.viewYear && selM === state.viewMonth && selD === d) b.classList.add('selected');
+    b.addEventListener('click', () => {
+      state.selectedJdn = thisJdn;
+      state.fromCal = state.viewCal;
+      syncFromCalButtons();
+      renderPickerTrigger();
+      renderResults();
+      closeDatepicker();
+    });
+    wrap.appendChild(b);
+  }
+}
+
+function renderDatepicker() {
+  populateDatepickerSelectors();
+  renderDatepickerWeekdays();
+  renderDatepickerDays();
+}
+
+function openDatepicker() {
+  state.pickerOpen = true;
+  state.viewCal = state.fromCal;
+  const [y, m] = fromJdn(state.fromCal, state.selectedJdn);
+  state.viewYear = y;
+  state.viewMonth = m;
+  document.getElementById('datepicker').classList.add('open');
+  document.getElementById('pickerTrigger').classList.add('is-open');
+  renderDatepicker();
+}
+function closeDatepicker() {
+  state.pickerOpen = false;
+  document.getElementById('datepicker').classList.remove('open');
+  document.getElementById('pickerTrigger').classList.remove('is-open');
+}
+
+function syncFromCalButtons() {
+  document.querySelectorAll('#fromCalSwitch button').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-cal') === state.fromCal);
+  });
+}
+
+function shiftMonth(delta) {
+  let m = state.viewMonth + delta;
+  let y = state.viewYear;
+  if (m > 12) { m = 1; y += 1; }
+  if (m < 1) { m = 12; y -= 1; }
+  state.viewMonth = m;
+  state.viewYear = y;
+  renderDatepicker();
+}
+
+/* ===================== RENDER: WORLD CLOCK PANEL ===================== */
+function populateCitySelect() {
+  const t = I18N[state.lang];
+  const sel = document.getElementById('citySelect');
+  const available = CITIES.filter(c => !state.activeCities.includes(c.id));
+  sel.innerHTML = available.map(c => `<option value="${c.id}">${c.names[state.lang]}</option>`).join('');
+}
+
+function renderCityGrid() {
+  const t = I18N[state.lang];
+  const grid = document.getElementById('cityGrid');
+  grid.innerHTML = '';
+  const now = new Date();
+
+  state.activeCities.forEach(cityId => {
+    const city = CITIES.find(c => c.id === cityId);
+    if (!city) return;
+
+    let hh = '--', mm = '--', ss = '--', offsetLabel = '', dateLabel = '', hourNum = 12;
+    try {
+      const fmt = new Intl.DateTimeFormat('en-US', {
+        timeZone: city.tz, hour12: false,
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      });
+      const parts = fmt.formatToParts(now);
+      const get = (type) => parts.find(p => p.type === type).value;
+      hh = get('hour'); mm = get('minute'); ss = get('second');
+      hourNum = parseInt(hh, 10);
+
+      const dfmt = new Intl.DateTimeFormat(I18N[state.lang].locale, {
+        timeZone: city.tz, day: 'numeric', month: 'short', year: 'numeric'
+      });
+      dateLabel = dfmt.format(now);
+
+      const tzFmt = new Intl.DateTimeFormat('en-US', { timeZone: city.tz, timeZoneName: 'shortOffset' });
+      const tzParts = tzFmt.formatToParts(now);
+      const tzPart = tzParts.find(p => p.type === 'timeZoneName');
+      offsetLabel = tzPart ? tzPart.value : city.tz;
+    } catch (e) {
+      offsetLabel = city.tz;
+    }
+
+    const card = document.createElement('div');
+    const isDay = hourNum >= 6 && hourNum < 19;
+    card.className = 'city-card ' + (isDay ? 'daytime' : 'nighttime');
+    card.innerHTML = `
+      <button class="remove" title="${I18N[state.lang].removeCity}">✕</button>
+      <div class="name">${city.names[state.lang]}</div>
+      <div class="offset">${offsetLabel}</div>
+      <div class="time">${toPersianDigits(hh, state.lang)}:${toPersianDigits(mm, state.lang)}<span class="sec">:${toPersianDigits(ss, state.lang)}</span></div>
+      <div class="date">${dateLabel}</div>`;
+    card.querySelector('.remove').addEventListener('click', () => {
+      state.activeCities = state.activeCities.filter(id => id !== cityId);
+      renderCityGrid();
+      populateCitySelect();
+    });
+    grid.appendChild(card);
+  });
+}
+
+/* ===================== TABS ===================== */
+function switchTab(tabName) {
+  state.activeTab = tabName;
+  document.querySelectorAll('#tabs button').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-tab') === tabName);
+  });
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + tabName).classList.add('active');
+}
+
+/* ===================== FULL RE-RENDER (e.g. on language switch) ===================== */
+function fullRender() {
+  applyStaticI18n();
+  renderToday();
+  renderPickerTrigger();
+  renderResults();
+  if (state.pickerOpen) renderDatepicker();
+  populateCitySelect();
+  renderCityGrid();
+}
+
+/* ===================== EVENT WIRING ===================== */
+function wireEvents() {
+  document.getElementById('langbar').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-lang]');
+    if (!btn) return;
+    state.lang = btn.getAttribute('data-lang');
+    fullRender();
+  });
+
+  document.getElementById('tabs').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-tab]');
+    if (!btn) return;
+    switchTab(btn.getAttribute('data-tab'));
+  });
+
+  document.getElementById('fromCalSwitch').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-cal]');
+    if (!btn) return;
+    state.fromCal = btn.getAttribute('data-cal');
+    syncFromCalButtons();
+    renderPickerTrigger();
+    renderResults();
+    if (state.pickerOpen) openDatepicker();
+  });
+
+  document.getElementById('pickerTrigger').addEventListener('click', () => {
+    if (state.pickerOpen) closeDatepicker(); else openDatepicker();
+  });
+
+  document.getElementById('dpPrev').addEventListener('click', () => shiftMonth(-1));
+  document.getElementById('dpNext').addEventListener('click', () => shiftMonth(1));
+  document.getElementById('dpMonthSel').addEventListener('change', (e) => {
+    state.viewMonth = parseInt(e.target.value, 10);
+    renderDatepicker();
+  });
+  document.getElementById('dpYearSel').addEventListener('change', (e) => {
+    state.viewYear = parseInt(e.target.value, 10);
+    renderDatepicker();
+  });
+
+  document.getElementById('addCityBtn').addEventListener('click', () => {
+    const sel = document.getElementById('citySelect');
+    if (!sel.value) return;
+    if (!state.activeCities.includes(sel.value)) {
+      state.activeCities.push(sel.value);
+      renderCityGrid();
+      populateCitySelect();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!state.pickerOpen) return;
+    const picker = document.getElementById('datepicker');
+    const trigger = document.getElementById('pickerTrigger');
+    if (!picker.contains(e.target) && !trigger.contains(e.target)) closeDatepicker();
+  });
+}
+
+/* ===================== INIT ===================== */
+function init() {
+  initSelectedIfNeeded();
+  wireEvents();
+  fullRender();
+  setInterval(() => {
+    renderToday();
+    renderCityGrid();
+  }, 1000);
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+</script>
+</body>
+</html>

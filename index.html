@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>طراح سایت Arsha_pm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0F1B1E;
+    --surface:#16262A;
+    --surface-2:#1D2F33;
+    --gold:#C9A227;
+    --text:#F5F1E8;
+    --muted:#9FB0AE;
+    --line: rgba(245,241,232,0.12);
+    --radius: 14px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Vazirmatn', sans-serif;
+    line-height:1.7;
+    overflow-x:hidden;
+  }
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+
+  /* ===== nav ===== */
+  header{
+    position:fixed; top:0; right:0; left:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 6%;
+    background:linear-gradient(to bottom, rgba(15,27,30,0.9), transparent);
+  }
+  .logo{font-weight:800; font-size:1.1rem; letter-spacing:.5px;}
+  nav ul{display:flex; gap:28px; list-style:none;}
+  nav a{font-size:.95rem; color:var(--muted); transition:color .25s;}
+  nav a:hover{color:var(--gold);}
+  .nav-toggle{display:none;}
+
+  /* ===== hero ===== */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    display:flex; align-items:center;
+    padding:0 6%;
+    overflow:hidden;
+  }
+  .ribbon{
+    position:absolute;
+    top:-10%; right:-15%;
+    width:75%; height:140%;
+    background:linear-gradient(135deg, var(--gold) 0%, #8a6d1a 100%);
+    transform:rotate(-8deg);
+    opacity:.15;
+    border-radius:60px;
+    z-index:0;
+  }
+  .hero-inner{position:relative; z-index:1; max-width:780px;}
+  .eyebrow{
+    display:inline-block;
+    font-size:.85rem;
+    color:var(--gold);
+    letter-spacing:2px;
+    border:1px solid var(--line);
+    padding:6px 16px;
+    border-radius:999px;
+    margin-bottom:28px;
+  }
+  h1.name{
+    font-size:clamp(2.6rem, 7vw, 5rem);
+    font-weight:900;
+    line-height:1.1;
+    margin-bottom:18px;
+  }
+  h1.name span{color:var(--gold);}
+  .tagline{
+    font-size:clamp(1.1rem, 2vw, 1.4rem);
+    color:var(--muted);
+    max-width:560px;
+    margin-bottom:36px;
+    font-weight:300;
+  }
+  .hero-cta{display:flex; gap:16px; flex-wrap:wrap;}
+  .btn{
+    padding:14px 30px;
+    border-radius:999px;
+    font-weight:600;
+    font-size:.95rem;
+    transition:transform .25s, background .25s, color .25s;
+    display:inline-block;
+  }
+  .btn-solid{background:var(--gold); color:var(--bg);}
+  .btn-solid:hover{transform:translateY(-3px);}
+  .btn-outline{border:1px solid var(--line); color:var(--text);}
+  .btn-outline:hover{border-color:var(--gold); color:var(--gold);}
+
+  /* ===== section shared ===== */
+  section{padding:120px 6%;}
+  .section-head{margin-bottom:60px; max-width:600px;}
+  .section-num{color:var(--gold); font-size:.9rem; letter-spacing:2px; margin-bottom:12px; display:block;}
+  h2{font-size:clamp(1.8rem, 4vw, 2.6rem); font-weight:800;}
+  .section-sub{color:var(--muted); margin-top:14px; font-size:1.05rem; font-weight:300;}
+
+  /* ===== about ===== */
+  .about{background:var(--surface);}
+  .about-grid{display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:start;}
+  .about-text p{color:var(--muted); margin-bottom:18px; font-weight:300; font-size:1.05rem;}
+  .skills-list{display:flex; flex-direction:column; gap:22px;}
+  .skill-row{display:flex; flex-direction:column; gap:8px;}
+  .skill-top{display:flex; justify-content:space-between; font-size:.95rem;}
+  .skill-bar{height:6px; background:var(--line); border-radius:999px; overflow:hidden;}
+  .skill-fill{height:100%; background:var(--gold); border-radius:999px;}
+
+  /* ===== projects ===== */
+  .projects-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));
+    gap:28px;
+  }
+  .project-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    transition:transform .3s, border-color .3s;
+    cursor:pointer;
+    display:block;
+  }
+  .project-card:hover{transform:translateY(-6px); border-color:var(--gold);}
+  .project-card:focus-visible{outline:2px solid var(--gold); outline-offset:3px;}
+  .project-thumb{
+    height:180px;
+    background:linear-gradient(135deg, var(--surface-2), var(--bg));
+    display:flex; align-items:center; justify-content:center;
+    color:var(--muted);
+    font-size:.85rem;
+    letter-spacing:1px;
+    overflow:hidden;
+  }
+  .project-thumb img{
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .project-body{padding:24px;}
+  .project-body h3{font-size:1.15rem; margin-bottom:8px; font-weight:700;}
+  .project-body p{color:var(--muted); font-size:.92rem; font-weight:300; margin-bottom:14px;}
+  .project-tags{display:flex; gap:8px; flex-wrap:wrap;}
+  .tag{
+    font-size:.75rem; color:var(--gold);
+    border:1px solid var(--line);
+    padding:3px 10px; border-radius:999px;
+  }
+
+  /* ===== experience timeline ===== */
+  .timeline{background:var(--surface); }
+  .tl-item{
+    display:grid;
+    grid-template-columns:140px 1fr;
+    gap:24px;
+    padding:28px 0;
+    border-top:1px solid var(--line);
+  }
+  .tl-item:last-child{border-bottom:1px solid var(--line);}
+  .tl-date{color:var(--gold); font-size:.9rem; font-weight:600;}
+  .tl-role{font-weight:700; margin-bottom:6px; font-size:1.05rem;}
+  .tl-place{color:var(--muted); font-size:.92rem; font-weight:300;}
+
+  /* ===== contact ===== */
+  .contact-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:60px;
+  }
+  .contact-info{display:flex; flex-direction:column; gap:22px;}
+  .info-row{display:flex; gap:16px; align-items:flex-start;}
+  .info-icon{
+    width:42px; height:42px; flex:none;
+    border-radius:10px;
+    background:var(--surface-2);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--gold);
+    font-size:1.1rem;
+  }
+  .info-label{font-size:.85rem; color:var(--muted); margin-bottom:4px;}
+  .info-value{font-size:1rem; font-weight:600;}
+  form{display:flex; flex-direction:column; gap:16px;}
+  input, textarea{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:14px 16px;
+    color:var(--text);
+    font-family:inherit;
+    font-size:.95rem;
+    resize:vertical;
+  }
+  input:focus, textarea:focus{outline:2px solid var(--gold); border-color:transparent;}
+  textarea{min-height:130px;}
+
+  footer{
+    padding:36px 6%;
+    text-align:center;
+    color:var(--muted);
+    font-size:.85rem;
+    border-top:1px solid var(--line);
+  }
+
+  @media(max-width:800px){
+    nav ul{display:none;}
+    .about-grid, .contact-grid{grid-template-columns:1fr; gap:40px;}
+    .tl-item{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">آرشا<span style="color:var(--gold)">.</span></div>
+  <nav>
+    <ul>
+      <li><a href="#about">درباره من</a></li>
+      <li><a href="#projects">نمونه‌کارها</a></li>
+      <li><a href="#experience">تجربه</a></li>
+      <li><a href="#contact">تماس</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="ribbon"></div>
+  <div class="hero-inner">
+    <span class="eyebrow">در دسترس برای همکاری</span>
+    <h1 class="name">سلام، من <span></span>آرشا هستم</h1>
+    <p class="tagline">
+     طراح  
+    </p>
+    <div class="hero-cta">
+      <a href="#projects" class="btn btn-solid">مشاهده نمونه‌کارها</a>
+      <a href="#contact" class="btn btn-outline">تماس با من</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section class="about" id="about">
+  <div class="about-grid">
+    <div class="about-text">
+      <span class="section-num">۰۱ — درباره من</span>
+      <h2 style="margin-bottom:22px;">کمی درباره‌ خودم بگم</h2>
+      <p>
+        من آرشا هستم طراح سایت/برنامه درحد سایت های معرفی مثل این.
+      </p>
+      <p>
+       سازنده و مالک سایت Game-z.ir .
+      </p>
+    </div>
+    <div class="skills-list">
+      <div class="skill-row">
+        <div class="skill-top"><span>HTML</span><span>۹۰٪</span></div>
+        <div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-top"><span>CSS</span><span>۸۰٪</span></div>
+        <div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-top"><span>JavaScript</span><span>۷۰٪</span></div>
+        <div class="skill-bar"><div class="skill-fill" style="width:70%"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-top"><span>Pyton</span><span>۶۰٪</span></div>
+        <div class="skill-bar"><div class="skill-fill" style="width:60%"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PROJECTS ===== -->
+<section id="projects">
+  <div class="section-head">
+    <span class="section-num">۰۲ — نمونه‌کارها</span>
+    <h2>پروژه‌هایی که کار کرده‌ام</h2>
+    <p class="section-sub">چند نمونه از کارهایی که بهشون افتخار می‌کنم.</p>
+  </div>
+  <div class="projects-grid">
+    <a class="project-card" href="https://game-z.ir/" target="_blank" rel="noopener">
+      <div class="project-thumb"><img src="./pictures/poster1.jpeg" alt="تصویر پروژه Game-z"></div>
+      <div class="project-body">
+        <h3>سایت Game-z </h3>
+        <p>این سایت برا گیمر هاست.تمامی سرور بازی و یک هوش مصنوعی برای امکان اجرای بازی مورد نظر در سیستم شما.</p>
+        <div class="project-tags"><span class="tag">برچسب</span><span class="tag">برچسب</span></div>
+      </div>
+    </a>
+    <a class="project-card" href="#" target="_blank" rel="noopener">
+      <div class="project-thumb"><img src="images/project2.jpg" alt="تصویر پروژه سامانه مدیریت پارکینگ"></div>
+      <div class="project-body">
+        <h3>سامانه مدیریت پارکینگ</h3>
+        <p>این سایت برای مدیریت پارکینگ شما با اد کردن پلاک است.</p>
+        <div class="project-tags"><span class="tag">برچسب</span><span class="tag">برچسب</span></div>
+      </div>
+    </a>
+    <a class="project-card" href="./cal.html" target="_blank" rel="noopener">
+      <div class="project-thumb"><img src="images/project3.jpg" alt="تصویر پروژه تقویم و تایم جهان"></div>
+      <div class="project-body">
+        <h3>تقویم و تایم تمام جهان</h3>
+        <p>این سایت برای تبدیل تاریخ و نشون دادن زمان دور تا دور جهان است.</p>
+        <div class="project-tags"><span class="tag">برچسب</span><span class="tag">برچسب</span></div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ===== EXPERIENCE ===== -->
+<section class="timeline" id="experience">
+  <div class="section-head">
+    <span class="section-num">۰۳ — تحصیل و مهارت‌آموزی</span>
+    <h2>مسیر یادگیری من</h2>
+  </div>
+  <div class="tl-item">
+    <div class="tl-date">۱۴۰۳ – اکنون</div>
+    <div>
+      <div class="tl-role">شروع HTML/CSS/JS</div>
+      <div class="tl-place">فهمیدم که به نوشتن سایت علاقه دارم پس این شد که به اینجا برسم.</div>
+    </div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-date">۱۴۰۲</div>
+    <div>
+      <div class="tl-role"> پایتون متوسط  </div>
+      <div class="tl-place">پس از دو دوره پایتون فهمیدم علاقه زیادی ندارم.</div>
+    </div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-date">۱۴۰۱</div>
+    <div>
+      <div class="tl-role">اولین پروژه شروع پایتون  </div>
+      <div class="tl-place">اولین شروع برنامه نویسی من.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section id="contact">
+  <div class="section-head">
+    <span class="section-num">۰۴ — تماس</span>
+    <h2>بیا با هم صحبت کنیم</h2>
+    <p class="section-sub">برای همکاری، سوال یا فقط یه سلام، از این راه‌ها در دسترسم.</p>
+  </div>
+  <div class="contact-grid">
+    <div class="contact-info">
+      <div class="info-row">
+        <div class="info-icon">✉</div>
+        <div>
+          <div class="info-label">ایمیل</div>
+          <div class="info-value">arshapaydar57@gmail.com</div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">☎</div>
+        <div>
+          <div class="info-label">تلفن</div>
+          <div class="info-value">۰۹۱۲ ۰۰۰ ۰۰۰۰</div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">◎</div>
+        <div>
+          <div class="info-label">شبکه‌های اجتماعی</div>
+          <div class="info-value">Instagram · LinkedIn · GitHub</div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">↗</div>
+        <div>
+          <div class="info-label">آدرس سایت</div>
+          <a class="info-value" href="#" style="color:var(--gold);">Arsha-pm.ir</a>
+        </div>
+      </div>
+    </div>
+    <form onsubmit="event.preventDefault(); alert('این فرم فقط نمایشیه — برای فعال شدن باید به یک سرویس ایمیل وصل بشه.');">
+      <input type="text" placeholder="نام شما" required>
+      <input type="email" placeholder="ایمیل شما" required>
+      <textarea placeholder="پیام شما..." required></textarea>
+      <button type="submit" class="btn btn-solid" style="border:none; cursor:pointer;">ارسال پیام</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  © ۱۴۰۴ آرشا — همه‌ی حقوق محفوظ است.
+</footer>
+
+</body>
+</html>
