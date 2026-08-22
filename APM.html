@@ -7,7 +7,7 @@
     <link rel="shortcut icon" href="./pictures/logo.png" type="image/x-icon" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
         /* ===== RESET & VARIABLES ===== */
         *,
@@ -40,8 +40,11 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-primary);
+            font-family: 'Vazirmatn', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background:
+                radial-gradient(900px 500px at 12% -10%, rgba(37, 99, 235, 0.16), transparent 60%),
+                radial-gradient(700px 500px at 100% 10%, rgba(37, 99, 235, 0.08), transparent 55%),
+                var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
             display: flex;
@@ -49,6 +52,7 @@
             justify-content: center;
             padding: 20px;
             direction: rtl;
+            font-variant-numeric: tabular-nums;
         }
 
         ::-webkit-scrollbar {
@@ -995,6 +999,153 @@
         .app-footer span {
             color: var(--text-muted);
         }
+
+        /* ===== IRAN PLATE INPUT WIDGET ===== */
+        .iran-plate-input {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+        .plate-frame {
+            display: flex;
+            align-items: stretch;
+            width: 100%;
+            max-width: 360px;
+            height: 92px;
+            background: linear-gradient(180deg, #eef1f5, #d7dce3);
+            border: 3px solid #1a1a1a;
+            border-radius: 9px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            overflow: hidden;
+            direction: ltr;
+        }
+        .plate-flag-col {
+            width: 44px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            border-left: 2px solid #1a1a1a;
+        }
+        .plate-flag-stripes {
+            flex: 0 0 34%;
+            display: flex;
+            flex-direction: column;
+        }
+        .plate-flag-stripes .stripe {
+            flex: 1;
+        }
+        .plate-flag-stripes .stripe.green { background: #239f40; }
+        .plate-flag-stripes .stripe.white { background: #fff; }
+        .plate-flag-stripes .stripe.red { background: #da0000; }
+        .plate-ir-label {
+            flex: 1;
+            background: #12244d;
+            color: #fff;
+            font-size: 0.55rem;
+            font-weight: 700;
+            line-height: 1.25;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.3px;
+        }
+        .plate-main-col {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 0 8px;
+        }
+        .plate-seg {
+            background: transparent;
+            border: none;
+            border-bottom: 2px dashed #9aa2ad;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            color: #14161c;
+            font-size: 1.5rem;
+            padding: 2px 0;
+        }
+        .plate-seg::placeholder {
+            color: #b7bcc4;
+        }
+        .plate-seg:focus {
+            outline: none;
+            border-bottom-color: var(--blue);
+            border-bottom-style: solid;
+        }
+        .plate-seg-2 { width: 46px; }
+        .plate-seg-3 { width: 62px; }
+        .plate-letter-select {
+            width: 68px;
+            appearance: none;
+            background: transparent;
+            border: none;
+            border-bottom: 2px dashed #9aa2ad;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #14161c;
+            text-align: center;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+        .plate-letter-select:focus {
+            outline: none;
+            border-bottom-color: var(--blue);
+            border-bottom-style: solid;
+        }
+        .plate-side-col {
+            width: 56px;
+            flex-shrink: 0;
+            border-right: 2px solid #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 6px 0;
+        }
+        .plate-side-text {
+            font-family: 'Vazirmatn', sans-serif;
+            font-weight: 800;
+            font-size: 0.8rem;
+            color: #14161c;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+        }
+        .plate-side-code {
+            width: 34px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px dashed #9aa2ad;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            color: #14161c;
+            font-size: 1rem;
+        }
+        .plate-side-code:focus {
+            outline: none;
+            border-bottom-color: var(--blue);
+            border-bottom-style: solid;
+        }
+        .plate-widget-hint {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-align: center;
+        }
+        @media (max-width: 400px) {
+            .plate-frame { max-width: 300px; height: 80px; }
+            .plate-seg, .plate-letter-select { font-size: 1.15rem; }
+            .plate-seg-2 { width: 36px; }
+            .plate-seg-3 { width: 50px; }
+            .plate-letter-select { width: 56px; }
+        }
     </style>
 </head>
 <body>
@@ -1660,6 +1811,60 @@
                 return u ? u.plates : [];
             }
 
+            // ===================================================================
+            // IRAN PLATE VISUAL INPUT WIDGET
+            // ===================================================================
+            const PLATE_LETTERS = ['ا', 'ب', 'پ', 'ت', 'ث', 'ج', 'د', 'ز', 'ژ', 'س', 'ش', 'ص', 'ط', 'ق', 'ل', 'م', 'ن',
+                'و', 'ه', 'ی'
+            ];
+
+            function buildPlateWidgetHtml(prefill) {
+                prefill = prefill || {};
+                let opts = '<option value="">حرف</option>';
+                PLATE_LETTERS.forEach(l => {
+                    opts += `<option value="${l}"${prefill.letter === l ? ' selected' : ''}>${l}</option>`;
+                });
+                return `
+                    <div class="iran-plate-input">
+                        <div class="plate-frame">
+                            <div class="plate-flag-col">
+                                <div class="plate-flag-stripes">
+                                    <span class="stripe green"></span><span class="stripe white"></span><span class="stripe red"></span>
+                                </div>
+                                <div class="plate-ir-label">I.R.<br>IRAN</div>
+                            </div>
+                            <div class="plate-main-col">
+                                <input type="text" maxlength="2" inputmode="numeric" class="plate-seg plate-seg-2" placeholder="12" value="${prefill.p1 || ''}" />
+                                <select class="plate-letter-select">${opts}</select>
+                                <input type="text" maxlength="3" inputmode="numeric" class="plate-seg plate-seg-3" placeholder="345" value="${prefill.p3 || ''}" />
+                            </div>
+                            <div class="plate-side-col">
+                                <span class="plate-side-text">ایران</span>
+                                <input type="text" maxlength="2" inputmode="numeric" class="plate-side-code" placeholder="67" value="${prefill.city || ''}" />
+                            </div>
+                        </div>
+                        <div class="plate-widget-hint">پلاک را دقیقاً مطابق کارت خودرو وارد کنید</div>
+                    </div>
+                `;
+            }
+
+            function readPlateWidget(modal) {
+                const p1 = modal.querySelector('.plate-seg-2').value.trim();
+                const letter = modal.querySelector('.plate-letter-select').value;
+                const p3 = modal.querySelector('.plate-seg-3').value.trim();
+                const city = modal.querySelector('.plate-side-code').value.trim();
+                if (!p1 || !letter || !p3 || !city) return null;
+                if (!/^\d{2}$/.test(p1) || !/^\d{3}$/.test(p3) || !/^\d{2}$/.test(city)) return null;
+                return `${p1} ${letter} ${p3} ایران ${city}`;
+            }
+
+            function parsePlateToPrefill(plateStr) {
+                if (!plateStr) return {};
+                const m = String(plateStr).match(/^(\d{2})\s*([آ-ی]+)\s*(\d{3})\s*ایران\s*(\d{2})$/);
+                if (!m) return {};
+                return { p1: m[1], letter: m[2], p3: m[3], city: m[4] };
+            }
+
             function addPlate(unitId, plate, note) {
                 const u = appData.units[unitId];
                 if (!u) return false;
@@ -1719,10 +1924,11 @@
                     showToast('شما مجوز ویرایش این پلاک را ندارید.', 'error');
                     return;
                 }
+                const prefill = parsePlateToPrefill(plate.plate);
                 const html = `
                     <div class="input-group mb-4">
                         <label>شماره پلاک</label>
-                        <input type="text" id="editPlateInput" value="${plate.plate}" placeholder="مثلاً IRAN12345" />
+                        ${buildPlateWidgetHtml(prefill)}
                     </div>
                     <div class="input-group">
                         <label>توضیحات (اختیاری)</label>
@@ -1730,9 +1936,9 @@
                     </div>
                 `;
                 openModal('ویرایش پلاک', html, function(modal) {
-                    const newPlate = modal.querySelector('#editPlateInput').value.trim();
+                    const newPlate = readPlateWidget(modal);
                     const newNote = modal.querySelector('#editPlateNote').value.trim();
-                    if (!newPlate) { showToast('لطفاً شماره پلاک را وارد کنید.', 'error'); return false; }
+                    if (!newPlate) { showToast('لطفاً همه بخش‌های پلاک را کامل و صحیح وارد کنید.', 'error'); return false; }
                     editPlate(unitId, plateId, newPlate, newNote);
                     return true;
                 }, 'ویرایش');
@@ -1874,19 +2080,19 @@
                 }
                 const html = `
                     <div class="input-group mb-4"><label>نام مهمان</label><input type="text" id="editGuestName" value="${guest.name}" /></div>
-                    <div class="input-group mb-4"><label>پلاک</label><input type="text" id="editGuestPlate" value="${guest.plate}" /></div>
+                    <div class="input-group mb-4"><label>پلاک</label>${buildPlateWidgetHtml(parsePlateToPrefill(guest.plate))}</div>
                     <div class="input-group mb-4"><label>زمان شروع</label><input type="datetime-local" id="editGuestStart" value="${guest.start}" /></div>
                     <div class="input-group mb-4"><label>زمان پایان</label><input type="datetime-local" id="editGuestEnd" value="${guest.end}" /></div>
                     <div class="input-group"><label>توضیحات (اختیاری)</label><input type="text" id="editGuestNote" value="${guest.note || ''}" /></div>
                 `;
                 openModal('ویرایش مهمان', html, function(modal) {
                     const name = modal.querySelector('#editGuestName').value.trim();
-                    const plate = modal.querySelector('#editGuestPlate').value.trim();
+                    const plate = readPlateWidget(modal);
                     const start = modal.querySelector('#editGuestStart').value;
                     const end = modal.querySelector('#editGuestEnd').value;
                     const note = modal.querySelector('#editGuestNote').value.trim();
                     if (!name) { showToast('لطفاً نام مهمان را وارد کنید.', 'error'); return false; }
-                    if (!plate) { showToast('لطفاً پلاک مهمان را وارد کنید.', 'error'); return false; }
+                    if (!plate) { showToast('لطفاً همه بخش‌های پلاک را کامل و صحیح وارد کنید.', 'error'); return false; }
                     if (!start || !end) { showToast('لطفاً زمان شروع و پایان را مشخص کنید.', 'error'); return false; }
                     if (new Date(start) >= new Date(end)) { showToast('زمان پایان باید بعد از شروع باشد.', 'error');
                         return false; }
@@ -2022,14 +2228,17 @@
                 }
                 const html = `
                     ${isAdmin ? `<div class="input-group mb-4"><label>واحد</label><select id="addPlateUnit">${unitOptions}</select></div>` : ''}
-                    <div class="input-group mb-4"><label>شماره پلاک</label><input type="text" id="addPlateInput" placeholder="مثلاً IRAN12345" /></div>
+                    <div class="input-group mb-4">
+                        <label>شماره پلاک</label>
+                        ${buildPlateWidgetHtml()}
+                    </div>
                     <div class="input-group"><label>توضیحات (اختیاری)</label><input type="text" id="addPlateNote" placeholder="توضیحات" /></div>
                 `;
                 openModal('افزودن پلاک جدید', html, function(modal) {
                     const unit = isAdmin ? parseInt(modal.querySelector('#addPlateUnit').value) : currentUser.unitId;
-                    const plate = modal.querySelector('#addPlateInput').value.trim();
+                    const plate = readPlateWidget(modal);
                     const note = modal.querySelector('#addPlateNote').value.trim();
-                    if (!plate) { showToast('لطفاً شماره پلاک را وارد کنید.', 'error'); return false; }
+                    if (!plate) { showToast('لطفاً همه بخش‌های پلاک را کامل و صحیح وارد کنید.', 'error'); return false; }
                     addPlate(unit, plate, note);
                     return true;
                 }, 'افزودن');
@@ -2049,7 +2258,7 @@
                 const html = `
                     ${isAdmin ? `<div class="input-group mb-4"><label>واحد</label><select id="addGuestUnit">${unitOptions}</select></div>` : ''}
                     <div class="input-group mb-4"><label>نام مهمان</label><input type="text" id="addGuestName" placeholder="نام کامل" /></div>
-                    <div class="input-group mb-4"><label>پلاک</label><input type="text" id="addGuestPlate" placeholder="پلاک خودرو" /></div>
+                    <div class="input-group mb-4"><label>پلاک</label>${buildPlateWidgetHtml()}</div>
                     <div class="input-group mb-4"><label>زمان شروع</label><input type="datetime-local" id="addGuestStart" value="${startDefault}" /></div>
                     <div class="input-group mb-4"><label>زمان پایان</label><input type="datetime-local" id="addGuestEnd" value="${endDefault}" /></div>
                     <div class="input-group"><label>توضیحات (اختیاری)</label><input type="text" id="addGuestNote" placeholder="توضیحات" /></div>
@@ -2058,12 +2267,12 @@
                     const unit = isAdmin ? parseInt(modal.querySelector('#addGuestUnit').value) : currentUser
                         .unitId;
                     const name = modal.querySelector('#addGuestName').value.trim();
-                    const plate = modal.querySelector('#addGuestPlate').value.trim();
+                    const plate = readPlateWidget(modal);
                     const start = modal.querySelector('#addGuestStart').value;
                     const end = modal.querySelector('#addGuestEnd').value;
                     const note = modal.querySelector('#addGuestNote').value.trim();
                     if (!name) { showToast('لطفاً نام مهمان را وارد کنید.', 'error'); return false; }
-                    if (!plate) { showToast('لطفاً پلاک مهمان را وارد کنید.', 'error'); return false; }
+                    if (!plate) { showToast('لطفاً همه بخش‌های پلاک را کامل و صحیح وارد کنید.', 'error'); return false; }
                     if (!start || !end) { showToast('لطفاً زمان شروع و پایان را مشخص کنید.', 'error'); return false; }
                     if (new Date(start) >= new Date(end)) { showToast('زمان پایان باید بعد از شروع باشد.', 'error');
                         return false; }
