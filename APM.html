@@ -1,0 +1,2241 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>APM - سامانه مدیریت پارکینگ</title>
+    <link rel="shortcut icon" href="./pictures/logo.png" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+    <style>
+        /* ===== RESET & VARIABLES ===== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg-primary: #08080e;
+            --bg-card: #12121e;
+            --bg-input: #0e0e18;
+            --border-color: #1e293b;
+            --border-hover: #2d3a52;
+            --text-primary: #f0f4ff;
+            --text-muted: #94a3b8;
+            --text-dim: #4a5a72;
+            --blue: #2563eb;
+            --blue-light: #60a5fa;
+            --blue-glow: rgba(37, 99, 235, 0.25);
+            --green: #16a34a;
+            --red: #dc2626;
+            --yellow: #eab308;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            --transition: 0.25s ease;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-input);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--blue);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1e40af;
+        }
+
+        /* ===== UTILITY ===== */
+        .hidden {
+            display: none !important;
+        }
+        .flex {
+            display: flex;
+        }
+        .flex-col {
+            flex-direction: column;
+        }
+        .items-center {
+            align-items: center;
+        }
+        .justify-between {
+            justify-content: space-between;
+        }
+        .gap-2 {
+            gap: 8px;
+        }
+        .gap-4 {
+            gap: 16px;
+        }
+        .gap-6 {
+            gap: 24px;
+        }
+        .w-full {
+            width: 100%;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-muted {
+            color: var(--text-muted);
+        }
+        .text-sm {
+            font-size: 0.875rem;
+        }
+        .text-xs {
+            font-size: 0.75rem;
+        }
+        .mt-2 {
+            margin-top: 8px;
+        }
+        .mt-4 {
+            margin-top: 16px;
+        }
+        .mb-2 {
+            margin-bottom: 8px;
+        }
+        .mb-4 {
+            margin-bottom: 16px;
+        }
+        .mb-6 {
+            margin-bottom: 24px;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 22px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            text-decoration: none;
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0);
+            transition: background var(--transition);
+        }
+        .btn:hover::after {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .btn:active::after {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .btn-primary {
+            background: var(--blue);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px var(--blue-glow);
+        }
+
+        .btn-secondary {
+            background: #1e293b;
+            color: var(--text-primary);
+        }
+        .btn-secondary:hover {
+            background: #2d3a52;
+        }
+
+        .btn-danger {
+            background: var(--red);
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .btn-success {
+            background: var(--green);
+            color: #fff;
+        }
+        .btn-success:hover {
+            background: #15803d;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+        .btn-outline:hover {
+            background: var(--bg-input);
+            color: #fff;
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            border-radius: 8px;
+        }
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+        }
+        .btn-icon {
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 24px;
+            transition: all var(--transition);
+        }
+        .card:hover {
+            border-color: var(--border-hover);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .card-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* ===== INPUTS ===== */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+        }
+        .input-group label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #c8d0e0;
+        }
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: border var(--transition), box-shadow var(--transition);
+            width: 100%;
+        }
+        .input-group input:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px var(--blue-glow);
+        }
+        .input-group input::placeholder {
+            color: var(--text-dim);
+        }
+        .input-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        .input-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 16px center;
+            padding-left: 40px;
+        }
+        .input-group select option {
+            background: var(--bg-card);
+        }
+
+        /* ===== LOGIN ===== */
+        .login-container {
+            width: 100%;
+            max-width: 440px;
+            margin: 0 auto;
+        }
+        .login-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 40px 32px;
+            backdrop-filter: blur(4px);
+            box-shadow: var(--shadow);
+        }
+
+        .logo-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        .logo-wrapper .logo-img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 8px;
+            border-radius: 16px;
+            background: var(--bg-input);
+            padding: 8px;
+        }
+        .logo-wrapper .logo-text {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--blue), var(--blue-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .logo-wrapper .logo-badge {
+            background: var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.3px;
+            -webkit-text-fill-color: var(--text-muted);
+        }
+        .logo-sub {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .logo-sub strong {
+            color: var(--blue-light);
+            font-weight: 600;
+        }
+
+        .login-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 20px 0 16px;
+        }
+        .login-divider::before,
+        .login-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-color);
+        }
+        .login-divider span {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .login-error {
+            background: rgba(220, 38, 38, 0.12);
+            border: 1px solid rgba(220, 38, 38, 0.25);
+            border-radius: var(--radius-sm);
+            padding: 10px 16px;
+            color: #f87171;
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+            display: none;
+        }
+        .login-error.show {
+            display: block;
+        }
+
+        .login-toggle {
+            display: flex;
+            gap: 4px;
+            background: var(--bg-input);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+        .login-toggle .toggle-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+        .login-toggle .toggle-btn.active {
+            background: var(--blue);
+            color: #fff;
+            box-shadow: 0 4px 16px var(--blue-glow);
+        }
+        .login-toggle .toggle-btn:hover:not(.active) {
+            color: var(--text-primary);
+        }
+
+        .login-hint {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-align: center;
+            margin-top: 12px;
+        }
+        .login-hint code {
+            background: var(--bg-input);
+            padding: 2px 10px;
+            border-radius: 6px;
+            color: var(--blue-light);
+            font-family: inherit;
+            font-size: 0.75rem;
+        }
+
+        /* ===== DASHBOARD ===== */
+        .dashboard {
+            width: 100%;
+            max-width: 1440px;
+            min-height: 90vh;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 24px;
+            margin: 0 auto;
+        }
+        @media (max-width: 900px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+        }
+        @media (max-width: 900px) {
+            .sidebar {
+                position: relative;
+                top: 0;
+                max-height: none;
+            }
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+        .sidebar-brand .brand-img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: var(--bg-input);
+            padding: 4px;
+            flex-shrink: 0;
+        }
+        .sidebar-brand .brand-text {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--blue), var(--blue-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .sidebar-brand .brand-badge {
+            background: var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.55rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+            -webkit-text-fill-color: var(--text-muted);
+        }
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            background: var(--bg-input);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .sidebar-user .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue), #1e40af);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .sidebar-user .user-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .sidebar-user .user-info .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+        .sidebar-user .user-info .role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+        .sidebar-nav .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all var(--transition);
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            width: 100%;
+            text-align: right;
+            position: relative;
+        }
+        .sidebar-nav .nav-item:hover {
+            background: #1a1a2e;
+            color: var(--text-primary);
+        }
+        .sidebar-nav .nav-item.active {
+            background: #1a1a2e;
+            color: var(--blue-light);
+            box-shadow: inset 3px 0 0 var(--blue);
+        }
+        .sidebar-nav .nav-item .icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+        .sidebar-nav .nav-item .badge-count {
+            margin-right: auto;
+            background: var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            padding: 1px 10px;
+            border-radius: 20px;
+        }
+
+        .sidebar-footer {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* ===== MAIN ===== */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .page-header .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .page-header .header-left .header-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: var(--bg-input);
+            padding: 6px;
+            flex-shrink: 0;
+        }
+        .page-header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .page-header .sub {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            -webkit-text-fill-color: var(--text-muted);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px 18px;
+            transition: all var(--transition);
+        }
+        .stat-card:hover {
+            border-color: var(--border-hover);
+        }
+        .stat-card .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--blue-light);
+        }
+        .stat-card .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* ===== TABLES ===== */
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+        .table-wrap table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            min-width: 420px;
+        }
+        .table-wrap table th {
+            background: var(--bg-input);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            padding: 12px 16px;
+            text-align: right;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .table-wrap table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--bg-input);
+            color: #e8edf5;
+            vertical-align: middle;
+        }
+        .table-wrap table tr:last-child td {
+            border-bottom: none;
+        }
+        .table-wrap table tr:hover td {
+            background: var(--bg-input);
+        }
+        .table-wrap .actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .badge-status {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .badge-status.active {
+            background: rgba(22, 163, 74, 0.15);
+            color: #4ade80;
+        }
+        .badge-status.expired {
+            background: rgba(220, 38, 38, 0.12);
+            color: #f87171;
+        }
+        .badge-status.pending {
+            background: rgba(234, 179, 8, 0.12);
+            color: #facc15;
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+        .modal-overlay .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 32px;
+            width: 100%;
+            max-width: 520px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.25s ease;
+            box-shadow: var(--shadow);
+        }
+        .modal-overlay .modal .modal-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .modal-overlay .modal .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .modal-overlay .modal .modal-actions .btn {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-dim);
+        }
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            opacity: 0.4;
+        }
+        .empty-state h3 {
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .empty-state p {
+            font-size: 0.9rem;
+        }
+
+        /* ===== ADMIN UNITS ===== */
+        .admin-unit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .admin-unit-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 18px 20px;
+            transition: all var(--transition);
+        }
+        .admin-unit-card:hover {
+            border-color: var(--border-hover);
+        }
+        .admin-unit-card .unit-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .admin-unit-card .unit-header .unit-name {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+        .admin-unit-card .unit-header .unit-code {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            background: var(--bg-input);
+            padding: 2px 12px;
+            border-radius: 20px;
+        }
+        .admin-unit-card .unit-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .admin-unit-card .unit-stats span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .admin-unit-card .unit-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: 380px;
+            width: 100%;
+        }
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 20px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            animation: slideUp 0.3s ease;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-right: 4px solid var(--blue);
+        }
+        .toast-success {
+            border-right-color: var(--green);
+        }
+        .toast-error {
+            border-right-color: var(--red);
+        }
+        .toast-info {
+            border-right-color: var(--blue);
+        }
+        .toast .toast-icon {
+            font-size: 1.2rem;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 640px) {
+            .login-card {
+                padding: 24px 16px;
+            }
+            .logo-wrapper .logo-img {
+                width: 60px;
+                height: 60px;
+            }
+            .logo-wrapper .logo-text {
+                font-size: 1.6rem;
+            }
+            .page-header h1 {
+                font-size: 1.2rem;
+            }
+            .page-header .header-left .header-logo {
+                width: 32px;
+                height: 32px;
+                padding: 4px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .modal-overlay .modal {
+                padding: 20px 16px;
+            }
+            .admin-unit-grid {
+                grid-template-columns: 1fr;
+            }
+            .dashboard {
+                padding: 0;
+            }
+            .sidebar {
+                border-radius: 16px;
+                padding: 16px 12px;
+            }
+            .card {
+                padding: 16px;
+            }
+            .table-wrap table {
+                font-size: 0.8rem;
+                min-width: 320px;
+            }
+            .table-wrap table th,
+            .table-wrap table td {
+                padding: 8px 10px;
+            }
+            .login-toggle .toggle-btn {
+                font-size: 0.75rem;
+                padding: 6px 10px;
+            }
+        }
+        @media (max-width: 400px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .modal-overlay .modal .modal-actions .btn {
+                flex: 1 1 100%;
+            }
+        }
+
+        .color-blue {
+            color: var(--blue-light);
+        }
+        .border-blue {
+            border-color: var(--blue);
+        }
+        .bg-blue-light {
+            background: rgba(37, 99, 235, 0.06);
+        }
+        .truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+
+        .admin-tag {
+            background: rgba(37, 99, 235, 0.12);
+            color: var(--blue-light);
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            -webkit-text-fill-color: var(--blue-light);
+        }
+
+        .app-footer {
+            margin-top: 24px;
+            padding: 16px 0;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+        .app-footer span {
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================ -->
+    <!-- LOGIN -->
+    <!-- ============================================================ -->
+    <div id="loginPage" class="login-container">
+        <div class="login-card">
+            <div class="logo-wrapper">
+                <img src="./pictures/logo.png" alt="APM Logo" class="logo-img" />
+                <span class="logo-text">APM</span>
+                <span class="logo-badge">v0.2</span>
+                <div class="logo-sub">
+                    سامانه مدیریت پارکینگ &bull; <strong>کنترل هوشمند پلاک‌های مجاز</strong>
+                </div>
+            </div>
+
+            <div class="login-toggle" id="loginToggle">
+                <button class="toggle-btn active" data-mode="unit">ورود واحد</button>
+                <button class="toggle-btn" data-mode="admin">مدیر ساختمان</button>
+            </div>
+
+            <div class="login-error" id="loginError">خطا در ورود. لطفاً مجدداً تلاش کنید.</div>
+
+            <!-- Unit Login -->
+            <form id="unitLoginForm">
+                <div class="input-group mb-4">
+                    <label for="unitCode">کد واحد</label>
+                    <input type="text" id="unitCode" placeholder="مثلاً U001" value="U001" />
+                </div>
+                <div class="input-group mb-4">
+                    <label for="unitPassword">رمز عبور</label>
+                    <input type="password" id="unitPassword" placeholder="رمز عبور خود را وارد کنید" value="1234" />
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">ورود به پنل واحد</button>
+                <div class="login-hint">
+                    <span>کدهای پیش‌فرض: </span>
+                    <code>U001</code> تا <code>U024</code> &bull; رمز: <code>1234</code>
+                </div>
+            </form>
+
+            <!-- Admin Login -->
+            <form id="adminLoginForm" class="hidden">
+                <div class="input-group mb-4">
+                    <label for="adminCode">کد مدیر</label>
+                    <input type="text" id="adminCode" placeholder="کد مدیر" value="ADMIN" />
+                </div>
+                <div class="input-group mb-4">
+                    <label for="adminPassword">رمز عبور مدیر</label>
+                    <input type="password" id="adminPassword" placeholder="رمز عبور مدیر" value="admin123" />
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">ورود به پنل مدیریت</button>
+                <div class="login-hint">
+                    <span>کد: </span><code>ADMIN</code> &bull; رمز: <code>admin123</code>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- DASHBOARD -->
+    <!-- ============================================================ -->
+    <div id="dashboardPage" class="dashboard hidden">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <img src="./pictures/logo.png" alt="APM" class="brand-img" />
+                <span class="brand-text">APM</span>
+                <span class="brand-badge">مدیریت</span>
+            </div>
+            <div class="sidebar-user" id="sidebarUser">
+                <div class="avatar" id="userAvatar">U</div>
+                <div class="user-info">
+                    <div class="name" id="userName">واحد ۱</div>
+                    <div class="role" id="userRole">کاربر</div>
+                </div>
+            </div>
+            <nav class="sidebar-nav" id="sidebarNav">
+                <button class="nav-item active" data-tab="dashboard">
+                    <span class="icon">📊</span> داشبورد
+                </button>
+                <button class="nav-item" data-tab="plates">
+                    <span class="icon">🚗</span> پلاک‌های مجاز
+                    <span class="badge-count" id="plateCount">۰</span>
+                </button>
+                <button class="nav-item" data-tab="guests">
+                    <span class="icon">👤</span> مهمانان
+                    <span class="badge-count" id="guestCount">۰</span>
+                </button>
+                <button class="nav-item hidden" data-tab="admin-units" id="adminUnitsTab">
+                    <span class="icon">🏢</span> مدیریت واحدها
+                </button>
+                <button class="nav-item hidden" data-tab="admin-settings" id="adminSettingsTab">
+                    <span class="icon">⚙️</span> تنظیمات
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary btn-block btn-sm" id="logoutBtn">🚪 خروج</button>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main-content">
+
+            <!-- TAB: DASHBOARD -->
+            <section id="tab-dashboard" class="tab-content">
+                <div class="page-header">
+                    <div class="header-left">
+                        <img src="./pictures/logo.png" alt="APM" class="header-logo" />
+                        <div>
+                            <h1 id="dashboardTitle">داشبورد</h1>
+                            <div class="sub" id="dashboardSub">خلاصه وضعیت پارکینگ</div>
+                        </div>
+                    </div>
+                    <span class="text-muted text-sm" id="dashboardTime"></span>
+                </div>
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card"><div class="stat-number" id="statPlates">۰</div><div class="stat-label">پلاک‌های مجاز</div></div>
+                    <div class="stat-card"><div class="stat-number" id="statGuests">۰</div><div class="stat-label">مهمانان فعال</div></div>
+                    <div class="stat-card"><div class="stat-number" id="statTotalGuests">۰</div><div class="stat-label">کل مهمانان ثبت‌شده</div></div>
+                    <div class="stat-card"><div class="stat-number" id="statUnit">-</div><div class="stat-label">واحد</div></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="card-title">📋 فعالیت‌های اخیر</span></div>
+                    <div id="recentActivities" class="text-muted text-sm">هیچ فعالیتی ثبت نشده است.</div>
+                </div>
+            </section>
+
+            <!-- TAB: PLATES -->
+            <section id="tab-plates" class="tab-content hidden">
+                <div class="page-header">
+                    <div class="header-left">
+                        <img src="./pictures/logo.png" alt="APM" class="header-logo" />
+                        <div><h1>🚗 پلاک‌های مجاز</h1><div class="sub">مدیریت پلاک‌های مجاز برای ورود به پارکینگ</div></div>
+                    </div>
+                    <button class="btn btn-primary btn-sm" id="addPlateBtn">➕ افزودن پلاک</button>
+                </div>
+                <div class="card">
+                    <div id="platesList">
+                        <div class="empty-state"><div class="icon">🚗</div><h3>هیچ پلاکی ثبت نشده</h3><p>برای افزودن پلاک جدید کلیک کنید.</p></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB: GUESTS -->
+            <section id="tab-guests" class="tab-content hidden">
+                <div class="page-header">
+                    <div class="header-left">
+                        <img src="./pictures/logo.png" alt="APM" class="header-logo" />
+                        <div><h1>👤 مهمانان</h1><div class="sub">مدیریت مهمانان با زمان شروع و پایان</div></div>
+                    </div>
+                    <button class="btn btn-primary btn-sm" id="addGuestBtn">➕ افزودن مهمان</button>
+                </div>
+                <div class="card">
+                    <div id="guestsList">
+                        <div class="empty-state"><div class="icon">👤</div><h3>هیچ مهمانی ثبت نشده</h3><p>برای افزودن مهمان جدید کلیک کنید.</p></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB: ADMIN UNITS -->
+            <section id="tab-admin-units" class="tab-content hidden">
+                <div class="page-header">
+                    <div class="header-left">
+                        <img src="./pictures/logo.png" alt="APM" class="header-logo" />
+                        <div><h1>🏢 مدیریت واحدها</h1><div class="sub">مشاهده و مدیریت تمام واحدهای ساختمان</div></div>
+                    </div>
+                </div>
+                <div id="adminUnitsContainer" class="admin-unit-grid"></div>
+            </section>
+
+            <!-- TAB: ADMIN SETTINGS -->
+            <section id="tab-admin-settings" class="tab-content hidden">
+                <div class="page-header">
+                    <div class="header-left">
+                        <img src="./pictures/logo.png" alt="APM" class="header-logo" />
+                        <div><h1>⚙️ تنظیمات مدیریت</h1><div class="sub">تنظیمات سیستم و مدیریت کلی</div></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="card-title">تغییر رمز عبور مدیر</span></div>
+                    <form id="adminChangePasswordForm" class="flex flex-col gap-4" style="max-width:400px;">
+                        <div class="input-group">
+                            <label>رمز فعلی</label>
+                            <input type="password" id="adminOldPass" placeholder="رمز فعلی" />
+                        </div>
+                        <div class="input-group">
+                            <label>رمز جدید</label>
+                            <input type="password" id="adminNewPass" placeholder="رمز جدید" />
+                        </div>
+                        <div class="input-group">
+                            <label>تکرار رمز جدید</label>
+                            <input type="password" id="adminNewPassConfirm" placeholder="تکرار رمز جدید" />
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width:fit-content;">تغییر رمز</button>
+                    </form>
+                </div>
+                <div class="card mt-4">
+                    <div class="card-header"><span class="card-title">بازنشانی رمز واحد</span></div>
+                    <form id="adminResetUnitPassForm" class="flex flex-col gap-4" style="max-width:400px;">
+                        <div class="input-group">
+                            <label>واحد</label>
+                            <select id="adminResetUnitSelect"></select>
+                        </div>
+                        <div class="input-group">
+                            <label>رمز جدید</label>
+                            <input type="text" id="adminResetUnitPass" placeholder="رمز جدید" value="1234" />
+                        </div>
+                        <button type="submit" class="btn btn-secondary" style="width:fit-content;">بازنشانی رمز</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <div class="app-footer">
+                <span>APM &bull; سامانه مدیریت پارکینگ &bull; نسخه ۰.۲</span>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MODAL CONTAINER -->
+    <!-- ============================================================ -->
+    <div id="modalContainer"></div>
+
+    <!-- ============================================================ -->
+    <!-- TOAST CONTAINER -->
+    <!-- ============================================================ -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ============================================================ -->
+    <!-- JAVASCRIPT -->
+    <!-- ============================================================ -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ===================================================================
+            // DATA LAYER
+            // ===================================================================
+            const STORAGE_KEY = 'apm_data';
+
+            function getDefaultData() {
+                const units = {};
+                for (let i = 1; i <= 24; i++) {
+                    const code = 'U' + String(i).padStart(3, '0');
+                    units[i] = {
+                        code: code,
+                        password: '1234',
+                        plates: [],
+                        guests: []
+                    };
+                }
+                return {
+                    units: units,
+                    admin: {
+                        password: 'admin123'
+                    },
+                    activities: []
+                };
+            }
+
+            function loadData() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                        const data = JSON.parse(raw);
+                        let modified = false;
+                        for (let i = 1; i <= 24; i++) {
+                            if (!data.units[i]) {
+                                data.units[i] = { code: 'U' + String(i).padStart(3, '0'), password: '1234', plates: [],
+                                    guests: [] };
+                                modified = true;
+                            }
+                        }
+                        if (!data.admin) { data.admin = { password: 'admin123' };
+                            modified = true; }
+                        if (!data.activities) { data.activities = [];
+                            modified = true; }
+                        if (modified) saveData(data);
+                        return data;
+                    }
+                } catch (e) { /* ignore */ }
+                const def = getDefaultData();
+                saveData(def);
+                return def;
+            }
+
+            function saveData(data) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            }
+
+            let appData = loadData();
+
+            // ===================================================================
+            // HELPERS
+            // ===================================================================
+            function generateId() {
+                return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+            }
+
+            function formatDate(iso) {
+                if (!iso) return '—';
+                try {
+                    const d = new Date(iso);
+                    return d.toLocaleString('fa-IR', { hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit',
+                        day: '2-digit' });
+                } catch { return iso; }
+            }
+
+            function isActiveGuest(guest) {
+                if (!guest.start || !guest.end) return false;
+                const now = new Date();
+                const start = new Date(guest.start);
+                const end = new Date(guest.end);
+                return now >= start && now <= end;
+            }
+
+            function getGuestStatus(guest) {
+                if (!guest.start || !guest.end) return 'pending';
+                const now = new Date();
+                const start = new Date(guest.start);
+                const end = new Date(guest.end);
+                if (now < start) return 'pending';
+                if (now > end) return 'expired';
+                return 'active';
+            }
+
+            function getUnitById(id) {
+                return appData.units[id] || null;
+            }
+
+            function getUnitByCode(code) {
+                for (const [id, u] of Object.entries(appData.units)) {
+                    if (u.code === code) return { id: parseInt(id), ...u };
+                }
+                return null;
+            }
+
+            function addActivity(msg) {
+                appData.activities.unshift({ time: new Date().toISOString(), message: msg });
+                if (appData.activities.length > 200) appData.activities.length = 200;
+                saveData(appData);
+            }
+
+            function getUnitDisplayName(unitId) {
+                const u = appData.units[unitId];
+                if (!u) return 'واحد ' + unitId;
+                return u.code + ' (واحد ' + unitId + ')';
+            }
+
+            // ===================================================================
+            // TOAST
+            // ===================================================================
+            function showToast(message, type = 'info') {
+                const container = document.getElementById('toastContainer');
+                const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+                const toast = document.createElement('div');
+                toast.className = 'toast toast-' + type;
+                toast.innerHTML = `<span class="toast-icon">${icons[type] || 'ℹ️'}</span><span>${message}</span>`;
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(40px)';
+                    toast.style.transition = 'all 0.3s ease';
+                    setTimeout(() => toast.remove(), 400);
+                }, 3500);
+            }
+
+            // ===================================================================
+            // MODAL
+            // ===================================================================
+            function openModal(title, bodyHTML, onSave, saveLabel = 'ذخیره', onCancel = null) {
+                const container = document.getElementById('modalContainer');
+                const overlay = document.createElement('div');
+                overlay.className = 'modal-overlay';
+                overlay.innerHTML = `
+                    <div class="modal">
+                        <div class="modal-title">${title}</div>
+                        <div class="modal-body">${bodyHTML}</div>
+                        <div class="modal-actions">
+                            <button class="btn btn-secondary" data-modal-cancel>انصراف</button>
+                            <button class="btn btn-primary" data-modal-save>${saveLabel}</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(overlay);
+
+                const modalEl = overlay.querySelector('.modal');
+                const cancelBtn = overlay.querySelector('[data-modal-cancel]');
+                const saveBtn = overlay.querySelector('[data-modal-save]');
+
+                function close() {
+                    overlay.remove();
+                    if (onCancel && typeof onCancel === 'function') onCancel();
+                }
+
+                cancelBtn.addEventListener('click', close);
+
+                saveBtn.addEventListener('click', function(e) {
+                    try {
+                        const result = onSave(modalEl);
+                        if (result !== false) {
+                            close();
+                        }
+                    } catch (err) {
+                        showToast('خطا: ' + err.message, 'error');
+                    }
+                });
+
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === overlay) close();
+                });
+
+                return overlay;
+            }
+
+            // ===================================================================
+            // AUTH
+            // ===================================================================
+            let currentUser = null;
+
+            function loginUnit(code, password) {
+                const found = getUnitByCode(code);
+                if (!found) return false;
+                if (found.password !== password) return false;
+                currentUser = { type: 'unit', unitId: found.id };
+                addActivity('وارد شدن واحد ' + found.code);
+                renderDashboard();
+                return true;
+            }
+
+            function loginAdmin(code, password) {
+                if (code !== 'ADMIN') return false;
+                if (appData.admin.password !== password) return false;
+                currentUser = { type: 'admin', unitId: null };
+                addActivity('ورود مدیر');
+                renderDashboard();
+                return true;
+            }
+
+            function logout() {
+                currentUser = null;
+                document.getElementById('loginPage').classList.remove('hidden');
+                document.getElementById('dashboardPage').classList.add('hidden');
+                document.getElementById('loginError').classList.remove('show');
+            }
+
+            // ===================================================================
+            // RENDER DASHBOARD
+            // ===================================================================
+            function renderDashboard() {
+                if (!currentUser) return;
+
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('dashboardPage').classList.remove('hidden');
+
+                const isAdmin = currentUser.type === 'admin';
+                const unitId = currentUser.unitId;
+
+                const avatar = document.getElementById('userAvatar');
+                const userName = document.getElementById('userName');
+                const userRole = document.getElementById('userRole');
+
+                if (isAdmin) {
+                    avatar.textContent = 'M';
+                    userName.textContent = 'مدیر ساختمان';
+                    userRole.textContent = 'دسترسی کامل';
+                } else {
+                    const u = appData.units[unitId];
+                    avatar.textContent = u ? u.code : 'U';
+                    userName.textContent = u ? u.code + ' (واحد ' + unitId + ')' : 'واحد ' + unitId;
+                    userRole.textContent = 'کاربر واحد';
+                }
+
+                const adminUnitsTab = document.getElementById('adminUnitsTab');
+                const adminSettingsTab = document.getElementById('adminSettingsTab');
+                if (isAdmin) {
+                    adminUnitsTab.classList.remove('hidden');
+                    adminSettingsTab.classList.remove('hidden');
+                } else {
+                    adminUnitsTab.classList.add('hidden');
+                    adminSettingsTab.classList.add('hidden');
+                }
+
+                updateSidebarCounts();
+                switchTab('dashboard');
+                updateClock();
+                renderDashboardTab();
+                renderPlatesTab();
+                renderGuestsTab();
+                if (isAdmin) {
+                    renderAdminUnits();
+                    renderAdminSettings();
+                }
+            }
+
+            function updateClock() {
+                const el = document.getElementById('dashboardTime');
+                if (el) {
+                    el.textContent = new Date().toLocaleString('fa-IR');
+                }
+                setTimeout(updateClock, 30000);
+            }
+
+            function updateSidebarCounts() {
+                const isAdmin = currentUser.type === 'admin';
+                let plates = 0,
+                    guests = 0;
+                if (isAdmin) {
+                    for (const [id, u] of Object.entries(appData.units)) {
+                        plates += u.plates.length;
+                        guests += u.guests.length;
+                    }
+                } else {
+                    const u = appData.units[currentUser.unitId];
+                    if (u) { plates = u.plates.length;
+                        guests = u.guests.length; }
+                }
+                document.getElementById('plateCount').textContent = plates;
+                document.getElementById('guestCount').textContent = guests;
+            }
+
+            // ===================================================================
+            // TAB SWITCHING
+            // ===================================================================
+            function switchTab(tabName) {
+                document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+                const target = document.getElementById('tab-' + tabName);
+                if (target) target.classList.remove('hidden');
+
+                document.querySelectorAll('.sidebar-nav .nav-item').forEach(el => {
+                    el.classList.toggle('active', el.dataset.tab === tabName);
+                });
+
+                if (tabName === 'dashboard') renderDashboardTab();
+                if (tabName === 'plates') renderPlatesTab();
+                if (tabName === 'guests') renderGuestsTab();
+                if (tabName === 'admin-units' && currentUser.type === 'admin') renderAdminUnits();
+                if (tabName === 'admin-settings' && currentUser.type === 'admin') renderAdminSettings();
+            }
+
+            document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    switchTab(this.dataset.tab);
+                });
+            });
+
+            // ===================================================================
+            // TAB: DASHBOARD
+            // ===================================================================
+            function renderDashboardTab() {
+                const isAdmin = currentUser.type === 'admin';
+                let totalPlates = 0,
+                    totalGuests = 0,
+                    activeGuests = 0;
+
+                if (isAdmin) {
+                    for (const [id, u] of Object.entries(appData.units)) {
+                        totalPlates += u.plates.length;
+                        totalGuests += u.guests.length;
+                        u.guests.forEach(g => { if (isActiveGuest(g)) activeGuests++; });
+                    }
+                    document.getElementById('statUnit').textContent = 'مدیر';
+                } else {
+                    const u = appData.units[currentUser.unitId];
+                    if (u) {
+                        totalPlates = u.plates.length;
+                        totalGuests = u.guests.length;
+                        u.guests.forEach(g => { if (isActiveGuest(g)) activeGuests++; });
+                        document.getElementById('statUnit').textContent = u.code;
+                    }
+                }
+
+                document.getElementById('statPlates').textContent = totalPlates;
+                document.getElementById('statGuests').textContent = activeGuests;
+                document.getElementById('statTotalGuests').textContent = totalGuests;
+
+                const actContainer = document.getElementById('recentActivities');
+                const acts = appData.activities.slice(0, 10);
+                if (acts.length === 0) {
+                    actContainer.innerHTML = '<span class="text-muted text-sm">هیچ فعالیتی ثبت نشده است.</span>';
+                } else {
+                    actContainer.innerHTML = acts.map(a =>
+                        `<div style="padding:6px 0;border-bottom:1px solid #0e0e18;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                            <span>${a.message}</span>
+                            <span class="text-muted text-xs">${formatDate(a.time)}</span>
+                        </div>`
+                    ).join('');
+                }
+            }
+
+            // ===================================================================
+            // TAB: PLATES
+            // ===================================================================
+            function renderPlatesTab() {
+                const container = document.getElementById('platesList');
+                const isAdmin = currentUser.type === 'admin';
+                let plates = [];
+                let unitId = currentUser.unitId;
+
+                if (isAdmin) {
+                    for (const [id, u] of Object.entries(appData.units)) {
+                        u.plates.forEach(p => {
+                            plates.push({ ...p, _unitId: id, _unitCode: u.code });
+                        });
+                    }
+                } else {
+                    const u = appData.units[unitId];
+                    if (u) {
+                        plates = u.plates.map(p => ({ ...p, _unitId: unitId, _unitCode: u.code }));
+                    }
+                }
+
+                if (plates.length === 0) {
+                    container.innerHTML =
+                        `<div class="empty-state"><div class="icon">🚗</div><h3>هیچ پلاکی ثبت نشده</h3><p>برای افزودن پلاک جدید کلیک کنید.</p></div>`;
+                    return;
+                }
+
+                let html = `<div class="table-wrap"><table>
+                    <thead><tr><th>پلاک</th><th>توضیحات</th><th>واحد</th><th>عملیات</th></tr></thead><tbody>`;
+                plates.forEach(p => {
+                    const unitLabel = isAdmin ? (p._unitCode || 'واحد ' + p._unitId) : '';
+                    html += `<tr>
+                        <td><strong>${p.plate}</strong></td>
+                        <td class="text-muted text-sm">${p.note || '—'}</td>
+                        <td class="text-muted text-sm">${unitLabel}</td>
+                        <td>
+                            <div class="actions">
+                                <button class="btn btn-secondary btn-sm btn-icon edit-plate" data-id="${p.id}" data-unit="${p._unitId}" title="ویرایش">✏️</button>
+                                <button class="btn btn-danger btn-sm btn-icon delete-plate" data-id="${p.id}" data-unit="${p._unitId}" title="حذف">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>`;
+                });
+                html += `</tbody></table></div>`;
+                container.innerHTML = html;
+
+                container.querySelectorAll('.edit-plate').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = this.dataset.id;
+                        const unit = parseInt(this.dataset.unit);
+                        openEditPlateModal(unit, id);
+                    });
+                });
+                container.querySelectorAll('.delete-plate').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = this.dataset.id;
+                        const unit = parseInt(this.dataset.unit);
+                        if (confirm('آیا از حذف این پلاک اطمینان دارید؟')) {
+                            deletePlate(unit, id);
+                        }
+                    });
+                });
+            }
+
+            function getPlatesForUnit(unitId) {
+                const u = appData.units[unitId];
+                return u ? u.plates : [];
+            }
+
+            function addPlate(unitId, plate, note) {
+                const u = appData.units[unitId];
+                if (!u) return false;
+                if (u.plates.some(p => p.plate === plate)) {
+                    showToast('این پلاک قبلاً ثبت شده است.', 'error');
+                    return false;
+                }
+                u.plates.push({ id: generateId(), plate: plate.trim(), note: note || '' });
+                saveData(appData);
+                addActivity('افزودن پلاک ' + plate + ' در ' + u.code);
+                showToast('پلاک با موفقیت افزوده شد.', 'success');
+                renderPlatesTab();
+                updateSidebarCounts();
+                return true;
+            }
+
+            function editPlate(unitId, plateId, newPlate, newNote) {
+                const u = appData.units[unitId];
+                if (!u) return false;
+                const idx = u.plates.findIndex(p => p.id === plateId);
+                if (idx === -1) return false;
+                if (u.plates.some((p, i) => i !== idx && p.plate === newPlate)) {
+                    showToast('این پلاک قبلاً ثبت شده است.', 'error');
+                    return false;
+                }
+                u.plates[idx].plate = newPlate.trim();
+                u.plates[idx].note = newNote || '';
+                saveData(appData);
+                addActivity('ویرایش پلاک ' + newPlate + ' در ' + u.code);
+                showToast('پلاک با موفقیت ویرایش شد.', 'success');
+                renderPlatesTab();
+                return true;
+            }
+
+            function deletePlate(unitId, plateId) {
+                const u = appData.units[unitId];
+                if (!u) return;
+                const idx = u.plates.findIndex(p => p.id === plateId);
+                if (idx === -1) return;
+                const removed = u.plates[idx];
+                u.plates.splice(idx, 1);
+                saveData(appData);
+                addActivity('حذف پلاک ' + removed.plate + ' از ' + u.code);
+                showToast('پلاک با موفقیت حذف شد.', 'success');
+                renderPlatesTab();
+                updateSidebarCounts();
+            }
+
+            function openEditPlateModal(unitId, plateId) {
+                const u = appData.units[unitId];
+                if (!u) return;
+                const plate = u.plates.find(p => p.id === plateId);
+                if (!plate) return;
+                const isAdmin = currentUser.type === 'admin';
+                const canEdit = isAdmin || currentUser.unitId === unitId;
+                if (!canEdit) {
+                    showToast('شما مجوز ویرایش این پلاک را ندارید.', 'error');
+                    return;
+                }
+                const html = `
+                    <div class="input-group mb-4">
+                        <label>شماره پلاک</label>
+                        <input type="text" id="editPlateInput" value="${plate.plate}" placeholder="مثلاً IRAN12345" />
+                    </div>
+                    <div class="input-group">
+                        <label>توضیحات (اختیاری)</label>
+                        <input type="text" id="editPlateNote" value="${plate.note || ''}" placeholder="توضیحات" />
+                    </div>
+                `;
+                openModal('ویرایش پلاک', html, function(modal) {
+                    const newPlate = modal.querySelector('#editPlateInput').value.trim();
+                    const newNote = modal.querySelector('#editPlateNote').value.trim();
+                    if (!newPlate) { showToast('لطفاً شماره پلاک را وارد کنید.', 'error'); return false; }
+                    editPlate(unitId, plateId, newPlate, newNote);
+                    return true;
+                }, 'ویرایش');
+            }
+
+            // ===================================================================
+            // TAB: GUESTS
+            // ===================================================================
+            function renderGuestsTab() {
+                const container = document.getElementById('guestsList');
+                const isAdmin = currentUser.type === 'admin';
+                let guests = [];
+                let unitId = currentUser.unitId;
+
+                if (isAdmin) {
+                    for (const [id, u] of Object.entries(appData.units)) {
+                        u.guests.forEach(g => {
+                            guests.push({ ...g, _unitId: id, _unitCode: u.code });
+                        });
+                    }
+                } else {
+                    const u = appData.units[unitId];
+                    if (u) {
+                        guests = u.guests.map(g => ({ ...g, _unitId: unitId, _unitCode: u.code }));
+                    }
+                }
+
+                if (guests.length === 0) {
+                    container.innerHTML =
+                        `<div class="empty-state"><div class="icon">👤</div><h3>هیچ مهمانی ثبت نشده</h3><p>برای افزودن مهمان جدید کلیک کنید.</p></div>`;
+                    return;
+                }
+
+                let html = `<div class="table-wrap"><table>
+                    <thead><tr><th>نام</th><th>پلاک</th><th>شروع</th><th>پایان</th><th>وضعیت</th><th>واحد</th><th>عملیات</th></tr></thead><tbody>`;
+                guests.forEach(g => {
+                    const status = getGuestStatus(g);
+                    const statusMap = { active: 'فعال ✅', expired: 'منقضی ❌', pending: 'در انتظار ⏳' };
+                    const badgeMap = { active: 'active', expired: 'expired', pending: 'pending' };
+                    const unitLabel = isAdmin ? (g._unitCode || 'واحد ' + g._unitId) : '';
+                    html += `<tr>
+                        <td><strong>${g.name}</strong></td>
+                        <td>${g.plate}</td>
+                        <td class="text-muted text-sm">${formatDate(g.start)}</td>
+                        <td class="text-muted text-sm">${formatDate(g.end)}</td>
+                        <td><span class="badge-status ${badgeMap[status]}">${statusMap[status]}</span></td>
+                        <td class="text-muted text-sm">${unitLabel}</td>
+                        <td>
+                            <div class="actions">
+                                <button class="btn btn-secondary btn-sm btn-icon edit-guest" data-id="${g.id}" data-unit="${g._unitId}" title="ویرایش">✏️</button>
+                                <button class="btn btn-danger btn-sm btn-icon delete-guest" data-id="${g.id}" data-unit="${g._unitId}" title="حذف">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>`;
+                });
+                html += `</tbody></table></div>`;
+                container.innerHTML = html;
+
+                container.querySelectorAll('.edit-guest').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = this.dataset.id;
+                        const unit = parseInt(this.dataset.unit);
+                        openEditGuestModal(unit, id);
+                    });
+                });
+                container.querySelectorAll('.delete-guest').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = this.dataset.id;
+                        const unit = parseInt(this.dataset.unit);
+                        if (confirm('آیا از حذف این مهمان اطمینان دارید؟')) {
+                            deleteGuest(unit, id);
+                        }
+                    });
+                });
+            }
+
+            function addGuest(unitId, name, plate, start, end, note) {
+                const u = appData.units[unitId];
+                if (!u) return false;
+                if (!name.trim()) { showToast('لطفاً نام مهمان را وارد کنید.', 'error'); return false; }
+                if (!plate.trim()) { showToast('لطفاً پلاک مهمان را وارد کنید.', 'error'); return false; }
+                if (!start || !end) { showToast('لطفاً زمان شروع و پایان را مشخص کنید.', 'error'); return false; }
+                if (new Date(start) >= new Date(end)) { showToast('زمان پایان باید بعد از شروع باشد.', 'error'); return false; }
+                u.guests.push({ id: generateId(), name: name.trim(), plate: plate.trim(), start: start, end: end,
+                    note: note || '' });
+                saveData(appData);
+                addActivity('افزودن مهمان ' + name + ' در ' + u.code);
+                showToast('مهمان با موفقیت افزوده شد.', 'success');
+                renderGuestsTab();
+                updateSidebarCounts();
+                return true;
+            }
+
+            function editGuest(unitId, guestId, name, plate, start, end, note) {
+                const u = appData.units[unitId];
+                if (!u) return false;
+                const idx = u.guests.findIndex(g => g.id === guestId);
+                if (idx === -1) return false;
+                if (!name.trim()) { showToast('لطفاً نام مهمان را وارد کنید.', 'error'); return false; }
+                if (!plate.trim()) { showToast('لطفاً پلاک مهمان را وارد کنید.', 'error'); return false; }
+                if (!start || !end) { showToast('لطفاً زمان شروع و پایان را مشخص کنید.', 'error'); return false; }
+                if (new Date(start) >= new Date(end)) { showToast('زمان پایان باید بعد از شروع باشد.', 'error'); return false; }
+                u.guests[idx].name = name.trim();
+                u.guests[idx].plate = plate.trim();
+                u.guests[idx].start = start;
+                u.guests[idx].end = end;
+                u.guests[idx].note = note || '';
+                saveData(appData);
+                addActivity('ویرایش مهمان ' + name + ' در ' + u.code);
+                showToast('مهمان با موفقیت ویرایش شد.', 'success');
+                renderGuestsTab();
+                return true;
+            }
+
+            function deleteGuest(unitId, guestId) {
+                const u = appData.units[unitId];
+                if (!u) return;
+                const idx = u.guests.findIndex(g => g.id === guestId);
+                if (idx === -1) return;
+                const removed = u.guests[idx];
+                u.guests.splice(idx, 1);
+                saveData(appData);
+                addActivity('حذف مهمان ' + removed.name + ' از ' + u.code);
+                showToast('مهمان با موفقیت حذف شد.', 'success');
+                renderGuestsTab();
+                updateSidebarCounts();
+            }
+
+            function openEditGuestModal(unitId, guestId) {
+                const u = appData.units[unitId];
+                if (!u) return;
+                const guest = u.guests.find(g => g.id === guestId);
+                if (!guest) return;
+                const isAdmin = currentUser.type === 'admin';
+                const canEdit = isAdmin || currentUser.unitId === unitId;
+                if (!canEdit) {
+                    showToast('شما مجوز ویرایش این مهمان را ندارید.', 'error');
+                    return;
+                }
+                const html = `
+                    <div class="input-group mb-4"><label>نام مهمان</label><input type="text" id="editGuestName" value="${guest.name}" /></div>
+                    <div class="input-group mb-4"><label>پلاک</label><input type="text" id="editGuestPlate" value="${guest.plate}" /></div>
+                    <div class="input-group mb-4"><label>زمان شروع</label><input type="datetime-local" id="editGuestStart" value="${guest.start}" /></div>
+                    <div class="input-group mb-4"><label>زمان پایان</label><input type="datetime-local" id="editGuestEnd" value="${guest.end}" /></div>
+                    <div class="input-group"><label>توضیحات (اختیاری)</label><input type="text" id="editGuestNote" value="${guest.note || ''}" /></div>
+                `;
+                openModal('ویرایش مهمان', html, function(modal) {
+                    const name = modal.querySelector('#editGuestName').value.trim();
+                    const plate = modal.querySelector('#editGuestPlate').value.trim();
+                    const start = modal.querySelector('#editGuestStart').value;
+                    const end = modal.querySelector('#editGuestEnd').value;
+                    const note = modal.querySelector('#editGuestNote').value.trim();
+                    if (!name) { showToast('لطفاً نام مهمان را وارد کنید.', 'error'); return false; }
+                    if (!plate) { showToast('لطفاً پلاک مهمان را وارد کنید.', 'error'); return false; }
+                    if (!start || !end) { showToast('لطفاً زمان شروع و پایان را مشخص کنید.', 'error'); return false; }
+                    if (new Date(start) >= new Date(end)) { showToast('زمان پایان باید بعد از شروع باشد.', 'error');
+                        return false; }
+                    editGuest(unitId, guestId, name, plate, start, end, note);
+                    return true;
+                }, 'ویرایش');
+            }
+
+            // ===================================================================
+            // TAB: ADMIN UNITS
+            // ===================================================================
+            function renderAdminUnits() {
+                if (currentUser.type !== 'admin') return;
+                const container = document.getElementById('adminUnitsContainer');
+                let html = '';
+                for (const [id, u] of Object.entries(appData.units)) {
+                    const plateCount = u.plates.length;
+                    const guestCount = u.guests.length;
+                    html += `
+                        <div class="admin-unit-card">
+                            <div class="unit-header">
+                                <span class="unit-name">${u.code}</span>
+                                <span class="unit-code">واحد ${id}</span>
+                            </div>
+                            <div class="unit-stats">
+                                <span>🚗 ${plateCount} پلاک</span>
+                                <span>👤 ${guestCount} مهمان</span>
+                            </div>
+                            <div class="unit-actions">
+                                <button class="btn btn-secondary btn-sm admin-view-plates" data-unit="${id}">🚗 پلاک‌ها</button>
+                                <button class="btn btn-secondary btn-sm admin-view-guests" data-unit="${id}">👤 مهمانان</button>
+                                <button class="btn btn-outline btn-sm admin-reset-pass" data-unit="${id}">🔑 بازنشانی رمز</button>
+                            </div>
+                        </div>
+                    `;
+                }
+                container.innerHTML = html;
+
+                container.querySelectorAll('.admin-view-plates').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const unit = parseInt(this.dataset.unit);
+                        viewUnitPlates(unit);
+                    });
+                });
+                container.querySelectorAll('.admin-view-guests').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const unit = parseInt(this.dataset.unit);
+                        viewUnitGuests(unit);
+                    });
+                });
+                container.querySelectorAll('.admin-reset-pass').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const unit = parseInt(this.dataset.unit);
+                        const newPass = prompt('رمز جدید برای ' + appData.units[unit].code + ' را وارد کنید:',
+                            '1234');
+                        if (newPass !== null && newPass.trim()) {
+                            appData.units[unit].password = newPass.trim();
+                            saveData(appData);
+                            addActivity('بازنشانی رمز ' + appData.units[unit].code);
+                            showToast('رمز با موفقیت تغییر کرد.', 'success');
+                            renderAdminUnits();
+                        }
+                    });
+                });
+            }
+
+            function viewUnitPlates(unitId) {
+                const u = appData.units[unitId];
+                if (!u) return;
+                let html = `<div class="text-muted text-sm mb-4">${u.code} — ${u.plates.length} پلاک</div>`;
+                if (u.plates.length === 0) {
+                    html += `<div class="empty-state"><div class="icon">🚗</div><h3>هیچ پلاکی ثبت نشده</h3></div>`;
+                } else {
+                    html += `<div class="table-wrap"><table><thead><tr><th>پلاک</th><th>توضیحات</th></tr></thead><tbody>`;
+                    u.plates.forEach(p => {
+                        html += `<tr><td><strong>${p.plate}</strong></td><td class="text-muted text-sm">${p.note || '—'}</td></tr>`;
+                    });
+                    html += `</tbody></table></div>`;
+                }
+                openModal('پلاک‌های ' + u.code, html, function() { return true; }, 'بستن');
+            }
+
+            function viewUnitGuests(unitId) {
+                const u = appData.units[unitId];
+                if (!u) return;
+                let html = `<div class="text-muted text-sm mb-4">${u.code} — ${u.guests.length} مهمان</div>`;
+                if (u.guests.length === 0) {
+                    html += `<div class="empty-state"><div class="icon">👤</div><h3>هیچ مهمانی ثبت نشده</h3></div>`;
+                } else {
+                    html += `<div class="table-wrap"><table><thead><tr><th>نام</th><th>پلاک</th><th>شروع</th><th>پایان</th><th>وضعیت</th></tr></thead><tbody>`;
+                    u.guests.forEach(g => {
+                        const status = getGuestStatus(g);
+                        const statusMap = { active: 'فعال ✅', expired: 'منقضی ❌', pending: 'در انتظار ⏳' };
+                        const badgeMap = { active: 'active', expired: 'expired', pending: 'pending' };
+                        html += `<tr>
+                            <td><strong>${g.name}</strong></td>
+                            <td>${g.plate}</td>
+                            <td class="text-muted text-sm">${formatDate(g.start)}</td>
+                            <td class="text-muted text-sm">${formatDate(g.end)}</td>
+                            <td><span class="badge-status ${badgeMap[status]}">${statusMap[status]}</span></td>
+                        </tr>`;
+                    });
+                    html += `</tbody></table></div>`;
+                }
+                openModal('مهمانان ' + u.code, html, function() { return true; }, 'بستن');
+            }
+
+            // ===================================================================
+            // TAB: ADMIN SETTINGS
+            // ===================================================================
+            function renderAdminSettings() {
+                if (currentUser.type !== 'admin') return;
+                const select = document.getElementById('adminResetUnitSelect');
+                select.innerHTML = '';
+                for (const [id, u] of Object.entries(appData.units)) {
+                    const opt = document.createElement('option');
+                    opt.value = id;
+                    opt.textContent = u.code + ' (واحد ' + id + ')';
+                    select.appendChild(opt);
+                }
+            }
+
+            // ===================================================================
+            // EVENTS: ADD PLATE / GUEST
+            // ===================================================================
+            document.getElementById('addPlateBtn').addEventListener('click', function() {
+                const isAdmin = currentUser.type === 'admin';
+                let unitOptions = '';
+                if (isAdmin) {
+                    for (const [id, u] of Object.entries(appData.units)) {
+                        unitOptions += `<option value="${id}">${u.code} (واحد ${id})</option>`;
+                    }
+                }
+                const html = `
+                    ${isAdmin ? `<div class="input-group mb-4"><label>واحد</label><select id="addPlateUnit">${unitOptions}</select></div>` : ''}
+                    <div class="input-group mb-4"><label>شماره پلاک</label><input type="text" id="addPlateInput" placeholder="مثلاً IRAN12345" /></div>
+                    <div class="input-group"><label>توضیحات (اختیاری)</label><input type="text" id="addPlateNote" placeholder="توضیحات" /></div>
+                `;
+                openModal('افزودن پلاک جدید', html, function(modal) {
+                    const unit = isAdmin ? parseInt(modal.querySelector('#addPlateUnit').value) : currentUser.unitId;
+                    const plate = modal.querySelector('#addPlateInput').value.trim();
+                    const note = modal.querySelector('#addPlateNote').value.trim();
+                    if (!plate) { showToast('لطفاً شماره پلاک را وارد کنید.', 'error'); return false; }
+                    addPlate(unit, plate, note);
+                    return true;
+                }, 'افزودن');
+            });
+
+            document.getElementById('addGuestBtn').addEventListener('click', function() {
+                const isAdmin = currentUser.type === 'admin';
+                let unitOptions = '';
+                if (isAdmin) {
+                    for (const [id, u] of Object.entries(appData.units)) {
+                        unitOptions += `<option value="${id}">${u.code} (واحد ${id})</option>`;
+                    }
+                }
+                const now = new Date();
+                const startDefault = now.toISOString().slice(0, 16);
+                const endDefault = new Date(now.getTime() + 2 * 60 * 60 * 1000).toISOString().slice(0, 16);
+                const html = `
+                    ${isAdmin ? `<div class="input-group mb-4"><label>واحد</label><select id="addGuestUnit">${unitOptions}</select></div>` : ''}
+                    <div class="input-group mb-4"><label>نام مهمان</label><input type="text" id="addGuestName" placeholder="نام کامل" /></div>
+                    <div class="input-group mb-4"><label>پلاک</label><input type="text" id="addGuestPlate" placeholder="پلاک خودرو" /></div>
+                    <div class="input-group mb-4"><label>زمان شروع</label><input type="datetime-local" id="addGuestStart" value="${startDefault}" /></div>
+                    <div class="input-group mb-4"><label>زمان پایان</label><input type="datetime-local" id="addGuestEnd" value="${endDefault}" /></div>
+                    <div class="input-group"><label>توضیحات (اختیاری)</label><input type="text" id="addGuestNote" placeholder="توضیحات" /></div>
+                `;
+                openModal('افزودن مهمان جدید', html, function(modal) {
+                    const unit = isAdmin ? parseInt(modal.querySelector('#addGuestUnit').value) : currentUser
+                        .unitId;
+                    const name = modal.querySelector('#addGuestName').value.trim();
+                    const plate = modal.querySelector('#addGuestPlate').value.trim();
+                    const start = modal.querySelector('#addGuestStart').value;
+                    const end = modal.querySelector('#addGuestEnd').value;
+                    const note = modal.querySelector('#addGuestNote').value.trim();
+                    if (!name) { showToast('لطفاً نام مهمان را وارد کنید.', 'error'); return false; }
+                    if (!plate) { showToast('لطفاً پلاک مهمان را وارد کنید.', 'error'); return false; }
+                    if (!start || !end) { showToast('لطفاً زمان شروع و پایان را مشخص کنید.', 'error'); return false; }
+                    if (new Date(start) >= new Date(end)) { showToast('زمان پایان باید بعد از شروع باشد.', 'error');
+                        return false; }
+                    addGuest(unit, name, plate, start, end, note);
+                    return true;
+                }, 'افزودن');
+            });
+
+            // ===================================================================
+            // EVENTS: LOGIN TOGGLE
+            // ===================================================================
+            document.querySelectorAll('#loginToggle .toggle-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('#loginToggle .toggle-btn').forEach(b => b.classList.remove(
+                    'active'));
+                    this.classList.add('active');
+                    const mode = this.dataset.mode;
+                    document.getElementById('unitLoginForm').classList.toggle('hidden', mode !== 'unit');
+                    document.getElementById('adminLoginForm').classList.toggle('hidden', mode !== 'admin');
+                    document.getElementById('loginError').classList.remove('show');
+                });
+            });
+
+            // ===================================================================
+            // EVENTS: LOGIN FORMS
+            // ===================================================================
+            document.getElementById('unitLoginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const code = document.getElementById('unitCode').value.trim();
+                const password = document.getElementById('unitPassword').value;
+                const errorEl = document.getElementById('loginError');
+                if (loginUnit(code, password)) {
+                    errorEl.classList.remove('show');
+                } else {
+                    errorEl.textContent = 'کد واحد یا رمز عبور اشتباه است.';
+                    errorEl.classList.add('show');
+                }
+            });
+
+            document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const code = document.getElementById('adminCode').value.trim();
+                const password = document.getElementById('adminPassword').value;
+                const errorEl = document.getElementById('loginError');
+                if (loginAdmin(code, password)) {
+                    errorEl.classList.remove('show');
+                } else {
+                    errorEl.textContent = 'کد مدیر یا رمز عبور اشتباه است.';
+                    errorEl.classList.add('show');
+                }
+            });
+
+            // ===================================================================
+            // EVENTS: LOGOUT
+            // ===================================================================
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                if (confirm('آیا از خروج اطمینان دارید؟')) {
+                    addActivity('خروج از سیستم');
+                    logout();
+                    showToast('با موفقیت خارج شدید.', 'info');
+                }
+            });
+
+            // ===================================================================
+            // EVENTS: ADMIN CHANGE PASSWORD
+            // ===================================================================
+            document.getElementById('adminChangePasswordForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const old = document.getElementById('adminOldPass').value;
+                const newPass = document.getElementById('adminNewPass').value;
+                const confirmPass = document.getElementById('adminNewPassConfirm').value;
+                if (old !== appData.admin.password) {
+                    showToast('رمز فعلی اشتباه است.', 'error');
+                    return;
+                }
+                if (newPass.length < 4) {
+                    showToast('رمز جدید باید حداقل ۴ کاراکتر باشد.', 'error');
+                    return;
+                }
+                if (newPass !== confirmPass) {
+                    showToast('رمز جدید و تکرار آن مطابقت ندارند.', 'error');
+                    return;
+                }
+                appData.admin.password = newPass;
+                saveData(appData);
+                addActivity('تغییر رمز مدیر');
+                showToast('رمز مدیر با موفقیت تغییر کرد.', 'success');
+                document.getElementById('adminOldPass').value = '';
+                document.getElementById('adminNewPass').value = '';
+                document.getElementById('adminNewPassConfirm').value = '';
+            });
+
+            // ===================================================================
+            // EVENTS: ADMIN RESET UNIT PASSWORD
+            // ===================================================================
+            document.getElementById('adminResetUnitPassForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const unitId = parseInt(document.getElementById('adminResetUnitSelect').value);
+                const newPass = document.getElementById('adminResetUnitPass').value.trim();
+                if (!newPass || newPass.length < 4) {
+                    showToast('رمز باید حداقل ۴ کاراکتر باشد.', 'error');
+                    return;
+                }
+                const u = appData.units[unitId];
+                if (!u) { showToast('واحد نامعتبر است.', 'error'); return; }
+                u.password = newPass;
+                saveData(appData);
+                addActivity('بازنشانی رمز ' + u.code + ' توسط مدیر');
+                showToast('رمز ' + u.code + ' با موفقیت تغییر کرد.', 'success');
+                renderAdminUnits();
+            });
+
+            // ===================================================================
+            // KEYBOARD SHORTCUT: ESC
+            // ===================================================================
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const overlay = document.querySelector('.modal-overlay');
+                    if (overlay) overlay.remove();
+                }
+            });
+
+            // ===================================================================
+            // SEED DEMO DATA
+            // ===================================================================
+            function seedDemoData() {
+                let seeded = false;
+                for (let i = 1; i <= 3; i++) {
+                    const u = appData.units[i];
+                    if (u.plates.length === 0 && u.guests.length === 0) {
+                        seeded = true;
+                        u.plates.push({ id: generateId(), plate: 'IRAN' + String(10000 + i * 1111), note: 'خودروی ' + u
+                                .code });
+                        if (i === 1) {
+                            u.plates.push({ id: generateId(), plate: 'TEHRAN' + String(20000 + i * 2222),
+                                note: 'خودروی دوم' });
+                        }
+                        const now = new Date();
+                        u.guests.push({
+                            id: generateId(),
+                            name: 'مهمان ' + u.code,
+                            plate: 'GUEST' + String(30000 + i * 3333),
+                            start: now.toISOString().slice(0, 16),
+                            end: new Date(now.getTime() + 3 * 60 * 60 * 1000).toISOString().slice(0, 16),
+                            note: 'بازدید کوتاه'
+                        });
+                        if (i === 2) {
+                            const past = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+                            u.guests.push({
+                                id: generateId(),
+                                name: 'مهمان قبلی',
+                                plate: 'OLD' + String(40000 + i * 4444),
+                                start: past.toISOString().slice(0, 16),
+                                end: new Date(past.getTime() + 1 * 60 * 60 * 1000).toISOString().slice(0, 16),
+                                note: 'منقضی شده'
+                            });
+                        }
+                    }
+                }
+                if (seeded) {
+                    saveData(appData);
+                    addActivity('داده‌های نمونه ایجاد شد.');
+                }
+            }
+            seedDemoData();
+
+            console.log('🚗 APM سامانه مدیریت پارکینگ بارگذاری شد.');
+            console.log('👤 برای ورود: U001 تا U024 با رمز 1234');
+            console.log('👨‍💼 مدیر: ADMIN با رمز admin123');
+
+        })();
+    </script>
+
+</body>
+</html>
