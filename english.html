@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فرانک | آموزش خصوصی زبان انگلیسی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1EDF3;
+    --paper-alt:#E7DFEC;
+    --card:#FBFAFC;
+    --ink:#2A2140;
+    --ink-soft:#5E5573;
+    --gold:#C0923A;
+    --gold-deep:#A87A2A;
+    --rose:#B45B72;
+    --line: rgba(42,33,64,0.14);
+    --max: 1120px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Vazirmatn', sans-serif;
+    font-weight:400;
+    line-height:1.9;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Noto Nastaliq Urdu', serif;
+    font-weight:700;
+    color:var(--ink);
+    margin:0;
+    line-height:1.8;
+  }
+  a{color:inherit; text-decoration:none;}
+  img,svg{display:block; max-width:100%;}
+  .wrap{max-width:var(--max); margin:0 auto; padding:0 28px;}
+  ::selection{background:var(--gold); color:#fff;}
+
+  /* focus visibility */
+  a:focus-visible, button:focus-visible{
+    outline:2px solid var(--rose);
+    outline-offset:3px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(241,237,243,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 0;
+  }
+  .logo{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Noto Nastaliq Urdu', serif; font-size:1.5rem; color:var(--ink);
+  }
+  .logo span{
+    width:38px; height:38px; border-radius:50%;
+    background:var(--ink); color:var(--paper);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.15rem;
+  }
+  nav.links{display:flex; gap:32px; font-size:0.98rem;}
+  nav.links a{color:var(--ink-soft); transition:color .2s;}
+  nav.links a:hover{color:var(--rose);}
+  .nav-call{
+    display:flex; align-items:center; gap:8px;
+    background:var(--ink); color:var(--paper);
+    padding:10px 20px; border-radius:999px;
+    font-size:0.92rem; white-space:nowrap;
+    transition:background .2s;
+  }
+  .nav-call:hover{background:var(--gold-deep);}
+  .burger{display:none; background:none; border:none; cursor:pointer; padding:6px;}
+  .burger svg{stroke:var(--ink);}
+  @media (max-width:860px){
+    nav.links{display:none;}
+    .burger{display:block;}
+    nav.links.open{
+      display:flex; flex-direction:column; position:absolute; inset-inline:0; top:100%;
+      background:var(--paper); border-bottom:1px solid var(--line); padding:20px 28px; gap:18px;
+    }
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{padding:72px 0 40px; overflow:hidden;}
+  .hero-grid{
+    display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; align-items:center;
+  }
+  .eyebrow{
+    color:var(--rose); font-size:0.98rem; margin-bottom:14px;
+  }
+  .hero h1{
+    font-size:clamp(2.1rem, 4.2vw, 3.2rem);
+    margin-bottom:22px;
+  }
+  .hero p.lead{
+    font-size:1.12rem; color:var(--ink-soft); max-width:44ch; margin-bottom:32px;
+  }
+  .hero-actions{display:flex; flex-wrap:wrap; gap:14px; align-items:center;}
+  .btn-primary{
+    background:var(--gold); color:#fff; padding:15px 30px; border-radius:999px;
+    font-size:1rem; display:inline-flex; align-items:center; gap:10px;
+    border:1px solid var(--gold); transition:background .2s, transform .15s;
+  }
+  .btn-primary:hover{background:var(--gold-deep); transform:translateY(-1px);}
+  .btn-ghost{
+    padding:15px 26px; border-radius:999px; border:1px solid var(--ink);
+    font-size:1rem; transition:background .2s;
+  }
+  .btn-ghost:hover{background:var(--paper-alt);}
+  .hero-stats{
+    display:flex; gap:36px; margin-top:44px; padding-top:28px; border-top:1px solid var(--line);
+  }
+  .hero-stats div b{
+    display:block; font-family:'Noto Nastaliq Urdu',serif; font-size:1.7rem; color:var(--ink);
+  }
+  .hero-stats div span{font-size:0.88rem; color:var(--ink-soft);}
+
+  .hero-art{position:relative;}
+  .hero-card{
+    animation: rise .8s ease both;
+  }
+  @keyframes rise{
+    from{opacity:0; transform:translateY(18px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  /* ---------- SECTION GENERIC ---------- */
+  section{padding:88px 0;}
+  .section-alt{background:var(--paper-alt);}
+  .kicker{color:var(--rose); font-size:0.95rem; margin-bottom:10px;}
+  .section-head{max-width:640px; margin-bottom:52px;}
+  .section-head h2{font-size:clamp(1.7rem, 3vw, 2.4rem);}
+  .section-head p{color:var(--ink-soft); margin-top:14px; font-size:1.05rem;}
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{
+    display:grid; grid-template-columns:0.85fr 1.15fr; gap:64px; align-items:center;
+  }
+  .portrait-frame{
+    background:var(--card); border:1px solid var(--line); padding:26px;
+  }
+  .about-quote{
+    margin-top:22px; padding-top:22px; border-top:1px solid var(--line);
+    font-family:'Noto Nastaliq Urdu', serif; font-size:1.25rem; color:var(--ink);
+  }
+  .about-body p{color:var(--ink-soft); margin:0 0 18px; font-size:1.03rem;}
+  .cred-list{display:flex; flex-wrap:wrap; gap:12px; margin-top:24px;}
+  .cred-list li{
+    list-style:none; border:1px solid var(--line); padding:8px 16px; border-radius:999px;
+    font-size:0.9rem; color:var(--ink-soft); background:var(--card);
+  }
+
+  /* ---------- PACKAGES ---------- */
+  .package-grid{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:0;
+    border:1px solid var(--line);
+  }
+  .package{
+    background:var(--card); padding:34px 28px; border-inline-start:1px solid var(--line);
+    position:relative;
+  }
+  .package:first-child{border-inline-start:none;}
+  @media (max-width:860px){
+    .package{border-inline-start:none; border-top:1px solid var(--line);}
+    .package:first-child{border-top:none;}
+  }
+  .package.featured{background:var(--ink); color:var(--paper);}
+  .package.featured .ink-soft-txt{color:#C9C2D6;}
+  .package.featured .price b{color:#fff;}
+  .package.featured .feat-list li::before{color:var(--gold);}
+  .package-tag{
+    display:inline-block; font-size:0.8rem; color:var(--rose); margin-bottom:14px;
+  }
+  .package.featured .package-tag{color:var(--gold);}
+  .package h3{font-size:1.3rem; margin-bottom:8px;}
+  .package .desc{color:var(--ink-soft); font-size:0.92rem; margin-bottom:22px;}
+  .package.featured .desc{color:#C9C2D6;}
+  .price{margin-bottom:22px;}
+  .price b{font-family:'Noto Nastaliq Urdu',serif; font-size:1.9rem; color:var(--ink);}
+  .price span{font-size:0.88rem; color:var(--ink-soft);}
+  .feat-list{list-style:none; padding:0; margin:0 0 28px;}
+  .feat-list li{
+    padding-inline-start:22px; position:relative; margin-bottom:10px; font-size:0.92rem; color:var(--ink-soft);
+  }
+  .package.featured .feat-list li{color:#DDD7E6;}
+  .feat-list li::before{
+    content:"–"; position:absolute; inset-inline-start:0; color:var(--rose);
+  }
+  .package-call{
+    display:flex; align-items:center; gap:8px; font-size:0.92rem; border:1px solid var(--ink);
+    padding:11px 18px; border-radius:999px; justify-content:center; transition:background .2s;
+  }
+  .package-call:hover{background:var(--paper-alt);}
+  .package.featured .package-call{border-color:var(--paper); background:var(--gold); border-color:var(--gold); color:#fff;}
+  .package.featured .package-call:hover{background:var(--gold-deep); border-color:var(--gold-deep);}
+
+  /* ---------- PROCESS ---------- */
+  .process-list{display:grid; grid-template-columns:repeat(3,1fr); gap:40px; counter-reset:step;}
+  @media (max-width:760px){.process-list{grid-template-columns:1fr;}}
+  .step{position:relative; padding-inline-start:0;}
+  .step-num{
+    font-family:'Noto Nastaliq Urdu',serif; font-size:2.6rem; color:var(--rose); opacity:0.5; display:block; margin-bottom:10px;
+  }
+  .step h3{font-size:1.15rem; margin-bottom:10px;}
+  .step p{color:var(--ink-soft); font-size:0.95rem; margin:0;}
+
+  /* ---------- TESTIMONIALS ---------- */
+  .test-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:28px;}
+  @media (max-width:860px){.test-grid{grid-template-columns:1fr;}}
+  .test-card{
+    background:var(--card); border:1px solid var(--line); padding:30px 26px;
+  }
+  .test-card p.quote{
+    font-size:1.02rem; color:var(--ink); margin-bottom:20px;
+  }
+  .test-who{display:flex; align-items:center; gap:12px; font-size:0.9rem; color:var(--ink-soft);}
+  .test-who .dot{
+    width:34px; height:34px; border-radius:50%; background:var(--paper-alt);
+    display:flex; align-items:center; justify-content:center; font-family:'Noto Nastaliq Urdu',serif; color:var(--ink);
+  }
+
+  /* ---------- FAQ ---------- */
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-q{
+    width:100%; text-align:start; background:none; border:none; cursor:pointer;
+    padding:22px 0; display:flex; justify-content:space-between; align-items:center; gap:20px;
+    font-family:'Vazirmatn'; font-size:1.05rem; color:var(--ink); font-weight:600;
+  }
+  .faq-q svg{flex-shrink:0; transition:transform .25s; stroke:var(--rose);}
+  .faq-item.open .faq-q svg{transform:rotate(45deg);}
+  .faq-a{
+    max-height:0; overflow:hidden; transition:max-height .3s ease;
+  }
+  .faq-a p{color:var(--ink-soft); padding-bottom:22px; margin:0; max-width:70ch; font-size:0.98rem;}
+
+  /* ---------- FINAL CTA ---------- */
+  .cta-block{
+    background:var(--ink); color:var(--paper); padding:80px 0; text-align:center;
+  }
+  .cta-block h2{color:#fff; font-size:clamp(1.8rem,3.4vw,2.6rem); margin-bottom:18px;}
+  .cta-block p{color:#C9C2D6; max-width:52ch; margin:0 auto 34px; font-size:1.05rem;}
+  .cta-phone{
+    display:inline-flex; align-items:center; gap:12px; font-family:'Noto Nastaliq Urdu',serif;
+    font-size:2rem; color:#fff; border:1px solid rgba(255,255,255,0.25); padding:18px 38px;
+    border-radius:999px; transition:border-color .2s, background .2s;
+  }
+  .cta-phone:hover{border-color:var(--gold); background:rgba(255,255,255,0.05);}
+  .cta-hours{margin-top:18px; font-size:0.9rem; color:#A79FBB;}
+
+  /* ---------- FOOTER ---------- */
+  footer{padding:56px 0 36px; font-size:0.9rem; color:var(--ink-soft);}
+  .foot-grid{
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:32px; padding-bottom:32px; border-bottom:1px solid var(--line);
+  }
+  .foot-cols{display:flex; gap:64px; flex-wrap:wrap;}
+  .foot-cols h4{font-size:0.95rem; color:var(--ink); margin-bottom:14px; font-weight:600;}
+  .foot-cols ul{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:9px;}
+  .foot-cols a:hover{color:var(--rose);}
+  .foot-bottom{padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="logo"><span>ف</span> فرانک</div>
+    <nav class="links" id="navLinks">
+      <a href="#about">درباره من</a>
+      <a href="#packages">بسته‌ها</a>
+      <a href="#process">روند شروع</a>
+      <a href="#testimonials">نظرات</a>
+      <a href="#faq">سوالات</a>
+    </nav>
+    <a class="nav-call" href="tel:+989123456789">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      تماس برای مشاوره
+    </a>
+    <button class="burger" id="burgerBtn" aria-label="باز کردن منو">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">مدرّس زبان انگلیسی، ۱۲ سال تجربه‌ی تدریس خصوصی</div>
+      <h1>زبان را طوری یاد بگیر که انگار داری با یک دوست حرف می‌زنی</h1>
+      <p class="lead">کلاس‌های خصوصی و نیمه‌خصوصی مکالمه، آمادگی آزمون و زبان تخصصی، متناسب با هدف و زمان خودت. برای شنیدن جزئیات بسته‌ها و رزرو جلسه‌ی اول، همین حالا زنگ بزن.</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="tel:+989123456789">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          ۰۹۱۲-۳۴۵-۶۷۸۹
+        </a>
+        <a class="btn-ghost" href="#packages">مشاهده‌ی بسته‌ها</a>
+      </div>
+      <div class="hero-stats">
+        <div><b>۱۲</b><span>سال سابقه</span></div>
+        <div><b>۴۰۰+</b><span>دانش‌آموز</span></div>
+        <div><b>۴.۹</b><span>میانگین رضایت</span></div>
+      </div>
+    </div>
+
+    <div class="hero-art">
+      <div class="portrait-frame hero-card">
+        <svg viewBox="0 0 340 340" width="100%">
+          <circle cx="170" cy="170" r="168" fill="none" stroke="#2A2140" stroke-width="1" opacity="0.12"/>
+          <circle cx="170" cy="120" r="52" fill="#E7DFEC"/>
+          <path d="M90 300c8-58 42-92 80-92s72 34 80 92" fill="#E7DFEC"/>
+          <path d="M138 108c0-22 14-38 32-38s32 16 32 38-14 46-32 46-32-24-32-46z" fill="none" stroke="#2A2140" stroke-width="1.6"/>
+          <path d="M126 96c6-20 22-30 44-30s38 10 44 30" fill="none" stroke="#2A2140" stroke-width="1.6"/>
+          <g stroke="#B45B72" stroke-width="1.6" fill="none">
+            <path d="M228 150c14 4 22 14 22 26 0 14-12 24-28 24-4 0-8-1-11-2l-9 8 2-12c-9-5-14-13-14-22 0-14 14-24 30-24 3 0 6 0 8 1"/>
+          </g>
+          <g stroke="#C0923A" stroke-width="1.6" fill="none">
+            <rect x="86" y="222" width="46" height="34" rx="1"/>
+            <line x1="86" y1="232" x2="132" y2="232"/>
+            <line x1="94" y1="240" x2="124" y2="240"/>
+            <line x1="94" y1="247" x2="118" y2="247"/>
+          </g>
+        </svg>
+        <p class="about-quote">«هر جلسه، یک قدم واقعی رو به جلوئه»</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap about-grid">
+    <div>
+      <svg viewBox="0 0 300 340" width="100%">
+        <rect x="0" y="0" width="300" height="340" fill="#E7DFEC"/>
+        <path d="M40 300c10-70 55-112 110-112s100 42 110 112" fill="#F1EDF3"/>
+        <circle cx="150" cy="150" r="62" fill="#F1EDF3"/>
+        <path d="M110 132c0-26 18-46 40-46s40 20 40 46-18 56-40 56-40-30-40-56z" fill="none" stroke="#2A2140" stroke-width="1.6"/>
+        <path d="M96 118c8-24 26-36 54-36s46 12 54 36" fill="none" stroke="#2A2140" stroke-width="1.6"/>
+        <g stroke="#C0923A" stroke-width="1.6" fill="none">
+          <rect x="100" y="230" width="100" height="60" rx="2"/>
+          <line x1="100" y1="248" x2="200" y2="248"/>
+          <line x1="112" y1="262" x2="188" y2="262"/>
+          <line x1="112" y1="274" x2="170" y2="274"/>
+        </g>
+      </svg>
+    </div>
+    <div class="about-body">
+      <div class="kicker">درباره‌ی من</div>
+      <h2 style="margin-bottom:22px; font-size:clamp(1.6rem,2.8vw,2.1rem);">یادگیری زبان، بدون استرس و بدون کلیشه</h2>
+      <p>اسمم فرانکه، فارغ‌التحصیل ارشد آموزش زبان انگلیسی و مدرّس رسمی چند آزمون بین‌المللی. ۱۲ ساله که به‌صورت خصوصی و آنلاین تدریس می‌کنم، از نوجوان تا بزرگسال، از سطح صفر تا آمادگی مصاحبه‌ی کاری.</p>
+      <p>روش من ساده‌ست: هر بسته رو بر اساس هدف واقعیِ خودت می‌چینم، نه یک برنامه‌ی از پیش آماده. قبل از هر چیز، تلفنی صحبت می‌کنیم تا سطح و هدفت مشخص بشه، بعد مسیر پیشنهادی رو با هم می‌بندیم.</p>
+      <ul class="cred-list">
+        <li>مدرک TESOL</li>
+        <li>مدرّس آیلتس و تافل</li>
+        <li>کارشناسی‌ارشد آموزش زبان</li>
+        <li>سابقه‌ی تدریس در سه آموزشگاه معتبر</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section-alt" id="packages">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">بسته‌های آموزشی</div>
+      <h2>بسته‌ای که با زمان و هدفت جور دربیاد</h2>
+      <p>هر بسته شامل جلسات دوره‌ای، پشتیبانی بین جلسات و بازخورد مکتوبه. برای رزرو یا سوال درباره‌ی هر بسته، تماس بگیر؛ خودم پاسخگو هستم.</p>
+    </div>
+
+    <div class="package-grid">
+      <div class="package">
+        <span class="package-tag">مکالمه</span>
+        <h3>بسته‌ی مکالمه‌ی روزمره</h3>
+        <p class="desc">برای کسانی که می‌خوان راحت و روان صحبت کنن.</p>
+        <div class="price"><b>۴٬۸۰۰٬۰۰۰</b> <span>تومان / ۸ جلسه</span></div>
+        <ul class="feat-list">
+          <li>جلسات ۶۰ دقیقه‌ای، هفته‌ای دو بار</li>
+          <li>تمرین مکالمه‌ی موضوعی</li>
+          <li>اصلاح تلفظ و لهجه</li>
+        </ul>
+        <a class="package-call" href="tel:+989123456789">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          تماس برای رزرو
+        </a>
+      </div>
+
+      <div class="package featured">
+        <span class="package-tag">پرطرفدار</span>
+        <h3>بسته‌ی خصوصی هدفمند</h3>
+        <p class="desc ink-soft-txt">یک‌به‌یک، با برنامه‌ی اختصاصی بر اساس هدفت.</p>
+        <div class="price"><b>۹٬۶۰۰٬۰۰۰</b> <span class="ink-soft-txt">تومان / ۱۲ جلسه</span></div>
+        <ul class="feat-list">
+          <li>جلسه‌ی مشاوره و سطح‌سنجی رایگان</li>
+          <li>برنامه‌ی درسی اختصاصی</li>
+          <li>تمرین و بازخورد بین جلسات</li>
+          <li>زمان‌بندی کاملاً منعطف</li>
+        </ul>
+        <a class="package-call" href="tel:+989123456789">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          تماس برای رزرو
+        </a>
+      </div>
+
+      <div class="package">
+        <span class="package-tag">آزمون</span>
+        <h3>بسته‌ی فشرده‌ی آیلتس</h3>
+        <p class="desc">برای رسیدن به نمره‌ی هدف در زمان مشخص.</p>
+        <div class="price"><b>۷٬۲۰۰٬۰۰۰</b> <span>تومان / ۱۰ جلسه</span></div>
+        <ul class="feat-list">
+          <li>تمرکز روی هر چهار مهارت</li>
+          <li>آزمون آزمایشی و تحلیل نتیجه</li>
+          <li>راهبردهای زمان‌بندی آزمون</li>
+        </ul>
+        <a class="package-call" href="tel:+989123456789">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          تماس برای رزرو
+        </a>
+      </div>
+
+      <div class="package">
+        <span class="package-tag">گروهی</span>
+        <h3>بسته‌ی گروه کوچک</h3>
+        <p class="desc">حداکثر ۴ نفر، برای یادگیری کم‌هزینه‌تر و پویا.</p>
+        <div class="price"><b>۲٬۹۰۰٬۰۰۰</b> <span>تومان / ۸ جلسه</span></div>
+        <ul class="feat-list">
+          <li>گروه‌های هم‌سطح</li>
+          <li>تمرین گروهی و بازی‌های زبانی</li>
+          <li>جلسات آنلاین یا حضوری</li>
+        </ul>
+        <a class="package-call" href="tel:+989123456789">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          تماس برای رزرو
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">روند شروع</div>
+      <h2>از تماس اول تا اولین جلسه، فقط سه مرحله</h2>
+    </div>
+    <div class="process-list">
+      <div class="step">
+        <span class="step-num">۱</span>
+        <h3>زنگ بزن</h3>
+        <p>با شماره‌ی بالای صفحه تماس بگیر یا پیام بده تا هماهنگ کنیم بهت زنگ بزنم.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">۲</span>
+        <h3>مشاوره‌ی رایگان</h3>
+        <p>در یک تماس کوتاه، سطح و هدفت رو می‌سنجیم و بسته‌ی مناسب رو پیشنهاد می‌دم.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">۳</span>
+        <h3>شروع کلاس</h3>
+        <p>زمان اولین جلسه رو هماهنگ می‌کنیم و مسیر یادگیریت رسماً شروع می‌شه.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-alt" id="testimonials">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">تجربه‌ی زبان‌آموزها</div>
+      <h2>چیزی که دیگران بعد از این دوره‌ها گفتن</h2>
+    </div>
+    <div class="test-grid">
+      <div class="test-card">
+        <p class="quote">«بعد از سال‌ها کلاس رفتن بی‌نتیجه، بالاخره احساس کردم دارم واقعاً پیشرفت می‌کنم. برنامه کاملاً مال خودم بود.»</p>
+        <div class="test-who"><span class="dot">س</span> سارا، بسته‌ی خصوصی</div>
+      </div>
+      <div class="test-card">
+        <p class="quote">«برای مصاحبه‌ی کاری وقت کم داشتم. خانم رضایی دقیقاً روی همون چیزی کار کرد که لازم داشتم.»</p>
+        <div class="test-who"><span class="dot">ع</span> علی، بسته‌ی مکالمه</div>
+      </div>
+      <div class="test-card">
+        <p class="quote">«نمره‌ی آیلتسم رو در سه ماه از ۵.۵ به ۷ رسوندم. روش تدریسش خیلی منظم و هدفمنده.»</p>
+        <div class="test-who"><span class="dot">ن</span> نیلوفر، بسته‌ی آیلتس</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap" style="max-width:760px;">
+    <div class="section-head">
+      <div class="kicker">سوالات پرتکرار</div>
+      <h2>قبل از تماس، شاید جوابش اینجا باشه</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item open">
+        <button class="faq-q">چطور می‌تونم بسته‌ای رو بخرم؟<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>خرید بسته‌ها فقط از طریق تماس تلفنی انجام می‌شه. کافیه زنگ بزنی تا درباره‌ی هدف و زمانت صحبت کنیم و بسته‌ی مناسب رو با هم نهایی کنیم.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">جلسات به‌صورت آنلاینه یا حضوری؟<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>هر دو حالت امکان‌پذیره. اکثر زبان‌آموزها آنلاین رو ترجیح می‌دن، اما برای ساکنین تهران، جلسات حضوری هم هماهنگ می‌شه.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">اگه سطحم رو ندونم چی؟<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>مشکلی نیست؛ در همون تماس اول، با چند سوال ساده سطحت رو می‌سنجیم و بر همون اساس بسته رو پیشنهاد می‌دم.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">امکان تغییر یا لغو جلسه هست؟<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>بله، با هماهنگی حداقل ۱۲ ساعت قبل، جلسه قابل جابه‌جاییه. جزئیاتش رو در همون تماس اول توضیح می‌دم.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-block">
+  <div class="wrap">
+    <h2>آماده‌ای شروع کنی؟</h2>
+    <p>همین حالا زنگ بزن، در کمتر از ده دقیقه هدفت رو می‌شنوم و بسته‌ی مناسب رو پیشنهاد می‌دم.</p>
+    <a class="cta-phone" href="tel:+989123456789">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      ۰۹۱۲-۳۴۵-۶۷۸۹
+    </a>
+    <div class="cta-hours">شنبه تا چهارشنبه، ساعت ۱۰ تا ۲۰</div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="logo"><span>ف</span> فرانک</div>
+      <div class="foot-cols">
+        <div>
+          <h4>صفحات</h4>
+          <ul>
+            <li><a href="#about">درباره من</a></li>
+            <li><a href="#packages">بسته‌ها</a></li>
+            <li><a href="#faq">سوالات</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>تماس</h4>
+          <ul>
+            <li><a href="tel:+989123456789">۰۹۱۲-۳۴۵-۶۷۸۹</a></li>
+            <li><a href="tel:+982188882020">۰۲۱-۸۸۸۸-۲۰۲۰</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© ۱۴۰۴ فرانک — آموزش خصوصی زبان انگلیسی</span>
+      <span>تمام رزروها فقط از طریق تماس تلفنی انجام می‌شود</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const burger = document.getElementById('burgerBtn');
+  const links = document.getElementById('navLinks');
+  burger.addEventListener('click', () => links.classList.toggle('open'));
+
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const q = item.querySelector('.faq-q');
+    const a = item.querySelector('.faq-a');
+    if(item.classList.contains('open')){ a.style.maxHeight = a.scrollHeight + 'px'; }
+    q.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.faq-a').style.maxHeight = 0;
+      });
+      if(!isOpen){
+        item.classList.add('open');
+        a.style.maxHeight = a.scrollHeight + 'px';
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
