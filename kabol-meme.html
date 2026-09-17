@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>کابل میم | کارخانه رسمی خنده ملت</title>
+<style>
+  :root{
+    --purple: #241534;
+    --purple-deep: #150c20;
+    --pink: #ff3e9d;
+    --yellow: #ffd23f;
+    --lime: #c6ff3e;
+    --cream: #fff7e8;
+    --ink: #150c20;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--purple);
+    color: var(--cream);
+    font-family: Tahoma, "Segoe UI", Arial, sans-serif;
+    overflow-x:hidden;
+  }
+
+  /* ---------- background texture ---------- */
+  .noise-bg{
+    position: fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(255,62,157,0.18), transparent 40%),
+      radial-gradient(circle at 85% 75%, rgba(198,255,62,0.14), transparent 45%),
+      radial-gradient(circle at 60% 10%, rgba(255,210,63,0.10), transparent 35%);
+  }
+
+  .wrap{ position:relative; z-index:1; }
+
+  /* ---------- marquee ---------- */
+  .marquee{
+    background: var(--pink);
+    color: var(--ink);
+    font-weight:900;
+    font-size: 15px;
+    padding: 8px 0;
+    white-space: nowrap;
+    overflow:hidden;
+    border-bottom: 3px solid var(--ink);
+    border-top: 3px solid var(--ink);
+  }
+  .marquee span{
+    display:inline-block;
+    padding-inline-start: 100%;
+    animation: scroll-right 22s linear infinite;
+  }
+  @keyframes scroll-right{
+    0%{ transform: translateX(0); }
+    100%{ transform: translateX(-100%); }
+  }
+
+  /* ---------- header ---------- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 22px 6%;
+    position: relative;
+  }
+  .logo{
+    font-size: 26px;
+    font-weight:900;
+    color: var(--cream);
+    display:flex; align-items:center; gap:10px;
+  }
+  .logo .tag{
+    background: var(--lime);
+    color: var(--ink);
+    font-size:11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    transform: rotate(-6deg);
+    font-weight:800;
+  }
+  nav a{
+    color: var(--cream);
+    text-decoration:none;
+    margin-inline-start: 26px;
+    font-weight:700;
+    font-size:15px;
+    position:relative;
+  }
+  nav a:hover{ color: var(--yellow); }
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding: 70px 6% 100px;
+    display:grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 40px;
+    align-items:center;
+  }
+  .hero h1{
+    font-size: clamp(38px, 6vw, 74px);
+    line-height: 1.15;
+    margin: 0 0 22px;
+    font-weight:900;
+  }
+  .hero h1 .scribble{
+    color: var(--yellow);
+    display:inline-block;
+    transform: rotate(-3deg);
+  }
+  .hero p.lead{
+    font-size: 19px;
+    line-height:1.9;
+    color: #e9dcff;
+    max-width: 540px;
+    margin-bottom: 34px;
+  }
+  .cta-row{ display:flex; gap:16px; flex-wrap:wrap; }
+  .btn{
+    display:inline-block;
+    padding: 16px 30px;
+    font-weight:900;
+    font-size:16px;
+    border-radius: 14px;
+    text-decoration:none;
+    cursor:pointer;
+    border: 3px solid var(--ink);
+    transition: transform .15s ease;
+  }
+  .btn:hover{ transform: translate(-3px,-3px); }
+  .btn-primary{
+    background: var(--pink);
+    color: var(--ink);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+  .btn-primary:hover{ box-shadow: 9px 9px 0 var(--ink); }
+  .btn-ghost{
+    background: transparent;
+    color: var(--cream);
+    border-color: var(--cream);
+  }
+  .btn-ghost:hover{ background: var(--cream); color:var(--ink); border-color:var(--ink);}
+
+  /* sticker stage */
+  .sticker-stage{
+    position:relative;
+    height: 380px;
+  }
+  .sticker{
+    position:absolute;
+    background: var(--yellow);
+    color: var(--ink);
+    font-weight:900;
+    padding: 14px 20px;
+    border-radius: 16px;
+    border: 3px solid var(--ink);
+    box-shadow: 5px 5px 0 rgba(0,0,0,.35);
+    font-size: 15px;
+    transition: transform .25s ease;
+    user-select:none;
+  }
+  .sticker:hover{ transform: scale(1.12) rotate(0deg) !important; z-index:5; }
+  .s1{ top: 10px; right: 10%; background: var(--lime); transform: rotate(-9deg); }
+  .s2{ top: 130px; right: 45%; background: var(--pink); transform: rotate(7deg); font-size:22px; }
+  .s3{ top: 60px; left: 5%; transform: rotate(11deg); }
+  .s4{ top: 230px; right: 8%; background: #fff; transform: rotate(-4deg); }
+  .s5{ top: 280px; left: 20%; background: var(--lime); transform: rotate(15deg); font-size:13px; }
+
+  /* ---------- section shells ---------- */
+  section{ padding: 90px 6%; position:relative; }
+  .section-tight{ padding-top:0; }
+  h2.section-title{
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight:900;
+    margin: 0 0 12px;
+    display:inline-block;
+    background: var(--yellow);
+    color: var(--ink);
+    padding: 6px 18px;
+    border-radius: 10px;
+    transform: rotate(-2deg);
+    border: 3px solid var(--ink);
+  }
+  .section-sub{
+    color:#d9c9ff;
+    font-size:17px;
+    max-width:600px;
+    margin: 20px 0 50px;
+    line-height:1.8;
+  }
+
+  /* ---------- services ---------- */
+  .services{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  .card{
+    background: #2f1c46;
+    border: 3px solid var(--ink);
+    border-radius: 20px;
+    padding: 30px 26px;
+    box-shadow: 7px 7px 0 rgba(0,0,0,.4);
+    transition: transform .2s ease;
+  }
+  .card:nth-child(2){ transform: rotate(1.2deg); }
+  .card:nth-child(3){ transform: rotate(-1.2deg); }
+  .card:hover{ transform: translateY(-8px) rotate(0deg); }
+  .card .emoji{ font-size: 42px; display:block; margin-bottom:16px; }
+  .card h3{ font-size:21px; margin:0 0 10px; color: var(--lime); }
+  .card p{ font-size:15px; line-height:1.8; color:#e4d8fb; margin:0 0 16px; }
+  .price{
+    display:inline-block;
+    font-weight:900;
+    background: var(--pink);
+    color: var(--ink);
+    padding: 5px 14px;
+    border-radius:8px;
+    font-size:14px;
+    border: 2px solid var(--ink);
+  }
+
+  /* ---------- process ---------- */
+  .process{
+    display:flex;
+    gap: 20px;
+    flex-wrap:wrap;
+    justify-content:space-between;
+  }
+  .step{
+    flex:1 1 200px;
+    background: var(--purple-deep);
+    border: 3px dashed var(--lime);
+    border-radius: 18px;
+    padding: 24px 20px;
+    text-align:center;
+  }
+  .step .num{
+    width:44px; height:44px; border-radius:50%;
+    background: var(--lime); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:900; margin: 0 auto 14px;
+  }
+  .step h4{ margin: 0 0 8px; font-size:17px; }
+  .step p{ margin:0; font-size:13.5px; color:#cbb8f0; line-height:1.7; }
+
+  /* ---------- gallery ---------- */
+  .gallery{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  .tile{
+    aspect-ratio: 1;
+    border-radius: 18px;
+    border: 3px solid var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    font-size: 46px;
+    box-shadow: 5px 5px 0 rgba(0,0,0,.35);
+    transition: transform .2s ease;
+    cursor:default;
+  }
+  .tile:hover{ transform: rotate(-4deg) scale(1.06); }
+  .t1{ background: var(--pink); }
+  .t2{ background: var(--lime); }
+  .t3{ background: var(--yellow); }
+  .t4{ background: #fff; }
+  .t5{ background: var(--lime); }
+  .t6{ background: #fff; }
+  .t7{ background: var(--pink); }
+  .t8{ background: var(--yellow); }
+
+  /* ---------- testimonials ---------- */
+  .testi-row{
+    display:grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 24px;
+  }
+  .testi{
+    background: var(--cream);
+    color: var(--ink);
+    border-radius: 18px;
+    padding: 26px 22px;
+    border: 3px solid var(--ink);
+    box-shadow: 6px 6px 0 rgba(0,0,0,.3);
+    position:relative;
+  }
+  .testi:before{
+    content: "”";
+    position:absolute; top:-6px; right: 18px;
+    font-size: 60px; color: var(--pink);
+    font-weight:900;
+  }
+  .testi p{ font-size:15px; line-height:1.8; margin: 10px 0 16px; }
+  .testi .who{ font-weight:900; font-size:14px; color:#5a2a80; }
+
+  /* ---------- stats ---------- */
+  .stats{
+    display:flex; justify-content:space-around; flex-wrap:wrap; gap:30px;
+    background: linear-gradient(135deg, var(--pink), var(--yellow));
+    border-radius: 26px;
+    padding: 46px 20px;
+    border: 4px solid var(--ink);
+  }
+  .stat{ text-align:center; color: var(--ink); }
+  .stat b{ display:block; font-size: 42px; font-weight:900; }
+  .stat span{ font-size: 13.5px; font-weight:700; }
+
+  /* ---------- order form ---------- */
+  .order-box{
+    max-width: 620px;
+    margin: 0 auto;
+    background: #2f1c46;
+    border: 3px solid var(--ink);
+    border-radius: 22px;
+    padding: 40px;
+    box-shadow: 8px 8px 0 rgba(0,0,0,.4);
+    text-align:center;
+  }
+  .order-box h3{ font-size: 24px; margin: 0 0 10px; }
+  .order-box p{ color:#d9c9ff; margin-bottom: 26px; }
+  select, input{
+    width:100%;
+    padding: 14px;
+    margin-bottom: 14px;
+    border-radius: 10px;
+    border: 2px solid var(--ink);
+    font-size: 15px;
+    font-family: inherit;
+    background: var(--cream);
+    color: var(--ink);
+  }
+
+  /* ---------- footer ---------- */
+  footer{
+    text-align:center;
+    padding: 40px 6% 50px;
+    color:#c9b6ee;
+    font-size: 13.5px;
+    border-top: 3px solid #3a2456;
+  }
+  footer .foot-logo{ font-weight:900; color: var(--cream); font-size:18px; margin-bottom:8px;}
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 880px){
+    .hero{ grid-template-columns: 1fr; }
+    .services{ grid-template-columns: 1fr; }
+    .gallery{ grid-template-columns: repeat(2,1fr); }
+    .testi-row{ grid-template-columns: 1fr; }
+    .process{ flex-direction:column; }
+    nav{ display:none; }
+    .sticker-stage{ height: 260px; }
+  }
+
+  /* accessibility: reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    .marquee span{ animation: none; }
+    *{ transition: none !important; }
+  }
+
+  :focus-visible{ outline: 3px solid var(--lime); outline-offset:3px; }
+</style>
+</head>
+<body>
+
+<div class="noise-bg"></div>
+
+<div class="wrap">
+
+  <div class="marquee"><span>🐫 کابل میم — از هر درد بی‌درمان یه میم می‌سازیم 🐫&nbsp;&nbsp;&nbsp;&nbsp;💀 تحویل استیکر تلگرام در کمتر از ۲۴ ساعت 💀&nbsp;&nbsp;&nbsp;&nbsp;🔥 رضایت مشتری یا بازگشت خنده 🔥&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+
+  <header>
+    <div class="logo">🐫 کابل میم <span class="tag">Est. هیچ‌وقت</span></div>
+    <nav>
+      <a href="#services">خدمات</a>
+      <a href="#gallery">نمونه‌کارها</a>
+      <a href="#process">روند کار</a>
+      <a href="#order">سفارش</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div>
+      <h1>غم‌هات رو بده،<br><span class="scribble">میم پس بگیر.</span></h1>
+      <p class="lead">کابل میم یه کارخانه‌ی رسمی و کاملاً غیرعلمیه که تخصصش تبدیل مشکلات روزمره‌ی شما به میم و استیکرهای فاخره. از شکست عشقی تا قطعی اینترنت، ما همه‌چیز رو خنده‌دار می‌کنیم.</p>
+      <div class="cta-row">
+        <a href="#order" class="btn btn-primary">همین حالا سفارش بده</a>
+        <a href="#gallery" class="btn btn-ghost">نمونه‌کارها رو ببین</a>
+      </div>
+    </div>
+    <div class="sticker-stage">
+      <div class="sticker s1">۱۰۰٪ خنده تضمینی*</div>
+      <div class="sticker s2">😂🐫🔥</div>
+      <div class="sticker s3">استیکر پک VIP</div>
+      <div class="sticker s4">*تضمین قابل انکاره</div>
+      <div class="sticker s5">تحویل فوری</div>
+    </div>
+  </section>
+
+  <section id="services">
+    <h2 class="section-title">خدمات کارخانه</h2>
+    <p class="section-sub">هر چی بخوای، به شرطی که میم یا استیکر باشه. غیر از این، بروبچ کارگاه بلد نیستن.</p>
+    <div class="services">
+      <div class="card">
+        <span class="emoji">🐫</span>
+        <h3>میم سفارشی اختصاصی</h3>
+        <p>عکس، موقعیت یا بدبختی‌تون رو بفرستید، تیم ما با ابزار حرفه‌ای (فتوشاپ نسخه‌ی کرک‌شده) تبدیلش می‌کنه به یه میم که رفقاتون فوروارد می‌کنن.</p>
+        <span class="price">از ۵۰ هزار تومان</span>
+      </div>
+      <div class="card">
+        <span class="emoji">📦</span>
+        <h3>پک استیکر تلگرام</h3>
+        <p>یه پک ۲۴ تایی استیکر با چهره‌ی خودتون یا شخصیت اختصاصی. مناسب گروه فامیل، گروه کاری، یا جایی که دیگه کسی جدی‌تون نمی‌گیره.</p>
+        <span class="price">از ۱۹۰ هزار تومان</span>
+      </div>
+      <div class="card">
+        <span class="emoji">🚑</span>
+        <h3>میم اورژانسی ۲۴ ساعته</h3>
+        <p>بحران خنده دارید؟ یه اتفاق تازه افتاده و باید همین الان میمش بشه؟ خط داغ کابل میم همیشه بیداره (چون خوابمون نمی‌بره).</p>
+        <span class="price">هزینه اورژانس +۳۰٪</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="process">
+    <h2 class="section-title">روند کار</h2>
+    <p class="section-sub">چهار قدم ساده تا رسیدن به آبروریزی دیجیتال.</p>
+    <div class="process">
+      <div class="step">
+        <div class="num">۱</div>
+        <h4>غم‌ت رو بفرست</h4>
+        <p>عکس، متن، یا فقط یه توضیح از روزی که داشتی.</p>
+      </div>
+      <div class="step">
+        <div class="num">۲</div>
+        <h4>تیم ما می‌خنده</h4>
+        <p>اول به وضعیتت می‌خندیم، بعد شروع به کار می‌کنیم.</p>
+      </div>
+      <div class="step">
+        <div class="num">۳</div>
+        <h4>طراحی و تولید</h4>
+        <p>میم یا استیکرت رو با عشق و کمی بی‌مسئولیتی می‌سازیم.</p>
+      </div>
+      <div class="step">
+        <div class="num">۴</div>
+        <h4>تحویل و انتشار</h4>
+        <p>فایل نهایی رو می‌گیری، توی گروه می‌فرستی، مشهور می‌شی.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="gallery">
+    <h2 class="section-title">نمونه‌کارهای افتخارآمیز</h2>
+    <p class="section-sub">چندتا از پروژه‌هایی که هنوز جرأت نداریم اسم مشتری رو بگیم.</p>
+    <div class="gallery">
+      <div class="tile t1">😹</div>
+      <div class="tile t2">🫠</div>
+      <div class="tile t3">🐫</div>
+      <div class="tile t4">💀</div>
+      <div class="tile t5">🤡</div>
+      <div class="tile t6">🔥</div>
+      <div class="tile t7">😂</div>
+      <div class="tile t8">👽</div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">نظرات مشتریان</h2>
+    <p class="section-sub">این‌ها واقعی‌ان. احتمالاً.</p>
+    <div class="testi-row">
+      <div class="testi">
+        <p>بعد از جدایی رفتم سراغ کابل میم، یه استیکر پک ازم ساختن که الان کل گروه دانشگاهم فقط با اون حرف می‌زنن. زندگیم عوض شد.</p>
+        <div class="who">— رضا، مشتری سابقاً غمگین</div>
+      </div>
+      <div class="testi">
+        <p>سفارش اورژانسی دادم ساعت ۳ صبح، تا ۴ صبح میمم آماده بود. نمی‌دونم این آدما کی می‌خوابن ولی ممنونم.</p>
+        <div class="who">— سارا، بی‌خواب حرفه‌ای</div>
+      </div>
+      <div class="testi">
+        <p>عکس گربه‌مو فرستادم گفتم میم کن، الان گربم تو ۱۲ کشور مشهوره. دیگه با من حرف نمی‌زنه، فکر کنم غرور گرفتتش.</p>
+        <div class="who">— امیر، صاحبِ سابقِ یک گربه</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="stats">
+      <div class="stat"><b>۴۲٬۰۰۰+</b><span>میم تولید شده</span></div>
+      <div class="stat"><b>۱۸۷</b><span>رابطه که بعد از میم بهتر شد</span></div>
+      <div class="stat"><b>۰</b><span>پشیمانی گزارش‌شده (رسماً)</span></div>
+      <div class="stat"><b>۲۴/۷</b><span>خط داغ خنده</span></div>
+    </div>
+  </section>
+
+  <section id="order">
+    <div class="order-box">
+      <h3>آماده‌ای معروف بشی؟</h3>
+      <p>فرم زیر رو پر کن، تیم کابل میم ظرف چند دقیقه باهات تماس می‌گیره (یا شایدم فراموشت کنه، شانسیه).</p>
+      <input type="text" placeholder="اسمت رو بگو، قول می‌دیم بامزه‌ش کنیم">
+      <select>
+        <option>نوع سفارش رو انتخاب کن</option>
+        <option>میم سفارشی</option>
+        <option>پک استیکر تلگرام</option>
+        <option>میم اورژانسی</option>
+        <option>نمی‌دونم، شما تصمیم بگیرید</option>
+      </select>
+      <input type="text" placeholder="بدبختی یا خاطره‌ای که باید میم بشه">
+      <a href="#" class="btn btn-primary" style="width:100%; display:block;">ارسال سفارش به کارخانه</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="foot-logo">🐫 کابل میم</div>
+    <p>ساخته‌شده با عشق، کافئین زیاد، و یه ذره بی‌مسئولیتی هنری.<br>هیچ شتری در ساخت این سایت آسیب ندید.</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
