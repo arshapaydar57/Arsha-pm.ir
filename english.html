@@ -6,7 +6,7 @@
 <title>فرانک | آموزش خصوصی زبان انگلیسی</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Estedad:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --paper:#F1EDF3;
@@ -26,17 +26,18 @@
     margin:0;
     background:var(--paper);
     color:var(--ink);
-    font-family:'Vazirmatn', sans-serif;
+    font-family:'B Nazanin','BNazanin','Nazanin','Estedad', sans-serif;
     font-weight:400;
     line-height:1.9;
     -webkit-font-smoothing:antialiased;
   }
   h1,h2,h3,.display{
-    font-family:'Noto Nastaliq Urdu', serif;
-    font-weight:700;
+    font-family:'B Nazanin','BNazanin','Nazanin','Estedad', sans-serif;
+    font-weight:800;
     color:var(--ink);
     margin:0;
-    line-height:1.8;
+    line-height:1.5;
+    letter-spacing:-0.01em;
   }
   a{color:inherit; text-decoration:none;}
   img,svg{display:block; max-width:100%;}
@@ -53,6 +54,53 @@
     *{animation:none !important; transition:none !important;}
   }
 
+  /* ---------- LIVELINESS: reveal on scroll ---------- */
+  .reveal{
+    opacity:0; transform:translateY(26px);
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  .reveal.in-view{opacity:1; transform:translateY(0);}
+  .reveal-stagger.in-view > *{animation:staggerIn .6s ease both;}
+  .reveal-stagger.in-view > *:nth-child(1){animation-delay:.03s;}
+  .reveal-stagger.in-view > *:nth-child(2){animation-delay:.12s;}
+  .reveal-stagger.in-view > *:nth-child(3){animation-delay:.21s;}
+  .reveal-stagger.in-view > *:nth-child(4){animation-delay:.3s;}
+  @keyframes staggerIn{
+    from{opacity:0; transform:translateY(22px) scale(.98);}
+    to{opacity:1; transform:translateY(0) scale(1);}
+  }
+
+  /* ---------- LIVELINESS: floating decorative shapes ---------- */
+  @keyframes floatY{
+    0%,100%{transform:translateY(0) rotate(0deg);}
+    50%{transform:translateY(-14px) rotate(3deg);}
+  }
+  @keyframes floatY2{
+    0%,100%{transform:translateY(0) rotate(0deg);}
+    50%{transform:translateY(12px) rotate(-4deg);}
+  }
+  .floaty{animation:floatY 5.5s ease-in-out infinite;}
+  .floaty2{animation:floatY2 6.5s ease-in-out infinite;}
+
+  /* ---------- LIVELINESS: call pulse ---------- */
+  .pulse-ring{position:relative;}
+  .pulse-ring::before{
+    content:""; position:absolute; inset:0; border-radius:999px;
+    border:1.5px solid var(--gold); opacity:0; animation:pulseRing 2.4s ease-out infinite;
+  }
+  @keyframes pulseRing{
+    0%{transform:scale(0.94); opacity:0.7;}
+    70%{transform:scale(1.18); opacity:0;}
+    100%{transform:scale(1.18); opacity:0;}
+  }
+
+  /* ---------- LIVELINESS: hover lift ---------- */
+  .lift{transition:transform .28s ease, box-shadow .28s ease, border-color .28s ease;}
+  .lift:hover{transform:translateY(-6px); box-shadow:0 18px 34px -18px rgba(42,33,64,0.28);}
+
+  /* ---------- LIVELINESS: count number ---------- */
+  .count{display:inline-block;}
+
   /* ---------- HEADER ---------- */
   header{
     position:sticky; top:0; z-index:50;
@@ -66,7 +114,7 @@
   }
   .logo{
     display:flex; align-items:center; gap:10px;
-    font-family:'Noto Nastaliq Urdu', serif; font-size:1.5rem; color:var(--ink);
+    font-family:'B Nazanin','BNazanin','Nazanin','Estedad', sans-serif; font-weight:800; font-size:1.5rem; color:var(--ink);
   }
   .logo span{
     width:38px; height:38px; border-radius:50%;
@@ -75,8 +123,13 @@
     font-size:1.15rem;
   }
   nav.links{display:flex; gap:32px; font-size:0.98rem;}
-  nav.links a{color:var(--ink-soft); transition:color .2s;}
+  nav.links a{color:var(--ink-soft); transition:color .2s; position:relative; padding-bottom:4px;}
+  nav.links a::after{
+    content:""; position:absolute; right:0; bottom:0; height:1.5px; width:0;
+    background:var(--rose); transition:width .25s ease;
+  }
   nav.links a:hover{color:var(--rose);}
+  nav.links a:hover::after{width:100%;}
   .nav-call{
     display:flex; align-items:center; gap:8px;
     background:var(--ink); color:var(--paper);
@@ -95,6 +148,33 @@
       background:var(--paper); border-bottom:1px solid var(--line); padding:20px 28px; gap:18px;
     }
   }
+
+  /* ---------- INTRO ---------- */
+  .intro{padding:56px 0 8px;}
+  .intro-inner{position:relative; max-width:760px;}
+  .intro-shape{position:absolute; z-index:0;}
+  .intro-shape.s1{top:-18px; inset-inline-end:6%;}
+  .intro-shape.s2{top:60px; inset-inline-end:22%;}
+  .intro-shape.s3{top:10px; inset-inline-start:2%;}
+  @media (max-width:700px){ .intro-shape{display:none;} }
+  .intro-tag{
+    display:inline-flex; align-items:center; gap:6px; color:var(--rose);
+    font-size:0.92rem; font-weight:600; margin-bottom:14px; position:relative; z-index:1;
+  }
+  .intro-title{font-size:clamp(1.5rem,2.6vw,2rem); margin-bottom:16px; position:relative; z-index:1;}
+  .intro-text{color:var(--ink-soft); font-size:1.05rem; max-width:58ch; margin-bottom:38px; position:relative; z-index:1;}
+  .intro-points{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:24px;
+    border-top:1px solid var(--line); padding-top:28px; position:relative; z-index:1;
+  }
+  @media (max-width:700px){.intro-points{grid-template-columns:1fr;}}
+  .intro-point{display:flex; gap:14px; align-items:flex-start;}
+  .ip-num{
+    font-family:'B Nazanin','BNazanin','Nazanin','Estedad', sans-serif; font-weight:800; font-size:1.05rem; color:var(--gold);
+    flex-shrink:0;
+  }
+  .intro-point h4{margin:0 0 4px; font-size:1rem; font-weight:700; color:var(--ink);}
+  .intro-point p{margin:0; font-size:0.9rem; color:var(--ink-soft);}
 
   /* ---------- HERO ---------- */
   .hero{padding:72px 0 40px; overflow:hidden;}
@@ -116,8 +196,14 @@
     background:var(--gold); color:#fff; padding:15px 30px; border-radius:999px;
     font-size:1rem; display:inline-flex; align-items:center; gap:10px;
     border:1px solid var(--gold); transition:background .2s, transform .15s;
+    position:relative; overflow:hidden;
   }
-  .btn-primary:hover{background:var(--gold-deep); transform:translateY(-1px);}
+  .btn-primary::before{
+    content:""; position:absolute; inset:0; background:linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.35) 48%, transparent 62%);
+    transform:translateX(-120%); transition:transform .6s ease;
+  }
+  .btn-primary:hover::before{transform:translateX(120%);}
+  .btn-primary:hover{background:var(--gold-deep); transform:translateY(-2px);}
   .btn-ghost{
     padding:15px 26px; border-radius:999px; border:1px solid var(--ink);
     font-size:1rem; transition:background .2s;
@@ -127,7 +213,7 @@
     display:flex; gap:36px; margin-top:44px; padding-top:28px; border-top:1px solid var(--line);
   }
   .hero-stats div b{
-    display:block; font-family:'Noto Nastaliq Urdu',serif; font-size:1.7rem; color:var(--ink);
+    display:block; font-family:'B Nazanin','BNazanin','Nazanin','Estedad', sans-serif; font-weight:800; font-size:1.7rem; color:var(--ink);
   }
   .hero-stats div span{font-size:0.88rem; color:var(--ink-soft);}
 
@@ -148,6 +234,17 @@
   .section-head h2{font-size:clamp(1.7rem, 3vw, 2.4rem);}
   .section-head p{color:var(--ink-soft); margin-top:14px; font-size:1.05rem;}
 
+  /* ---------- VIDEO INTRO ---------- */
+  .video-frame{
+    max-width:860px; margin:0 auto; border:1px solid var(--line); background:var(--card); padding:14px;
+  }
+  .video-embed{
+    position:relative; width:100%; padding-top:56.25%; background:var(--paper-alt); overflow:hidden;
+  }
+  .video-embed iframe{
+    position:absolute; inset:0; width:100%; height:100%; border:0;
+  }
+
   /* ---------- ABOUT ---------- */
   .about-grid{
     display:grid; grid-template-columns:0.85fr 1.15fr; gap:64px; align-items:center;
@@ -157,7 +254,7 @@
   }
   .about-quote{
     margin-top:22px; padding-top:22px; border-top:1px solid var(--line);
-    font-family:'Noto Nastaliq Urdu', serif; font-size:1.25rem; color:var(--ink);
+    font-family:'B Nazanin','BNazanin','Nazanin','Estedad', sans-serif; font-weight:700; font-size:1.2rem; color:var(--ink);
   }
   .about-body p{color:var(--ink-soft); margin:0 0 18px; font-size:1.03rem;}
   .cred-list{display:flex; flex-wrap:wrap; gap:12px; margin-top:24px;}
@@ -192,7 +289,7 @@
   .package .desc{color:var(--ink-soft); font-size:0.92rem; margin-bottom:22px;}
   .package.featured .desc{color:#C9C2D6;}
   .price{margin-bottom:22px;}
-  .price b{font-family:'Noto Nastaliq Urdu',serif; font-size:1.9rem; color:var(--ink);}
+  .price b{font-family:'B Nazanin','BNazanin','Nazanin','Estedad', sans-serif; font-weight:800; font-size:1.9rem; color:var(--ink);}
   .price span{font-size:0.88rem; color:var(--ink-soft);}
   .feat-list{list-style:none; padding:0; margin:0 0 28px;}
   .feat-list li{
@@ -215,7 +312,7 @@
   @media (max-width:760px){.process-list{grid-template-columns:1fr;}}
   .step{position:relative; padding-inline-start:0;}
   .step-num{
-    font-family:'Noto Nastaliq Urdu',serif; font-size:2.6rem; color:var(--rose); opacity:0.5; display:block; margin-bottom:10px;
+    font-family:'B Nazanin','BNazanin','Nazanin','Estedad', sans-serif; font-weight:900; font-size:2.6rem; color:var(--rose); opacity:0.5; display:block; margin-bottom:10px;
   }
   .step h3{font-size:1.15rem; margin-bottom:10px;}
   .step p{color:var(--ink-soft); font-size:0.95rem; margin:0;}
@@ -232,7 +329,7 @@
   .test-who{display:flex; align-items:center; gap:12px; font-size:0.9rem; color:var(--ink-soft);}
   .test-who .dot{
     width:34px; height:34px; border-radius:50%; background:var(--paper-alt);
-    display:flex; align-items:center; justify-content:center; font-family:'Noto Nastaliq Urdu',serif; color:var(--ink);
+    display:flex; align-items:center; justify-content:center; font-family:'B Nazanin','BNazanin','Nazanin','Estedad', sans-serif; font-weight:700; color:var(--ink);
   }
 
   /* ---------- FAQ ---------- */
@@ -240,7 +337,7 @@
   .faq-q{
     width:100%; text-align:start; background:none; border:none; cursor:pointer;
     padding:22px 0; display:flex; justify-content:space-between; align-items:center; gap:20px;
-    font-family:'Vazirmatn'; font-size:1.05rem; color:var(--ink); font-weight:600;
+    font-family:'B Nazanin','BNazanin','Nazanin','Estedad'; font-size:1.05rem; color:var(--ink); font-weight:600;
   }
   .faq-q svg{flex-shrink:0; transition:transform .25s; stroke:var(--rose);}
   .faq-item.open .faq-q svg{transform:rotate(45deg);}
@@ -256,7 +353,7 @@
   .cta-block h2{color:#fff; font-size:clamp(1.8rem,3.4vw,2.6rem); margin-bottom:18px;}
   .cta-block p{color:#C9C2D6; max-width:52ch; margin:0 auto 34px; font-size:1.05rem;}
   .cta-phone{
-    display:inline-flex; align-items:center; gap:12px; font-family:'Noto Nastaliq Urdu',serif;
+    display:inline-flex; align-items:center; gap:12px; font-family:'B Nazanin','BNazanin','Nazanin','Estedad', sans-serif; font-weight:800;
     font-size:2rem; color:#fff; border:1px solid rgba(255,255,255,0.25); padding:18px 38px;
     border-radius:999px; transition:border-color .2s, background .2s;
   }
@@ -273,6 +370,13 @@
   .foot-cols ul{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:9px;}
   .foot-cols a:hover{color:var(--rose);}
   .foot-bottom{padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+  .social-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .social-btn{
+    display:inline-flex; align-items:center; gap:8px; border:1px solid var(--line);
+    background:var(--card); padding:9px 16px; border-radius:999px; font-size:0.86rem; color:var(--ink-soft);
+    transition:border-color .2s, color .2s, transform .2s;
+  }
+  .social-btn:hover{border-color:var(--rose); color:var(--rose); transform:translateY(-2px);}
 </style>
 </head>
 <body>
@@ -281,13 +385,14 @@
   <div class="wrap nav">
     <div class="logo"><span>ف</span> فرانک</div>
     <nav class="links" id="navLinks">
+      <a href="#video-intro">ویدیوی معرفی</a>
       <a href="#about">درباره من</a>
       <a href="#packages">بسته‌ها</a>
       <a href="#process">روند شروع</a>
       <a href="#testimonials">نظرات</a>
       <a href="#faq">سوالات</a>
     </nav>
-    <a class="nav-call" href="tel:+989123456789">
+    <a class="nav-call pulse-ring" href="tel:+989123456789">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
       تماس برای مشاوره
     </a>
@@ -297,6 +402,42 @@
   </div>
 </header>
 
+<section class="intro">
+  <div class="wrap intro-inner reveal">
+    <svg class="intro-shape s1 floaty" width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+    <svg class="intro-shape s2 floaty2" width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.6"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+    <svg class="intro-shape s3 floaty" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="1.6" opacity="0.5"><circle cx="12" cy="12" r="10"/><path d="M8 12l2.5 2.5L16 9"/></svg>
+
+    <div class="intro-tag">✎ درباره‌ی این سایت</div>
+    <h2 class="intro-title">هرچی لازمه بدونی، همین‌جاست</h2>
+    <p class="intro-text">این‌جا می‌تونی بسته‌های آموزشی زبان انگلیسیِ فرانک رو ببینی، سبک تدریسش رو بشناسی و نظر زبان‌آموزهای قبلی رو بخونی. خرید بسته‌ها آنلاین نیست؛ برای رزرو یا هر سوالی، فقط کافیه زنگ بزنی.</p>
+
+    <div class="intro-points reveal-stagger">
+      <div class="intro-point">
+        <span class="ip-num">۰۱</span>
+        <div>
+          <h4>بسته‌ها رو ببین</h4>
+          <p>چهار بسته با اهداف مختلف، شفاف و با قیمت مشخص.</p>
+        </div>
+      </div>
+      <div class="intro-point">
+        <span class="ip-num">۰۲</span>
+        <div>
+          <h4>زنگ بزن</h4>
+          <p>یک تماس کوتاه برای سطح‌سنجی و انتخاب بسته‌ی مناسب.</p>
+        </div>
+      </div>
+      <div class="intro-point">
+        <span class="ip-num">۰۳</span>
+        <div>
+          <h4>شروع کن</h4>
+          <p>اولین جلسه رو هماهنگ می‌کنیم و مسیر یادگیری آغاز می‌شه.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
@@ -304,20 +445,20 @@
       <h1>زبان را طوری یاد بگیر که انگار داری با یک دوست حرف می‌زنی</h1>
       <p class="lead">کلاس‌های خصوصی و نیمه‌خصوصی مکالمه، آمادگی آزمون و زبان تخصصی، متناسب با هدف و زمان خودت. برای شنیدن جزئیات بسته‌ها و رزرو جلسه‌ی اول، همین حالا زنگ بزن.</p>
       <div class="hero-actions">
-        <a class="btn-primary" href="tel:+989123456789">
+        <a class="btn-primary pulse-ring" href="tel:+989123456789">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
           ۰۹۱۲-۳۴۵-۶۷۸۹
         </a>
         <a class="btn-ghost" href="#packages">مشاهده‌ی بسته‌ها</a>
       </div>
-      <div class="hero-stats">
-        <div><b>۱۲</b><span>سال سابقه</span></div>
-        <div><b>۴۰۰+</b><span>دانش‌آموز</span></div>
-        <div><b>۴.۹</b><span>میانگین رضایت</span></div>
+      <div class="hero-stats reveal">
+        <div><b class="count" data-count="12" data-suffix="">۰</b><span>سال سابقه</span></div>
+        <div><b class="count" data-count="400" data-suffix="+">۰</b><span>دانش‌آموز</span></div>
+        <div><b class="count" data-count="4.9" data-suffix="">۰</b><span>میانگین رضایت</span></div>
       </div>
     </div>
 
-    <div class="hero-art">
+    <div class="hero-art reveal">
       <div class="portrait-frame hero-card">
         <svg viewBox="0 0 340 340" width="100%">
           <circle cx="170" cy="170" r="168" fill="none" stroke="#2A2140" stroke-width="1" opacity="0.12"/>
@@ -341,6 +482,27 @@
   </div>
 </section>
 
+<section id="video-intro" class="section-alt">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">ویدیوی معرفی</div>
+      <h2>قبل از تماس، یک نگاه کوتاه بنداز</h2>
+      <p>تو این ویدیو، فرانک خودش، روش تدریس و فضای کلاس‌ها رو معرفی می‌کنه.</p>
+    </div>
+    <div class="video-frame reveal">
+      <div class="video-embed">
+        <!-- کد امبد آپارات: videohash رو با شناسه‌ی ویدیوی واقعی جایگزین کن -->
+        <iframe src="https://www.aparat.com/video/video/embed/videohash/3NMGT/vt/frame?isamp"
+                allowfullscreen
+                webkitallowfullscreen
+                mozallowfullscreen
+                loading="lazy"
+                title="ویدیوی معرفی فرانک"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="about">
   <div class="wrap about-grid">
     <div>
@@ -358,7 +520,7 @@
         </g>
       </svg>
     </div>
-    <div class="about-body">
+    <div class="about-body reveal">
       <div class="kicker">درباره‌ی من</div>
       <h2 style="margin-bottom:22px; font-size:clamp(1.6rem,2.8vw,2.1rem);">یادگیری زبان، بدون استرس و بدون کلیشه</h2>
       <p>اسمم فرانکه، فارغ‌التحصیل ارشد آموزش زبان انگلیسی و مدرّس رسمی چند آزمون بین‌المللی. ۱۲ ساله که به‌صورت خصوصی و آنلاین تدریس می‌کنم، از نوجوان تا بزرگسال، از سطح صفر تا آمادگی مصاحبه‌ی کاری.</p>
@@ -375,14 +537,14 @@
 
 <section class="section-alt" id="packages">
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head reveal">
       <div class="kicker">بسته‌های آموزشی</div>
       <h2>بسته‌ای که با زمان و هدفت جور دربیاد</h2>
       <p>هر بسته شامل جلسات دوره‌ای، پشتیبانی بین جلسات و بازخورد مکتوبه. برای رزرو یا سوال درباره‌ی هر بسته، تماس بگیر؛ خودم پاسخگو هستم.</p>
     </div>
 
-    <div class="package-grid">
-      <div class="package">
+    <div class="package-grid reveal-stagger">
+      <div class="package lift reveal">
         <span class="package-tag">مکالمه</span>
         <h3>بسته‌ی مکالمه‌ی روزمره</h3>
         <p class="desc">برای کسانی که می‌خوان راحت و روان صحبت کنن.</p>
@@ -398,7 +560,7 @@
         </a>
       </div>
 
-      <div class="package featured">
+      <div class="package featured lift reveal">
         <span class="package-tag">پرطرفدار</span>
         <h3>بسته‌ی خصوصی هدفمند</h3>
         <p class="desc ink-soft-txt">یک‌به‌یک، با برنامه‌ی اختصاصی بر اساس هدفت.</p>
@@ -415,7 +577,7 @@
         </a>
       </div>
 
-      <div class="package">
+      <div class="package lift reveal">
         <span class="package-tag">آزمون</span>
         <h3>بسته‌ی فشرده‌ی آیلتس</h3>
         <p class="desc">برای رسیدن به نمره‌ی هدف در زمان مشخص.</p>
@@ -431,7 +593,7 @@
         </a>
       </div>
 
-      <div class="package">
+      <div class="package lift reveal">
         <span class="package-tag">گروهی</span>
         <h3>بسته‌ی گروه کوچک</h3>
         <p class="desc">حداکثر ۴ نفر، برای یادگیری کم‌هزینه‌تر و پویا.</p>
@@ -452,11 +614,11 @@
 
 <section id="process">
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head reveal">
       <div class="kicker">روند شروع</div>
       <h2>از تماس اول تا اولین جلسه، فقط سه مرحله</h2>
     </div>
-    <div class="process-list">
+    <div class="process-list reveal-stagger">
       <div class="step">
         <span class="step-num">۱</span>
         <h3>زنگ بزن</h3>
@@ -478,20 +640,20 @@
 
 <section class="section-alt" id="testimonials">
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head reveal">
       <div class="kicker">تجربه‌ی زبان‌آموزها</div>
       <h2>چیزی که دیگران بعد از این دوره‌ها گفتن</h2>
     </div>
-    <div class="test-grid">
-      <div class="test-card">
+    <div class="test-grid reveal-stagger">
+      <div class="test-card lift reveal">
         <p class="quote">«بعد از سال‌ها کلاس رفتن بی‌نتیجه، بالاخره احساس کردم دارم واقعاً پیشرفت می‌کنم. برنامه کاملاً مال خودم بود.»</p>
         <div class="test-who"><span class="dot">س</span> سارا، بسته‌ی خصوصی</div>
       </div>
-      <div class="test-card">
+      <div class="test-card lift reveal">
         <p class="quote">«برای مصاحبه‌ی کاری وقت کم داشتم. خانم رضایی دقیقاً روی همون چیزی کار کرد که لازم داشتم.»</p>
         <div class="test-who"><span class="dot">ع</span> علی، بسته‌ی مکالمه</div>
       </div>
-      <div class="test-card">
+      <div class="test-card lift reveal">
         <p class="quote">«نمره‌ی آیلتسم رو در سه ماه از ۵.۵ به ۷ رسوندم. روش تدریسش خیلی منظم و هدفمنده.»</p>
         <div class="test-who"><span class="dot">ن</span> نیلوفر، بسته‌ی آیلتس</div>
       </div>
@@ -501,7 +663,7 @@
 
 <section id="faq">
   <div class="wrap" style="max-width:760px;">
-    <div class="section-head">
+    <div class="section-head reveal">
       <div class="kicker">سوالات پرتکرار</div>
       <h2>قبل از تماس، شاید جوابش اینجا باشه</h2>
     </div>
@@ -530,7 +692,7 @@
   <div class="wrap">
     <h2>آماده‌ای شروع کنی؟</h2>
     <p>همین حالا زنگ بزن، در کمتر از ده دقیقه هدفت رو می‌شنوم و بسته‌ی مناسب رو پیشنهاد می‌دم.</p>
-    <a class="cta-phone" href="tel:+989123456789">
+    <a class="cta-phone pulse-ring" href="tel:+989123456789">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
       ۰۹۱۲-۳۴۵-۶۷۸۹
     </a>
@@ -558,6 +720,19 @@
             <li><a href="tel:+982188882020">۰۲۱-۸۸۸۸-۲۰۲۰</a></li>
           </ul>
         </div>
+        <div>
+          <h4>همراه من باش</h4>
+          <div class="social-row">
+            <a class="social-btn" href="https://instagram.com/faranak.english" target="_blank" rel="noopener" aria-label="اینستاگرام">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
+              اینستاگرام
+            </a>
+            <a class="social-btn" href="https://wa.me/989123456789" target="_blank" rel="noopener" aria-label="واتس‌اپ">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.5 11.9a8.4 8.4 0 0 1-12.3 7.4L3 20.5l1.3-4.9a8.4 8.4 0 1 1 16.2-3.7z"/><path d="M8.6 8.9c.2-.5.5-.5.8-.5h.6c.2 0 .4 0 .6.5.2.5.7 1.7.8 1.8.1.1.1.3 0 .5-.1.2-.2.3-.4.5-.2.2-.4.4-.2.7.2.4 1 1.5 2.1 2.4 1.4 1.2 2 1.3 2.3 1.2.3-.1.5-.4.7-.6.2-.2.4-.3.7-.2.3.1 1.6.8 1.9 1 .3.1.5.2.5.4 0 .2 0 1-.5 1.5-.5.5-1.4.9-2.4.7-1-.2-3-1.1-4.6-2.6-1.6-1.5-2.6-3.3-2.9-4.3-.3-1-.1-1.8.4-2.3z" fill="currentColor" stroke="none"/></svg>
+              واتس‌اپ
+            </a>
+          </div>
+        </div>
       </div>
     </div>
     <div class="foot-bottom">
@@ -571,6 +746,38 @@
   const burger = document.getElementById('burgerBtn');
   const links = document.getElementById('navLinks');
   burger.addEventListener('click', () => links.classList.toggle('open'));
+
+  // scroll-reveal
+  const toPersianDigits = n => String(n).replace(/[0-9]/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+  const revealEls = document.querySelectorAll('.reveal, .reveal-stagger');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('in-view');
+        if(entry.target.classList.contains('hero-stats')){
+          entry.target.querySelectorAll('.count').forEach(el => {
+            const target = parseFloat(el.dataset.count);
+            const suffix = el.dataset.suffix || '';
+            const isDecimal = String(target).includes('.');
+            const duration = 1100;
+            const start = performance.now();
+            function tick(now){
+              const p = Math.min((now - start) / duration, 1);
+              const eased = 1 - Math.pow(1 - p, 3);
+              const val = target * eased;
+              el.textContent = toPersianDigits(isDecimal ? val.toFixed(1) : Math.round(val)) + suffix;
+              if(p < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+          });
+        }
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  revealEls.forEach(el => io.observe(el));
+  // hero itself should reveal immediately on load, not wait for scroll
+  document.querySelector('.hero-art')?.classList.add('in-view');
 
   document.querySelectorAll('.faq-item').forEach(item => {
     const q = item.querySelector('.faq-q');
