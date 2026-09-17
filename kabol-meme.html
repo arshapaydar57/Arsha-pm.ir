@@ -39,7 +39,7 @@
   /* هر چیزی که این کلاس رو داره با فونت تیتر (لاله‌زار) نوشته می‌شه */
   .display{
     font-family: var(--font-display);
-    font-weight: 400;      /* لاله‌زار فقط یک وزن داره، بولد مصنوعی بهش نده */
+    font-weight: 400;
     letter-spacing: 0;
   }
 
@@ -286,7 +286,6 @@
     overflow:hidden;
   }
   .tile:hover{ transform: rotate(-4deg) scale(1.06); }
-  /* عکس داخل کاشی، کل کاشی رو پر می‌کنه */
   .tile img{
     position:absolute; inset:0;
     width:100%; height:100%;
@@ -294,7 +293,6 @@
     display:block;
   }
   .tile:has(img){ cursor: zoom-in; }
-  /* برچسب کوچیک روی عکس */
   .tile .cap{
     position:absolute; bottom:0; right:0; left:0;
     background: linear-gradient(to top, rgba(21,12,32,.92), transparent);
@@ -401,7 +399,6 @@
     display:inline-block; margin-top:6px;
     color: var(--yellow); font-weight:700; font-size:14px;
   }
-  .honey{ display:none !important; }
 
   /* ---------- support ---------- */
   .support-grid{
@@ -663,33 +660,25 @@
   </section>
 
   <!-- ============================================================
-       ✉️  فرم سفارش — وصل به ایمیل kabol.meme.official@gmail.com
+       ✉️  فرم سفارش — ارسال با ایمیل (مثل پایدار هولدینگ)
        ------------------------------------------------------------
-       این فرم از سرویس رایگان FormSubmit استفاده می‌کنه.
-       ⚠️ یک بار فعال‌سازی لازمه: بعد از آپلود سایت، اولین فرم رو
-       خودت پر کن و بفرست → یه ایمیل تأیید به
-       kabol.meme.official@gmail.com میاد → روی لینکش کلیک کن.
-       از اون به بعد همه‌ی سفارش‌ها مستقیم میان به همون ایمیل.
+       این فرم دیگه به هیچ سرویس بیرونی (FormSubmit و ...) وصل نیست.
+       با زدن دکمه، برنامه‌ی ایمیل کاربر باز می‌شه و سفارش
+       مستقیم می‌ره به: kabol.meme.official@gmail.com
        ============================================================ -->
   <section id="order">
     <div class="order-box">
       <h3>آماده‌ای معروف بشی؟</h3>
-      <p>فرم زیر رو پر کن، سفارشت مستقیم می‌ره به ایمیل کارخانه و تیم کابل میم باهات تماس می‌گیره (یا شایدم فراموشت کنه، شانسیه).</p>
+      <p>فرم زیر رو پر کن، با زدن دکمه، برنامه‌ی ایمیل خودت باز می‌شه و سفارش مستقیم می‌ره به ایمیل کارخانه.</p>
 
-      <form id="orderForm" action="https://formsubmit.co/kabol.meme.official@gmail.com" method="POST">
-        <!-- تنظیمات FormSubmit -->
-        <input type="hidden" name="_subject" value="🐫 سفارش جدید از سایت کابل میم">
-        <input type="hidden" name="_captcha" value="false">
-        <input type="hidden" name="_template" value="table">
-        <input type="hidden" name="_autoresponse" value="سفارشت به دست کارخانه‌ی کابل میم رسید 🐫 به‌زودی باهات تماس می‌گیریم.">
-        <!-- ضد اسپم (نامرئی، دست نزن) -->
-        <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off">
+      <form id="orderForm">
+        <input type="text" id="f_name" name="name" required
+               placeholder="اسمت رو بگو، قول می‌دیم بامزه‌ش کنیم">
 
-        <input type="text" id="f_name" name="نام سفارش‌دهنده" required placeholder="اسمت رو بگو، قول می‌دیم بامزه‌ش کنیم">
+        <input type="text" id="f_contact" name="contact" required
+               placeholder="ایمیل یا آیدی تلگرام برای تماس">
 
-        <input type="text" id="f_contact" name="راه ارتباطی" required placeholder="ایمیل یا آیدی تلگرام برای تماس">
-
-        <select id="f_type" name="نوع سفارش" required>
+        <select id="f_type" name="type" required>
           <option value="">نوع سفارش رو انتخاب کن</option>
           <option>میم سفارشی</option>
           <option>پک استیکر تلگرام</option>
@@ -697,12 +686,13 @@
           <option>نمی‌دونم، شما تصمیم بگیرید</option>
         </select>
 
-        <textarea id="f_story" name="توضیح سفارش" required placeholder="بدبختی یا خاطره‌ای که باید میم بشه رو اینجا تعریف کن..."></textarea>
+        <textarea id="f_story" name="story" required
+                  placeholder="بدبختی یا خاطره‌ای که باید میم بشه رو اینجا تعریف کن..."></textarea>
 
         <button type="submit" class="btn btn-primary">ارسال سفارش به کارخانه</button>
       </form>
 
-      <div class="form-note">
+      <div class="form-note" id="formNote">
         دکمه کار نکرد؟ <a href="#" id="mailtoLink" class="mailto-alt">همین اطلاعات رو با ایمیل خودت بفرست ✉️</a>
       </div>
     </div>
@@ -790,25 +780,44 @@
     if (e.key === 'Escape') lb.classList.remove('open');
   });
 
-  /* ---------- راه دوم ارسال: باز کردن برنامه‌ی ایمیل با متن آماده ---------- */
+  /* ---------- ارسال سفارش با ایمیل (مثل پایدار هولدینگ) ---------- */
+  var ORDER_EMAIL = 'kabol.meme.official@gmail.com';
+
+  function buildOrderBody() {
+    var name    = document.getElementById('f_name').value.trim()    || '—';
+    var contact = document.getElementById('f_contact').value.trim() || '—';
+    var type    = document.getElementById('f_type').value           || '—';
+    var story   = document.getElementById('f_story').value.trim()   || '—';
+
+    return 'سفارش جدید از سایت کابل میم\n\n' +
+           'نام: ' + name + '\n' +
+           'راه ارتباطی: ' + contact + '\n' +
+           'نوع سفارش: ' + type + '\n\n' +
+           'توضیح:\n' + story + '\n';
+  }
+
+  function sendOrderMail() {
+    var subject = encodeURIComponent('🐫 سفارش جدید از سایت کابل میم');
+    var body    = encodeURIComponent(buildOrderBody());
+    window.location.href = 'mailto:' + ORDER_EMAIL + '?subject=' + subject + '&body=' + body;
+  }
+
+  /* دکمه‌ی اصلی فرم */
+  document.getElementById('orderForm').addEventListener('submit', function (e) {
+    e.preventDefault();          // جلوی ارسال معمولی فرم رو می‌گیره
+    sendOrderMail();
+
+    var note = document.getElementById('formNote');
+    note.innerHTML = '✅ برنامه‌ی ایمیل شما باز شد — فقط دکمه‌ی Send رو بزن. ' +
+                     'اگه باز نشد، دستی به ' +
+                     '<a href="mailto:' + ORDER_EMAIL + '" class="mailto-alt">' +
+                     ORDER_EMAIL + '</a> ایمیل بزن.';
+  });
+
+  /* لینک پشتیبان (همون لینک پایین فرم) */
   document.getElementById('mailtoLink').addEventListener('click', function (e) {
     e.preventDefault();
-    var name    = document.getElementById('f_name').value    || '—';
-    var contact = document.getElementById('f_contact').value || '—';
-    var type    = document.getElementById('f_type').value    || '—';
-    var story   = document.getElementById('f_story').value   || '—';
-
-    var body =
-      'سفارش جدید از سایت کابل میم\n\n' +
-      'نام: ' + name + '\n' +
-      'راه ارتباطی: ' + contact + '\n' +
-      'نوع سفارش: ' + type + '\n\n' +
-      'توضیح:\n' + story + '\n';
-
-    window.location.href =
-      'mailto:kabol.meme.official@gmail.com' +
-      '?subject=' + encodeURIComponent('🐫 سفارش جدید از سایت کابل میم') +
-      '&body=' + encodeURIComponent(body);
+    sendOrderMail();
   });
 </script>
 
