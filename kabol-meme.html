@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>کابل میم | کارخانه رسمی خنده ملت</title>
+
+<!-- ===== فونت‌ها: Lalezar برای تیترها + Vazirmatn برای متن ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@400;500;700;900&display=swap" rel="stylesheet">
+
 <style>
   :root{
     --purple: #241534;
@@ -13,6 +19,9 @@
     --lime: #c6ff3e;
     --cream: #fff7e8;
     --ink: #150c20;
+
+    --font-body: "Vazirmatn", Tahoma, "Segoe UI", Arial, sans-serif;
+    --font-display: "Lalezar", "Vazirmatn", Tahoma, sans-serif;
   }
 
   *{ box-sizing: border-box; }
@@ -23,8 +32,15 @@
     margin:0;
     background: var(--purple);
     color: var(--cream);
-    font-family: Tahoma, "Segoe UI", Arial, sans-serif;
+    font-family: var(--font-body);
     overflow-x:hidden;
+  }
+
+  /* هر چیزی که این کلاس رو داره با فونت تیتر (لاله‌زار) نوشته می‌شه */
+  .display{
+    font-family: var(--font-display);
+    font-weight: 400;      /* لاله‌زار فقط یک وزن داره، بولد مصنوعی بهش نده */
+    letter-spacing: 0;
   }
 
   /* ---------- background texture ---------- */
@@ -42,9 +58,8 @@
   .marquee{
     background: var(--pink);
     color: var(--ink);
-    font-weight:900;
-    font-size: 15px;
-    padding: 8px 0;
+    font-size: 17px;
+    padding: 9px 0;
     white-space: nowrap;
     overflow:hidden;
     border-bottom: 3px solid var(--ink);
@@ -65,10 +80,10 @@
     display:flex; align-items:center; justify-content:space-between;
     padding: 22px 6%;
     position: relative;
+    gap:16px;
   }
   .logo{
-    font-size: 26px;
-    font-weight:900;
+    font-size: 30px;
     color: var(--cream);
     display:flex; align-items:center; gap:10px;
   }
@@ -80,11 +95,12 @@
     border-radius: 20px;
     transform: rotate(-6deg);
     font-weight:800;
+    font-family: var(--font-body);
   }
   nav a{
     color: var(--cream);
     text-decoration:none;
-    margin-inline-start: 26px;
+    margin-inline-start: 22px;
     font-weight:700;
     font-size:15px;
     position:relative;
@@ -100,10 +116,9 @@
     align-items:center;
   }
   .hero h1{
-    font-size: clamp(38px, 6vw, 74px);
-    line-height: 1.15;
+    font-size: clamp(42px, 6.4vw, 82px);
+    line-height: 1.25;
     margin: 0 0 22px;
-    font-weight:900;
   }
   .hero h1 .scribble{
     color: var(--yellow);
@@ -120,14 +135,15 @@
   .cta-row{ display:flex; gap:16px; flex-wrap:wrap; }
   .btn{
     display:inline-block;
-    padding: 16px 30px;
-    font-weight:900;
-    font-size:16px;
+    padding: 14px 30px;
+    font-size:19px;
     border-radius: 14px;
     text-decoration:none;
     cursor:pointer;
     border: 3px solid var(--ink);
-    transition: transform .15s ease;
+    transition: transform .15s ease, box-shadow .15s ease;
+    font-family: var(--font-display);
+    font-weight:400;
   }
   .btn:hover{ transform: translate(-3px,-3px); }
   .btn-primary{
@@ -152,41 +168,43 @@
     position:absolute;
     background: var(--yellow);
     color: var(--ink);
-    font-weight:900;
-    padding: 14px 20px;
+    padding: 10px 20px;
     border-radius: 16px;
     border: 3px solid var(--ink);
     box-shadow: 5px 5px 0 rgba(0,0,0,.35);
-    font-size: 15px;
+    font-size: 18px;
     transition: transform .25s ease;
     user-select:none;
+    font-family: var(--font-display);
   }
   .sticker:hover{ transform: scale(1.12) rotate(0deg) !important; z-index:5; }
   .s1{ top: 10px; right: 10%; background: var(--lime); transform: rotate(-9deg); }
-  .s2{ top: 130px; right: 45%; background: var(--pink); transform: rotate(7deg); font-size:22px; }
+  .s2{ top: 130px; right: 45%; background: var(--pink); transform: rotate(7deg); font-size:24px; }
   .s3{ top: 60px; left: 5%; transform: rotate(11deg); }
-  .s4{ top: 230px; right: 8%; background: #fff; transform: rotate(-4deg); }
-  .s5{ top: 280px; left: 20%; background: var(--lime); transform: rotate(15deg); font-size:13px; }
+  .s4{ top: 230px; right: 8%; background: #fff; transform: rotate(-4deg); font-size:15px; }
+  .s5{ top: 290px; left: 20%; background: var(--lime); transform: rotate(15deg); font-size:16px; }
 
   /* ---------- section shells ---------- */
   section{ padding: 90px 6%; position:relative; }
   .section-tight{ padding-top:0; }
   h2.section-title{
-    font-size: clamp(28px, 4vw, 44px);
-    font-weight:900;
+    font-size: clamp(30px, 4.2vw, 48px);
     margin: 0 0 12px;
     display:inline-block;
     background: var(--yellow);
     color: var(--ink);
-    padding: 6px 18px;
+    padding: 4px 20px 8px;
     border-radius: 10px;
     transform: rotate(-2deg);
     border: 3px solid var(--ink);
+    font-family: var(--font-display);
+    font-weight:400;
+    line-height:1.4;
   }
   .section-sub{
     color:#d9c9ff;
     font-size:17px;
-    max-width:600px;
+    max-width:640px;
     margin: 20px 0 50px;
     line-height:1.8;
   }
@@ -209,7 +227,10 @@
   .card:nth-child(3){ transform: rotate(-1.2deg); }
   .card:hover{ transform: translateY(-8px) rotate(0deg); }
   .card .emoji{ font-size: 42px; display:block; margin-bottom:16px; }
-  .card h3{ font-size:21px; margin:0 0 10px; color: var(--lime); }
+  .card h3{
+    font-size:25px; margin:0 0 10px; color: var(--lime);
+    font-family: var(--font-display); font-weight:400;
+  }
   .card p{ font-size:15px; line-height:1.8; color:#e4d8fb; margin:0 0 16px; }
   .price{
     display:inline-block;
@@ -242,8 +263,9 @@
     background: var(--lime); color:var(--ink);
     display:flex; align-items:center; justify-content:center;
     font-weight:900; margin: 0 auto 14px;
+    font-size:20px;
   }
-  .step h4{ margin: 0 0 8px; font-size:17px; }
+  .step h4{ margin: 0 0 8px; font-size:20px; font-family: var(--font-display); font-weight:400; }
   .step p{ margin:0; font-size:13.5px; color:#cbb8f0; line-height:1.7; }
 
   /* ---------- gallery ---------- */
@@ -253,6 +275,7 @@
     gap: 18px;
   }
   .tile{
+    position:relative;
     aspect-ratio: 1;
     border-radius: 18px;
     border: 3px solid var(--ink);
@@ -260,9 +283,30 @@
     font-size: 46px;
     box-shadow: 5px 5px 0 rgba(0,0,0,.35);
     transition: transform .2s ease;
-    cursor:default;
+    overflow:hidden;
   }
   .tile:hover{ transform: rotate(-4deg) scale(1.06); }
+  /* عکس داخل کاشی، کل کاشی رو پر می‌کنه */
+  .tile img{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit: cover;
+    display:block;
+  }
+  .tile:has(img){ cursor: zoom-in; }
+  /* برچسب کوچیک روی عکس */
+  .tile .cap{
+    position:absolute; bottom:0; right:0; left:0;
+    background: linear-gradient(to top, rgba(21,12,32,.92), transparent);
+    color: var(--cream);
+    font-size: 13px;
+    font-weight:700;
+    padding: 22px 12px 10px;
+    text-align:center;
+    opacity:0;
+    transition: opacity .2s ease;
+  }
+  .tile:hover .cap{ opacity:1; }
   .t1{ background: var(--pink); }
   .t2{ background: var(--lime); }
   .t3{ background: var(--yellow); }
@@ -271,6 +315,23 @@
   .t6{ background: #fff; }
   .t7{ background: var(--pink); }
   .t8{ background: var(--yellow); }
+
+  /* lightbox */
+  .lightbox{
+    position:fixed; inset:0; z-index:99;
+    background: rgba(10,5,16,.92);
+    display:none;
+    align-items:center; justify-content:center;
+    padding: 5vw;
+    cursor: zoom-out;
+  }
+  .lightbox.open{ display:flex; }
+  .lightbox img{
+    max-width:100%; max-height:90vh;
+    border-radius: 16px;
+    border: 4px solid var(--yellow);
+    box-shadow: 0 0 60px rgba(255,62,157,.35);
+  }
 
   /* ---------- testimonials ---------- */
   .testi-row{
@@ -305,12 +366,12 @@
     border: 4px solid var(--ink);
   }
   .stat{ text-align:center; color: var(--ink); }
-  .stat b{ display:block; font-size: 42px; font-weight:900; }
+  .stat b{ display:block; font-size: 48px; font-family: var(--font-display); font-weight:400; line-height:1.3; }
   .stat span{ font-size: 13.5px; font-weight:700; }
 
   /* ---------- order form ---------- */
   .order-box{
-    max-width: 620px;
+    max-width: 640px;
     margin: 0 auto;
     background: #2f1c46;
     border: 3px solid var(--ink);
@@ -319,19 +380,72 @@
     box-shadow: 8px 8px 0 rgba(0,0,0,.4);
     text-align:center;
   }
-  .order-box h3{ font-size: 24px; margin: 0 0 10px; }
-  .order-box p{ color:#d9c9ff; margin-bottom: 26px; }
-  select, input{
+  .order-box h3{ font-size: 30px; margin: 0 0 10px; font-family: var(--font-display); font-weight:400; }
+  .order-box p{ color:#d9c9ff; margin-bottom: 26px; line-height:1.8; }
+  select, input, textarea{
     width:100%;
     padding: 14px;
     margin-bottom: 14px;
     border-radius: 10px;
     border: 2px solid var(--ink);
     font-size: 15px;
-    font-family: inherit;
+    font-family: var(--font-body);
     background: var(--cream);
     color: var(--ink);
   }
+  textarea{ min-height: 110px; resize: vertical; }
+  button.btn{ width:100%; }
+  .form-note{ font-size:13px; color:#c3aee8; margin-top:14px; line-height:1.9; }
+  .form-note a{ color: var(--lime); }
+  .mailto-alt{
+    display:inline-block; margin-top:6px;
+    color: var(--yellow); font-weight:700; font-size:14px;
+  }
+  .honey{ display:none !important; }
+
+  /* ---------- support ---------- */
+  .support-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+  .support-card{
+    background: var(--purple-deep);
+    border: 3px solid var(--ink);
+    border-radius: 20px;
+    padding: 28px 24px;
+    box-shadow: 6px 6px 0 rgba(0,0,0,.4);
+    transition: transform .2s ease;
+  }
+  .support-card:hover{ transform: translateY(-6px); }
+  .support-card .emoji{ font-size: 36px; display:block; margin-bottom: 14px; }
+  .support-card h3{
+    margin:0 0 8px; font-size:23px; color: var(--yellow);
+    font-family: var(--font-display); font-weight:400;
+  }
+  .support-card p{ margin:0 0 16px; font-size:14.5px; line-height:1.8; color:#d9c9ff; }
+  .support-card a.link{
+    color: var(--lime);
+    font-weight:700;
+    text-decoration:none;
+    font-size:15px;
+    word-break: break-all;
+    border-bottom: 2px dashed var(--lime);
+  }
+  .support-card a.link:hover{ color: var(--pink); border-color: var(--pink); }
+  .hours{
+    margin-top: 40px;
+    background: var(--cream);
+    color: var(--ink);
+    border: 3px solid var(--ink);
+    border-radius: 18px;
+    padding: 22px 26px;
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:14px;
+    box-shadow: 6px 6px 0 rgba(0,0,0,.3);
+  }
+  .hours b{ font-family: var(--font-display); font-weight:400; font-size:22px; }
+  .hours span{ font-size:14.5px; font-weight:700; }
 
   /* ---------- footer ---------- */
   footer{
@@ -341,7 +455,8 @@
     font-size: 13.5px;
     border-top: 3px solid #3a2456;
   }
-  footer .foot-logo{ font-weight:900; color: var(--cream); font-size:18px; margin-bottom:8px;}
+  footer .foot-logo{ color: var(--cream); font-size:26px; margin-bottom:8px; font-family: var(--font-display); }
+  footer a{ color: var(--lime); }
 
   /* ---------- responsive ---------- */
   @media (max-width: 880px){
@@ -349,9 +464,11 @@
     .services{ grid-template-columns: 1fr; }
     .gallery{ grid-template-columns: repeat(2,1fr); }
     .testi-row{ grid-template-columns: 1fr; }
+    .support-grid{ grid-template-columns: 1fr; }
     .process{ flex-direction:column; }
     nav{ display:none; }
     .sticker-stage{ height: 260px; }
+    .order-box{ padding: 28px 20px; }
   }
 
   /* accessibility: reduced motion */
@@ -369,21 +486,22 @@
 
 <div class="wrap">
 
-  <div class="marquee"><span>🐫 کابل میم — از هر درد بی‌درمان یه میم می‌سازیم 🐫&nbsp;&nbsp;&nbsp;&nbsp;💀 تحویل استیکر تلگرام در کمتر از ۲۴ ساعت 💀&nbsp;&nbsp;&nbsp;&nbsp;🔥 رضایت مشتری یا بازگشت خنده 🔥&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+  <div class="marquee"><span class="display">🐫 کابل میم — از هر درد بی‌درمان یه میم می‌سازیم 🐫&nbsp;&nbsp;&nbsp;&nbsp;💀 تحویل استیکر تلگرام در کمتر از ۲۴ ساعت 💀&nbsp;&nbsp;&nbsp;&nbsp;🔥 رضایت مشتری یا بازگشت خنده 🔥&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
 
   <header>
-    <div class="logo">🐫 کابل میم <span class="tag">Est. هیچ‌وقت</span></div>
+    <div class="logo display">🐫 کابل میم <span class="tag">Est. هیچ‌وقت</span></div>
     <nav>
       <a href="#services">خدمات</a>
       <a href="#gallery">نمونه‌کارها</a>
       <a href="#process">روند کار</a>
       <a href="#order">سفارش</a>
+      <a href="#support">پشتیبانی</a>
     </nav>
   </header>
 
   <section class="hero">
     <div>
-      <h1>غم‌هات رو بده،<br><span class="scribble">میم پس بگیر.</span></h1>
+      <h1 class="display">غم‌هات رو بده،<br><span class="scribble">میم پس بگیر.</span></h1>
       <p class="lead">کابل میم یه کارخانه‌ی رسمی و کاملاً غیرعلمیه که تخصصش تبدیل مشکلات روزمره‌ی شما به میم و استیکرهای فاخره. از شکست عشقی تا قطعی اینترنت، ما همه‌چیز رو خنده‌دار می‌کنیم.</p>
       <div class="cta-row">
         <a href="#order" class="btn btn-primary">همین حالا سفارش بده</a>
@@ -451,18 +569,68 @@
     </div>
   </section>
 
+  <!-- ============================================================
+       🖼️  بخش نمونه‌کارها — اینجا عکس بذار
+       ------------------------------------------------------------
+       برای هر کاشی فقط کافیه آدرس عکس رو توی src بنویسی:
+
+         <img src="images/meme-1.jpg" alt="توضیح عکس">
+
+       * اگه عکس‌ها کنار همین فایل توی پوشه‌ی images باشن:
+             src="images/meme-1.jpg"
+       * اگه عکس آنلاین داری (مثلاً توی تلگرام/سایت دیگه):
+             src="https://example.com/meme.jpg"
+       * اگه یه کاشی رو خالی بذاری (src خالی یا عکس پیدا نشه)،
+         خودکار برمی‌گرده به همون ایموجی رنگی قبلی.
+       * متن داخل <span class="cap"> اسم پروژه‌ست که موقع hover
+         روی عکس نشون داده می‌شه.
+       * با کلیک روی هر عکس، بزرگ (تمام‌صفحه) باز می‌شه.
+       ============================================================ -->
   <section id="gallery">
     <h2 class="section-title">نمونه‌کارهای افتخارآمیز</h2>
     <p class="section-sub">چندتا از پروژه‌هایی که هنوز جرأت نداریم اسم مشتری رو بگیم.</p>
     <div class="gallery">
-      <div class="tile t1">😹</div>
-      <div class="tile t2">🫠</div>
-      <div class="tile t3">🐫</div>
-      <div class="tile t4">💀</div>
-      <div class="tile t5">🤡</div>
-      <div class="tile t6">🔥</div>
-      <div class="tile t7">😂</div>
-      <div class="tile t8">👽</div>
+
+      <div class="tile t1">😹
+        <img src="images/meme-1.jpg" alt="نمونه کار ۱">
+        <span class="cap">پروژه‌ی گربه‌ی مشهور</span>
+      </div>
+
+      <div class="tile t2">🫠
+        <img src="images/meme-2.jpg" alt="نمونه کار ۲">
+        <span class="cap">پک استیکر گروه فامیل</span>
+      </div>
+
+      <div class="tile t3">🐫
+        <img src="images/meme-3.jpg" alt="نمونه کار ۳">
+        <span class="cap">میم اختصاصی شتر</span>
+      </div>
+
+      <div class="tile t4">💀
+        <img src="images/meme-4.jpg" alt="نمونه کار ۴">
+        <span class="cap">سفارش اورژانسی ۳ صبح</span>
+      </div>
+
+      <div class="tile t5">🤡
+        <img src="images/meme-5.jpg" alt="نمونه کار ۵">
+        <span class="cap">میم شکست عشقی</span>
+      </div>
+
+      <div class="tile t6">🔥
+        <img src="images/meme-6.jpg" alt="نمونه کار ۶">
+        <span class="cap">کمپین وایرال</span>
+      </div>
+
+      <div class="tile t7">😂
+        <img src="images/meme-7.jpg" alt="نمونه کار ۷">
+        <span class="cap">استیکر پک VIP</span>
+      </div>
+
+      <div class="tile t8">👽
+        <img src="images/meme-8.jpg" alt="نمونه کار ۸">
+        <span class="cap">پروژه‌ی محرمانه</span>
+      </div>
+
     </div>
   </section>
 
@@ -494,29 +662,155 @@
     </div>
   </section>
 
+  <!-- ============================================================
+       ✉️  فرم سفارش — وصل به ایمیل kabol.meme.official@gmail.com
+       ------------------------------------------------------------
+       این فرم از سرویس رایگان FormSubmit استفاده می‌کنه.
+       ⚠️ یک بار فعال‌سازی لازمه: بعد از آپلود سایت، اولین فرم رو
+       خودت پر کن و بفرست → یه ایمیل تأیید به
+       kabol.meme.official@gmail.com میاد → روی لینکش کلیک کن.
+       از اون به بعد همه‌ی سفارش‌ها مستقیم میان به همون ایمیل.
+       ============================================================ -->
   <section id="order">
     <div class="order-box">
       <h3>آماده‌ای معروف بشی؟</h3>
-      <p>فرم زیر رو پر کن، تیم کابل میم ظرف چند دقیقه باهات تماس می‌گیره (یا شایدم فراموشت کنه، شانسیه).</p>
-      <input type="text" placeholder="اسمت رو بگو، قول می‌دیم بامزه‌ش کنیم">
-      <select>
-        <option>نوع سفارش رو انتخاب کن</option>
-        <option>میم سفارشی</option>
-        <option>پک استیکر تلگرام</option>
-        <option>میم اورژانسی</option>
-        <option>نمی‌دونم، شما تصمیم بگیرید</option>
-      </select>
-      <input type="text" placeholder="بدبختی یا خاطره‌ای که باید میم بشه">
-      <a href="#" class="btn btn-primary" style="width:100%; display:block;">ارسال سفارش به کارخانه</a>
+      <p>فرم زیر رو پر کن، سفارشت مستقیم می‌ره به ایمیل کارخانه و تیم کابل میم باهات تماس می‌گیره (یا شایدم فراموشت کنه، شانسیه).</p>
+
+      <form id="orderForm" action="https://formsubmit.co/kabol.meme.official@gmail.com" method="POST">
+        <!-- تنظیمات FormSubmit -->
+        <input type="hidden" name="_subject" value="🐫 سفارش جدید از سایت کابل میم">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_autoresponse" value="سفارشت به دست کارخانه‌ی کابل میم رسید 🐫 به‌زودی باهات تماس می‌گیریم.">
+        <!-- ضد اسپم (نامرئی، دست نزن) -->
+        <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off">
+
+        <input type="text" id="f_name" name="نام سفارش‌دهنده" required placeholder="اسمت رو بگو، قول می‌دیم بامزه‌ش کنیم">
+
+        <input type="text" id="f_contact" name="راه ارتباطی" required placeholder="ایمیل یا آیدی تلگرام برای تماس">
+
+        <select id="f_type" name="نوع سفارش" required>
+          <option value="">نوع سفارش رو انتخاب کن</option>
+          <option>میم سفارشی</option>
+          <option>پک استیکر تلگرام</option>
+          <option>میم اورژانسی</option>
+          <option>نمی‌دونم، شما تصمیم بگیرید</option>
+        </select>
+
+        <textarea id="f_story" name="توضیح سفارش" required placeholder="بدبختی یا خاطره‌ای که باید میم بشه رو اینجا تعریف کن..."></textarea>
+
+        <button type="submit" class="btn btn-primary">ارسال سفارش به کارخانه</button>
+      </form>
+
+      <div class="form-note">
+        دکمه کار نکرد؟ <a href="#" id="mailtoLink" class="mailto-alt">همین اطلاعات رو با ایمیل خودت بفرست ✉️</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       🎧  بخش تماس با پشتیبانی
+       ============================================================ -->
+  <section id="support">
+    <h2 class="section-title">تماس با پشتیبانی</h2>
+    <p class="section-sub">سفارشت گم شده؟ میمت خنده‌دار نبود؟ یا فقط دلت تنگ شده؟ از هر کدوم از این راه‌ها بهمون بگو.</p>
+
+    <div class="support-grid">
+      <div class="support-card">
+        <span class="emoji">✉️</span>
+        <h3>ایمیل رسمی</h3>
+        <p>برای سفارش، پیگیری، شکایت رسمی یا تعریف و تمجید. معمولاً ظرف چند ساعت جواب می‌دیم.</p>
+        <a class="link" href="mailto:kabol.meme.official@gmail.com?subject=پشتیبانی%20کابل%20میم">kabol.meme.official@gmail.com</a>
+      </div>
+
+      <div class="support-card">
+        <span class="emoji">💬</span>
+        <h3>پشتیبانی تلگرام</h3>
+        <p>سریع‌ترین راه. آیدی زیر رو توی تلگرام بزن و مستقیم با یکی از بچه‌های کارگاه حرف بزن.</p>
+        <!-- 👇 آیدی تلگرام خودت رو جای kabolmeme بذار -->
+        <a class="link" href="https://t.me/kabolmeme" target="_blank" rel="noopener">@kabolmeme</a>
+      </div>
+
+      <div class="support-card">
+        <span class="emoji">🚨</span>
+        <h3>خط داغ اورژانس</h3>
+        <p>فقط برای بحران‌های واقعی میمی. اگه بیخودی زنگ بزنی، خودت میم می‌شی.</p>
+        <!-- 👇 شماره‌ی خودت رو جایگزین کن -->
+        <a class="link" href="tel:+989000000000">۰۹۰۰ ۰۰۰ ۰۰۰۰</a>
+      </div>
+    </div>
+
+    <div class="hours">
+      <b>🕐 ساعات پاسخگویی</b>
+      <span>شنبه تا پنجشنبه، ۱۰ صبح تا ۱۰ شب — جمعه‌ها فقط اورژانسی (و اگه بیدار باشیم)</span>
     </div>
   </section>
 
   <footer>
     <div class="foot-logo">🐫 کابل میم</div>
-    <p>ساخته‌شده با عشق، کافئین زیاد، و یه ذره بی‌مسئولیتی هنری.<br>هیچ شتری در ساخت این سایت آسیب ندید.</p>
+    <p>
+      ساخته‌شده با عشق، کافئین زیاد، و یه ذره بی‌مسئولیتی هنری.<br>
+      هیچ شتری در ساخت این سایت آسیب ندید.<br>
+      ارتباط: <a href="mailto:kabol.meme.official@gmail.com">kabol.meme.official@gmail.com</a>
+    </p>
   </footer>
 
 </div>
+
+<!-- lightbox برای بزرگ کردن عکس نمونه‌کارها -->
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+
+<script>
+  /* ---------- نمونه‌کارها: اگه عکس پیدا نشد، ایموجی برگرده ---------- */
+  document.querySelectorAll('.gallery .tile img').forEach(function (img) {
+    var fallback = function () {
+      img.remove();                                   // عکس نبود → ایموجی رنگی می‌مونه
+      var cap = img.parentElement.querySelector('.cap');
+      if (cap) cap.remove();
+    };
+    if (!img.getAttribute('src')) { fallback(); return; }
+    img.addEventListener('error', fallback);
+    if (img.complete && img.naturalWidth === 0) fallback();
+  });
+
+  /* ---------- کلیک روی عکس = نمایش تمام‌صفحه ---------- */
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.querySelectorAll('.gallery .tile').forEach(function (tile) {
+    tile.addEventListener('click', function () {
+      var img = tile.querySelector('img');
+      if (!img) return;
+      lbImg.src = img.src;
+      lbImg.alt = img.alt || '';
+      lb.classList.add('open');
+    });
+  });
+  lb.addEventListener('click', function () { lb.classList.remove('open'); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') lb.classList.remove('open');
+  });
+
+  /* ---------- راه دوم ارسال: باز کردن برنامه‌ی ایمیل با متن آماده ---------- */
+  document.getElementById('mailtoLink').addEventListener('click', function (e) {
+    e.preventDefault();
+    var name    = document.getElementById('f_name').value    || '—';
+    var contact = document.getElementById('f_contact').value || '—';
+    var type    = document.getElementById('f_type').value    || '—';
+    var story   = document.getElementById('f_story').value   || '—';
+
+    var body =
+      'سفارش جدید از سایت کابل میم\n\n' +
+      'نام: ' + name + '\n' +
+      'راه ارتباطی: ' + contact + '\n' +
+      'نوع سفارش: ' + type + '\n\n' +
+      'توضیح:\n' + story + '\n';
+
+    window.location.href =
+      'mailto:kabol.meme.official@gmail.com' +
+      '?subject=' + encodeURIComponent('🐫 سفارش جدید از سایت کابل میم') +
+      '&body=' + encodeURIComponent(body);
+  });
+</script>
 
 </body>
 </html>
