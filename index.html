@@ -51,6 +51,16 @@ body.focus .close{display:block}
 .node{border:1px solid #ffffff2a;padding:10px 14px;font-size:11px;letter-spacing:.15em;cursor:default;transition:.25s}
 .node:hover{border-color:var(--ac);color:var(--ac);transform:translateY(-3px)}
 .node em{display:none;font-style:normal;color:var(--dim);letter-spacing:0;margin-left:8px}.node:hover em{display:inline}
+.certs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+@media(max-width:460px){.certs{grid-template-columns:1fr}}
+.cert{border:1px solid #ffffff22;padding:10px;transition:.25s}
+.cert:hover{border-color:var(--ac)}
+.cert .frame{aspect-ratio:4/3;background:#0d0d10;border:1px dashed #ffffff2e;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.cert .frame a{display:block;width:100%;height:100%}
+.cert img{width:100%;height:100%;object-fit:contain;display:block}
+.cert .ph{font-size:10px;letter-spacing:.2em;color:var(--dim);text-align:center;padding:10px}
+.cert h4{font-size:13px;letter-spacing:.1em;margin-top:10px}
+.cert span{font-size:10px;color:var(--dim);letter-spacing:.15em}
 .big{font-size:clamp(34px,6vw,60px);font-weight:800;letter-spacing:-.04em;line-height:1}
 form{display:grid;gap:10px;margin-top:22px}
 input,textarea{background:none;border:0;border-bottom:1px solid #ffffff33;color:var(--fg);padding:12px 0;font:inherit;outline:0}
@@ -66,7 +76,7 @@ form button{justify-self:start;background:var(--ac);border:0;color:#fff;padding:
 <body>
 <canvas id="c" aria-hidden="true"></canvas>
 <nav aria-label="Primary"><b id="logo">ARSHA</b>
-<button data-s="work">WORK</button><button data-s="about">ABOUT</button><button data-s="lab">LAB</button><button data-s="journey">JOURNEY</button><button data-s="contact">CONTACT</button></nav>
+<button data-s="work">WORK</button><button data-s="about">ABOUT</button><button data-s="lab">LAB</button><button data-s="certs">CERTS</button><button data-s="journey">JOURNEY</button><button data-s="contact">CONTACT</button></nav>
 
 <header id="intro">
 <h1><span>ARSHA</span><span>PAYDAR</span></h1>
@@ -101,12 +111,20 @@ form button{justify-self:start;background:var(--ac);border:0;color:#fff;padding:
 <div class="item"><h3>WebGL playground</h3><p>Status: <span style="color:var(--ac)">in progress</span></p></div>
 <div class="item"><h3>ARSHA_OS</h3><p>Try clicking the logo five times.</p></div></section>
 
-<section class="panel" id="p-journey" aria-labelledby="hj"><small>05 — JOURNEY</small><h2 id="hj">Journey</h2>
+<section class="panel" id="p-certs" aria-labelledby="hcert"><small>05 — CERTIFICATES</small><h2 id="hcert">Certificates</h2>
+<p>Credentials earned along the way. Click an image to view it full size.</p>
+<div class="certs">
+<div class="cert"><div class="frame" id="cert-slot-1"><a href="arsha-pm.ir/pictures/certificate-py1.jpg" target="_blank" rel="noopener"><img src="./pictures/certificate-py1.jpg" alt="Python certificate 1" loading="lazy" onerror="this.parentNode.outerHTML='<span class=ph>IMAGE NOT FOUND<br>certs/python-cert-1.jpg</span>'"></a></div><h4>PYTHON — CERTIFICATE 1</h4><span>PROGRAMMING</span></div>
+<div class="cert"><div class="frame" id="cert-slot-2"><a href="certs/python-cert-2.jpg" target="_blank" rel="noopener"><img src="./pictures/certificate-py2.jpg" alt="Python certificate 2" loading="lazy" onerror="this.parentNode.outerHTML='<span class=ph>IMAGE NOT FOUND<br>certs/python-cert-2.jpg</span>'"></a></div><h4>PYTHON — CERTIFICATE 2</h4><span>PROGRAMMING</span></div>
+<div class="cert"><div class="frame" id="cert-slot-3"><a href="certs/html-css-cert.jpg" target="_blank" rel="noopener"><img src="./pictures/certificate-html1.jpg" alt="HTML / CSS certificate" loading="lazy" onerror="this.parentNode.outerHTML='<span class=ph>IMAGE NOT FOUND<br>certs/html-css-cert.jpg</span>'"></a></div><h4>HTML / CSS</h4><span>WEB FOUNDATIONS</span></div>
+</div></section>
+
+<section class="panel" id="p-journey" aria-labelledby="hj"><small>06 — JOURNEY</small><h2 id="hj">Journey</h2>
 <div class="item"><div class="meta">1403 — NOW</div><h3>HTML / CSS / JS</h3><p>Discovered a love for building websites, and that is how I got here.</p></div>
 <div class="item"><div class="meta">1402</div><h3>Intermediate Python</h3><p>Two Python courses taught me where my real interest was not.</p></div>
 <div class="item"><div class="meta">1401</div><h3>First project</h3><p>Started programming with Python.</p></div></section>
 
-<section class="panel" id="p-contact" aria-labelledby="hc"><small>06 — CONTACT</small><h2 id="hc">LET'S BUILD SOMETHING IMPOSSIBLE.</h2>
+<section class="panel" id="p-contact" aria-labelledby="hc"><small>07 — CONTACT</small><h2 id="hc">LET'S BUILD SOMETHING IMPOSSIBLE.</h2>
 <p><a href="mailto:Info@arsha-pm.ir">Info@arsha-pm.ir</a></p>
 <p style="margin-top:10px"><a href="https://github.com/">GitHub</a> · <a href="https://linkedin.com/">LinkedIn</a> · <a href="https://instagram.com/">Instagram</a></p>
 <form id="f"><input name="name" placeholder="Name" aria-label="Name" required><input name="email" type="email" placeholder="Email" aria-label="Email" required><textarea name="msg" rows="3" placeholder="Your project" aria-label="Message" required></textarea><button>SEND →</button></form></section>
@@ -122,7 +140,7 @@ var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 var mobile=matchMedia('(max-width:700px)').matches||('ontouchstart' in window);
 var perf=reduce||(navigator.hardwareConcurrency||4)<=2;
 var AC=0xff2b3a;
-var secs=[['about','ABOUT','Who I am','about'],['work','WORK','Selected projects','work'],['skills','SKILLS','The skill tree','skills'],['lab','LAB','Experiments','lab'],['journey','JOURNEY','Path so far','journey'],['contact','CONTACT','Say hello','contact']];
+var secs=[['about','ABOUT','Who I am','about'],['work','WORK','Selected projects','work'],['skills','SKILLS','The skill tree','skills'],['lab','LAB','Experiments','lab'],['certs','CERTS','Certificates','certs'],['journey','JOURNEY','Path so far','journey'],['contact','CONTACT','Say hello','contact']];
 var R=new THREE.WebGLRenderer({canvas:$('#c'),antialias:!mobile,alpha:false,powerPreference:'high-performance'});
 R.setPixelRatio(Math.min(devicePixelRatio,mobile||perf?1.25:2));R.setClearColor(0x050506);
 var S=new THREE.Scene();S.fog=new THREE.FogExp2(0x050506,.03);
@@ -144,12 +162,12 @@ var pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAtt
 var pts=new THREE.Points(pg,new THREE.PointsMaterial({color:0xaaaaaa,size:.05,transparent:true,opacity:.6}));S.add(pts);
 
 // section objects
-var geos=[new THREE.IcosahedronGeometry(.8,0),new THREE.BoxGeometry(1.2,1.2,1.2),new THREE.OctahedronGeometry(.9),new THREE.TorusKnotGeometry(.55,.18,80,10),new THREE.TorusGeometry(.7,.2,10,32),new THREE.TetrahedronGeometry(.95)];
+var geos=[new THREE.IcosahedronGeometry(.8,0),new THREE.BoxGeometry(1.2,1.2,1.2),new THREE.OctahedronGeometry(.9),new THREE.TorusKnotGeometry(.55,.18,80,10),new THREE.ConeGeometry(.85,1.3,5),new THREE.TorusGeometry(.7,.2,10,32),new THREE.TetrahedronGeometry(.95)];
 var ring=new THREE.Group();S.add(ring);var objs=[];
 secs.forEach(function(s,i){
  var m=new THREE.Mesh(geos[i],new THREE.MeshStandardMaterial({color:0x15151a,metalness:.85,roughness:.25,emissive:AC,emissiveIntensity:.05}));
  var e=new THREE.LineSegments(new THREE.EdgesGeometry(geos[i]),new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:.35}));m.add(e);
- var a=i/6*Math.PI*2;m.position.set(Math.cos(a)*6.5,Math.sin(i*1.7)*1.4,Math.sin(a)*6.5);
+ var a=i/secs.length*Math.PI*2;m.position.set(Math.cos(a)*6.5,Math.sin(i*1.7)*1.4,Math.sin(a)*6.5);
  m.userData={i:i,k:s[3],label:s[1],info:s[2],base:1,edge:e};ring.add(m);objs.push(m)});
 // hidden object
 var hid=new THREE.Mesh(new THREE.OctahedronGeometry(.25),new THREE.MeshBasicMaterial({color:AC,wireframe:true}));hid.position.set(-13,6,-10);S.add(hid);
