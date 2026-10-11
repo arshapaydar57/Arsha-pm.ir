@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07070B">
+<title>NEXORA</title>
+<meta name="description" content="Personal finance with multiple accounts, Toman and Rial, Jalali calendar and Excel/PDF reports.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%236366F1'/%3E%3Cpath d='M9 23V9l14 14V9' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+<script src="js/app.js"></script>
+<style>
+  html{scroll-behavior:smooth}body{overflow-x:hidden}
+  .wrap{max-width:1160px;margin:auto;padding:0 1.25rem}
+  /* ambient background: drifting orbs + faint grid */
+  .bg{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+  .orb{position:absolute;border-radius:50%;filter:blur(90px);animation:drift 18s ease-in-out infinite}
+  .o1{width:34rem;height:34rem;background:#6366F1;top:-12rem;inset-inline-start:-8rem;opacity:.3}.o2{width:28rem;height:28rem;background:#8B5CF6;top:20%;inset-inline-end:-10rem;opacity:.2;animation-delay:-6s}.o3{width:30rem;height:30rem;background:#EC4899;bottom:-14rem;inset-inline-start:30%;opacity:.16;animation-delay:-11s}
+  .gridbg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(70% 60% at 50% 20%,#000,transparent);mask-image:radial-gradient(70% 60% at 50% 20%,#000,transparent)}
+  /* nav */
+  .bar.glass{position:fixed}.fl.glass{position:absolute}
+  .bar{position:fixed;top:12px;inset-inline:12px;z-index:50;margin:auto;max-width:1100px;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.55rem .6rem .55rem 1rem;border-radius:18px;transition:background .3s,box-shadow .3s}
+  .bar.sc{background:rgba(12,12,20,.78);box-shadow:0 18px 40px -20px #000}.bar .links{display:none;gap:2rem;color:var(--muted);font-size:.9rem}.bar .links a{color:inherit;text-decoration:none;transition:color .2s}.bar .links a:hover{color:#fff}@media(min-width:800px){.bar .links{display:flex}}
+  .bar .r{display:flex;gap:.5rem;align-items:center}.bar .hide-s{display:none}@media(min-width:560px){.bar .hide-s{display:inline-flex}}
+  /* hero */
+  .hero-s{display:grid;gap:3rem;align-items:center;padding:9.5rem 0 5rem}@media(min-width:960px){.hero-s{grid-template-columns:1.05fr .95fr;padding-top:11rem}}
+  h1.t{font-size:clamp(2.6rem,6.4vw,4.7rem);line-height:1.04;letter-spacing:-.035em;font-weight:600;margin:0}html[lang=fa] h1.t{line-height:1.25;letter-spacing:0}
+  .word{display:inline-block;opacity:0;animation:up .9s var(--ease) forwards;animation-delay:calc(var(--w)*80ms + 150ms)}
+  .sub{margin:1.5rem 0 2.2rem;font-size:1.1rem;max-width:34rem;color:var(--muted);animation:up .9s var(--ease) .55s both}
+  .ctas{display:flex;flex-wrap:wrap;gap:.8rem;animation:up .9s var(--ease) .7s both}.ctas .btn{height:3.1rem;padding:0 1.6rem;font-size:.95rem}
+  .note{margin-top:1.4rem;font-size:.85rem;color:var(--muted);animation:up .9s var(--ease) .85s both}
+  /* product mock */
+  .stage{position:relative;perspective:1400px;animation:up 1.1s var(--ease) .4s both}
+  .mock{transform:rotateY(var(--ry,-8deg)) rotateX(var(--rx,4deg));transition:transform .35s var(--ease);transform-style:preserve-3d;padding:1rem;border-radius:24px}
+  .dots{display:flex;gap:.4rem;margin-bottom:.9rem}.dots i{width:.6rem;height:.6rem;border-radius:50%;background:rgba(255,255,255,.14)}
+  .mhero{border:1px solid transparent;border-radius:18px;padding:1.2rem;background:linear-gradient(#0e0e17,#0b0b12) padding-box,var(--grad) border-box;position:relative;overflow:hidden}
+  .mhero .big{font-size:1.9rem;margin:.1rem 0 0}.mhero svg{width:100%;height:64px;display:block;margin-top:.4rem}.mhero .line{stroke-dasharray:700;stroke-dashoffset:700;animation:draw 1.8s .9s var(--ease) forwards}
+  .minis{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:.6rem 0}.mini{padding:.8rem 1rem;border-radius:14px;background:rgba(255,255,255,.04);font-size:.8rem;color:var(--muted)}.mini b{display:block;font-size:1rem;color:#fff;margin-top:.1rem}
+  .mrow{display:flex;align-items:center;gap:.7rem;padding:.65rem .5rem;border-top:1px solid rgba(255,255,255,.05);font-size:.85rem;animation:up .7s var(--ease) both;animation-delay:calc(1.2s + var(--k)*.18s)}.mrow b{font-weight:500;display:block}.mrow small{color:var(--muted);font-size:.72rem}.mrow .amt{margin-inline-start:auto}
+  .fl{position:absolute;padding:.55rem .9rem;border-radius:14px;font-size:.82rem;white-space:nowrap;animation:float 6s ease-in-out infinite;background:rgba(18,18,28,.88)!important}
+  .fl.a{top:-1.4rem;inset-inline-end:-.6rem}.fl.b{bottom:2.2rem;inset-inline-start:-1.6rem;animation-delay:-2s}.fl.c{bottom:-1.3rem;inset-inline-end:2rem;animation-delay:-4s}
+  @keyframes float{50%{transform:translateY(-10px)}}@media(max-width:700px){.fl.b{inset-inline-start:-.4rem}}
+  /* ticker */
+  .tick{overflow:hidden;border-block:1px solid var(--line);padding:1rem 0;direction:ltr;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+  .track{display:flex;width:max-content;animation:marq 32s linear infinite}.track span{display:flex;align-items:center;gap:1.2rem;padding-inline:1.2rem;color:var(--muted);font-size:.95rem;white-space:nowrap}.track span::after{content:"";width:5px;height:5px;border-radius:50%;background:var(--grad)}
+  @keyframes marq{to{transform:translateX(-50%)}}
+  /* sections */
+  section.sx{padding:6rem 0}.sx h2{font-size:clamp(1.9rem,4vw,2.9rem);font-weight:600;letter-spacing:-.03em;margin:0 0 3rem;max-width:20ch;line-height:1.1}html[lang=fa] .sx h2{line-height:1.3;letter-spacing:0}
+  .rv{opacity:0;transform:translateY(30px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:calc(var(--d,0)*90ms)}.rv.vis{opacity:1;transform:none}
+  .bento{display:grid;gap:1rem;grid-template-columns:repeat(6,1fr)}.bento>div{grid-column:span 6;padding:1.6rem;overflow:hidden;min-height:15rem}
+  @media(min-width:760px){.bento .c3{grid-column:span 3}.bento .c2{grid-column:span 3}}@media(min-width:1000px){.bento .c2{grid-column:span 2}}
+  .bento h3{margin:0 0 .4rem;font-size:1.2rem;font-weight:600}.bento p{margin:0;color:var(--muted);font-size:.93rem;max-width:30ch}.vis-box{margin-top:1.3rem}
+  .accrow{display:flex;justify-content:space-between;align-items:center;padding:.7rem 1rem;border-radius:12px;background:rgba(255,255,255,.045);margin-bottom:.5rem;transition:transform .4s var(--spring)}.accrow:hover{transform:translateX(6px)}html[dir=rtl] .accrow:hover{transform:translateX(-6px)}
+  .big2{font-size:2rem;font-weight:600;letter-spacing:-.02em;margin:.9rem 0 0;font-variant-numeric:tabular-nums}
+  .bars{display:flex;align-items:flex-end;gap:.5rem;height:6rem}.bars i{flex:1;border-radius:6px 6px 2px 2px;background:var(--grad);transform:scaleY(0);transform-origin:bottom;transition:transform 1.1s var(--spring);transition-delay:calc(var(--b)*90ms + .2s)}.vis .bars i{transform:scaleY(1)}
+  .cal{display:grid;place-items:center;height:5.2rem;font-size:1.4rem;font-weight:600;border-radius:14px;background:rgba(255,255,255,.045);transition:opacity .35s,transform .35s}.cal.swp{opacity:0;transform:translateY(8px)}
+  .files{display:flex;gap:.7rem;flex-wrap:wrap}.file{padding:.7rem 1rem;border-radius:12px;background:rgba(255,255,255,.05);font-size:.85rem;transition:transform .4s var(--spring)}.file:hover{transform:translateY(-4px) rotate(-2deg)}.file.net{background:var(--grad);font-weight:600}
+  /* steps + stats */
+  .steps{display:grid;gap:1rem}@media(min-width:800px){.steps{grid-template-columns:repeat(3,1fr)}}.step{padding:1.6rem}.step .kico{margin-bottom:1rem}.step h3{margin:0 0 .4rem;font-size:1.1rem}.step p{margin:0;color:var(--muted);font-size:.92rem}
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;padding:4rem 0 0;text-align:center}@media(min-width:800px){.stats{grid-template-columns:repeat(4,1fr)}}.stats b{display:block;font-size:clamp(2.2rem,5vw,3.4rem);font-weight:600;letter-spacing:-.03em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}.stats span{color:var(--muted)}
+  /* CTA */
+  .cta{text-align:center;padding:4.5rem 1.5rem;border:1px solid transparent;border-radius:28px;background:linear-gradient(#0d0d16,#0d0d16) padding-box,linear-gradient(120deg,#6366F1,#8B5CF6,#EC4899,#6366F1) border-box;background-size:100% 100%,300% 100%;animation:flow 7s linear infinite;position:relative;overflow:hidden}
+  @keyframes flow{to{background-position:0 0,-300% 0}}.cta::before{content:"";position:absolute;inset:0;background:radial-gradient(50% 80% at 50% 0%,rgba(139,92,246,.35),transparent 70%)}.cta>*{position:relative}.cta h2{margin:0 auto 1rem}.cta p{color:var(--muted);margin:0 0 2rem}
+  footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;padding:3rem 0;color:var(--muted);font-size:.9rem}footer a{color:inherit;text-decoration:none;margin-inline-start:1.5rem}footer a:hover{color:#fff}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><div class="gridbg"></div><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
+
+<header class="bar glass" id="bar">
+  <a href="index.html" class="brand" style="padding:0"><span class="logo">N</span><b>NEXORA</b></a>
+  <nav class="links"><a href="#features" data-i18n="nav_f"></a><a href="#how" data-i18n="nav_h"></a></nav>
+  <div class="r"><button class="btn btn-sm" id="lg" type="button" aria-label="Language">FA</button><a href="login.html" class="btn btn-sm hide-s" data-i18n="login"></a><a href="signup.html" class="btn btn-grad btn-sm" data-i18n="signup"></a></div>
+</header>
+
+<main class="wrap">
+  <section class="hero-s">
+    <div>
+      <h1 class="t" id="h1"></h1>
+      <p class="sub" data-i18n="hero_s"></p>
+      <div class="ctas"><a href="signup.html" class="btn btn-grad" data-i18n="cta1"></a><a href="#features" class="btn" data-i18n="cta2"></a></div>
+      <p class="note" data-i18n="note"></p>
+    </div>
+    <div class="stage" id="stage">
+      <div class="glass mock" id="mock" dir="ltr">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <div class="mhero"><p class="muted" style="margin:0;font-size:.8rem" data-i18n="balance"></p><p class="big" id="mbal">0</p>
+          <svg viewBox="0 0 300 64" preserveAspectRatio="none"><defs><linearGradient id="mg" x1="0" x2="1"><stop offset="0" stop-color="#6366F1"/><stop offset=".6" stop-color="#8B5CF6"/><stop offset="1" stop-color="#EC4899"/></linearGradient></defs><path class="line" d="M0 52C40 48 60 54 100 38S170 26 200 30 260 10 300 6" fill="none" stroke="url(#mg)" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></div>
+        <div class="minis"><div class="mini"><span data-i18n="income_m"></span><b class="inc" id="mi">0</b></div><div class="mini"><span data-i18n="expense_m"></span><b class="exp" id="me">0</b></div></div>
+        <div id="mrows"></div>
+      </div>
+      <div class="glass fl a" id="fa" dir="auto"></div><div class="glass fl b" id="fb" dir="auto"></div><div class="glass fl c" id="fc" dir="auto"></div>
+    </div>
+  </section>
+</main>
+
+<div class="tick" aria-hidden="true"><div class="track" id="track"></div></div>
+
+<main class="wrap">
+  <section class="sx" id="features">
+    <h2 class="rv" data-i18n="f_t"></h2>
+    <div class="bento">
+      <div class="glass c3 rv"><h3 data-i18n="f1_t"></h3><p data-i18n="f1_d"></p><div class="vis-box" id="accs"></div></div>
+      <div class="glass c3 rv" style="--d:1"><h3 data-i18n="f2_t"></h3><p data-i18n="f2_d"></p><div class="vis-box"><div class="seg" id="cseg" style="max-width:15rem"><button type="button" class="on" data-c="IRT"></button><button type="button" data-c="IRR"></button></div><p class="big2" id="cval">0</p></div></div>
+      <div class="glass c2 rv"><h3 data-i18n="f3_t"></h3><p data-i18n="f3_d"></p><div class="vis-box"><div class="cal" id="cal"></div></div></div>
+      <div class="glass c2 rv" style="--d:1"><h3 data-i18n="f4_t"></h3><p data-i18n="f4_d"></p><div class="vis-box"><div class="bars"><i style="--b:0;height:40%"></i><i style="--b:1;height:66%"></i><i style="--b:2;height:52%"></i><i style="--b:3;height:82%"></i><i style="--b:4;height:60%"></i><i style="--b:5;height:94%"></i></div></div></div>
+      <div class="glass c2 rv" style="--d:2"><h3 data-i18n="f5_t"></h3><p data-i18n="f5_d"></p><div class="vis-box files"><span class="file">Excel</span><span class="file">PDF</span><span class="file net" id="fnet"></span></div></div>
+    </div>
+  </section>
+
+  <section class="sx" id="how">
+    <h2 class="rv" data-i18n="how_t"></h2>
+    <div class="steps">
+      <div class="glass step rv"><span class="kico i" id="i1"></span><h3 data-i18n="s1_t"></h3><p data-i18n="s1_d"></p></div>
+      <div class="glass step rv" style="--d:1"><span class="kico e" id="i2"></span><h3 data-i18n="s2_t"></h3><p data-i18n="s2_d"></p></div>
+      <div class="glass step rv" style="--d:2"><span class="kico s" id="i3"></span><h3 data-i18n="s3_t"></h3><p data-i18n="s3_d"></p></div>
+    </div>
+    <div class="stats rv" id="stats"></div>
+  </section>
+
+  <section class="sx" style="padding-top:0">
+    <div class="cta rv"><h2 data-i18n="cta_t"></h2><p data-i18n="cta_s"></p><a href="signup.html" class="btn btn-grad" style="height:3.2rem;padding:0 2rem" data-i18n="cta1"></a></div>
+  </section>
+  <footer><span>© <span id="yr"></span> NEXORA</span><span><a href="login.html" data-i18n="login"></a><a href="signup.html" data-i18n="signup"></a></span></footer>
+</main>
+
+<script>
+Object.assign(T.en, { nav_f:'Features', nav_h:'How it works', hero_t:'Know where every toman goes.', hero_s:'Accounts, categories, Jalali dates, Toman and Rial. One calm place for your money, private on your device.',
+  cta1:'Create free account', cta2:'See what it does', note:'No server, no tracking. Your data stays in this browser.',
+  tk:['Multiple accounts','Toman & Rial','Jalali calendar','Excel & PDF reports','Persian & English','Private by design'],
+  f_t:'Everything your money needs.', f1_t:'Accounts that match your life', f1_d:'Cash, cards, savings. Each with its own currency.', f2_t:'Toman or Rial, your call', f2_d:'Switch the display currency any time. 1 Toman is 10 Rial.',
+  f3_t:'A calendar that fits', f3_d:'Jalali or Gregorian, for every date.', f4_t:'Charts that explain', f4_d:'Six-month trends and spending by category.', f5_t:'Reports in your language', f5_d:'Excel and PDF in Persian or English, with the net amount left.',
+  how_t:'Clear in three steps.', s1_t:'Create your account', s1_d:'Under a minute. No card needed.', s2_t:'Add accounts and transactions', s2_d:'Income and expenses, each with its own categories.', s3_t:'See the full picture', s3_d:'Dashboard, filters and exports, instantly.',
+  stl:['categories','currencies','languages','calendars'], cta_t:'Start with your first transaction.', cta_s:'Free, fast and private.', net:'Net', acc:['Cash','Bank card','Savings'], mock:['Salary','Groceries','Restaurants & cafes'] });
+Object.assign(T.fa, { nav_f:'امکانات', nav_h:'چطور کار می‌کند', hero_t:'بدانید هر تومان کجا می‌رود.', hero_s:'حساب‌ها، دسته‌بندی‌ها، تاریخ شمسی، تومان و ریال. یک جای آرام برای پولتان، خصوصی روی دستگاه خودتان.',
+  cta1:'ساخت حساب رایگان', cta2:'ببینید چه می‌کند', note:'بدون سرور و بدون ردیابی. داده‌هایتان در همین مرورگر می‌ماند.',
+  tk:['چند حساب','تومان و ریال','تقویم شمسی','گزارش اکسل و PDF','فارسی و انگلیسی','خصوصی از پایه'],
+  f_t:'هر چیزی که پولتان لازم دارد.', f1_t:'حساب‌هایی مطابق زندگی شما', f1_d:'نقد، کارت، پس‌انداز. هرکدام با واحد پول خودش.', f2_t:'تومان یا ریال، انتخاب با شما', f2_d:'واحد نمایش را هر وقت خواستید عوض کنید. ۱ تومان برابر ۱۰ ریال.',
+  f3_t:'تقویمی که به شما می‌خورد', f3_d:'شمسی یا میلادی، برای همه تاریخ‌ها.', f4_t:'نمودارهایی که توضیح می‌دهند', f4_d:'روند ۶ ماهه و هزینه به تفکیک دسته.', f5_t:'گزارش به زبان شما', f5_d:'اکسل و PDF به فارسی یا انگلیسی، با مبلغ خالص باقیمانده.',
+  how_t:'در سه قدم، شفاف.', s1_t:'حساب بسازید', s1_d:'کمتر از یک دقیقه. بدون نیاز به کارت.', s2_t:'حساب و تراکنش اضافه کنید', s2_d:'درآمد و هزینه، هرکدام با دسته‌بندی خودش.', s3_t:'تصویر کامل را ببینید', s3_d:'داشبورد، فیلتر و خروجی، فوری.',
+  stl:['دسته‌بندی','واحد پول','زبان','تقویم'], cta_t:'با اولین تراکنش‌تان شروع کنید.', cta_s:'رایگان، سریع و خصوصی.', net:'خالص', acc:['نقد','کارت بانکی','پس‌انداز'], mock:['حقوق','خواربار','رستوران و کافه'] });
+
+i18n(); document.getElementById('yr').textContent = new Date().getFullYear();
+const $ = id => document.getElementById(id), lg = $('lg'); lg.textContent = L === 'fa' ? 'EN' : 'FA'; lg.onclick = () => setLang(L === 'fa' ? 'en' : 'fa');
+const M = (v, c = 'IRT') => money(v, c);
+// headline: words rise in one by one
+$('h1').innerHTML = t('hero_t').split(' ').map((w, i) => `<span class="word" style="--w:${i}">${w}</span>`).join(' ');
+// ticker (content repeated so the loop is seamless)
+const tk = t('tk').map(x => `<span>${x}</span>`).join(''); $('track').innerHTML = tk + tk + tk + tk;
+// product mock
+setTimeout(() => { countTo($('mbal'), 24580000, v => M(Math.round(v))); countTo($('mi'), 45000000, v => M(Math.round(v))); countTo($('me'), 2490000, v => M(Math.round(v))); }, 500);
+const rows = [['down', 0, 45000000], ['up', 1, 1850000], ['up', 2, 640000]];
+$('mrows').innerHTML = rows.map(([ic, i, v], k) => `<div class="mrow" style="--k:${k}"><span class="tico ${ic === 'down' ? 'income' : 'expense'}">${ico(ic, 16)}</span><div><b>${t('mock')[i]}</b><small>${t('acc')[1]}</small></div><span class="amt ${ic === 'down' ? 'inc' : 'exp'}">${ic === 'down' ? '+' : '−'}${M(v)}</span></div>`).join('');
+$('fa').textContent = '+ ' + M(45000000); $('fb').textContent = L === 'fa' ? '۱۸ مهر ۱۴۰۵' : '18 Mehr 1405'; $('fc').textContent = t('net') + ': ' + M(22090000);
+// 3D tilt follows the pointer
+const st = $('stage'); addEventListener('pointermove', e => { const r = st.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+  $('mock').style.setProperty('--ry', (-8 + x * 10) + 'deg'); $('mock').style.setProperty('--rx', (4 - y * 10) + 'deg'); });
+// features
+$('accs').innerHTML = [[0, 'IRR'], [1, 'IRT'], [2, 'IRT']].map(([i, c]) => `<div class="accrow"><span>${t('acc')[i]}</span><span class="chip">${curName(c)}</span></div>`).join('');
+const cs = $('cseg'); cs.querySelectorAll('button').forEach(b => b.textContent = curName(b.dataset.c));
+let cur = 'IRT', shown = 1000000; const cv = $('cval'); cv.textContent = M(shown);
+function tween(to) { const from = shown, s0 = performance.now(); (function f(n) { const p = Math.min((n - s0) / 700, 1); shown = from + (to - from) * (1 - Math.pow(1 - p, 3)); cv.textContent = M(Math.round(shown), cur); if (p < 1) requestAnimationFrame(f); })(s0); }
+cs.onclick = e => { const b = e.target.closest('button'); if (!b || b.dataset.c === cur) return; cs.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); segMove(cs); cur = b.dataset.c; tween(cur === 'IRT' ? 1000000 : 10000000); };
+const cal = $('cal'), dates = [`${num(18)} ${JM[L][6]} ${num(1405)}`, new Date(2026, 9, 10).toLocaleDateString(L === 'fa' ? 'fa-u-ca-gregory' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })]; let di = 0; cal.textContent = dates[0];
+setInterval(() => { cal.classList.add('swp'); setTimeout(() => { di ^= 1; cal.textContent = dates[di]; cal.classList.remove('swp'); }, 350); }, 2800);
+$('fnet').textContent = t('net') + ' ✓';
+$('i1').innerHTML = ico('plus', 20); $('i2').innerHTML = ico('wallet', 20); $('i3').innerHTML = ico('chart', 20);
+$('stats').innerHTML = [32, 2, 2, 2].map((n, i) => `<div><b data-n="${n}">0</b><span>${t('stl')[i]}</span></div>`).join('');
+// reveal on scroll (+ count-ups when the stats appear)
+const io = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; e.target.classList.add('vis'); io.unobserve(e.target);
+  e.target.querySelectorAll('[data-n]').forEach(b => countTo(b, +b.dataset.n, v => num(Math.round(v)))); }), { threshold: .15 });
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
+requestAnimationFrame(() => segMove(cs));
+const bar = $('bar'); addEventListener('scroll', () => bar.classList.toggle('sc', scrollY > 20), { passive: true });
+</script>
+</body>
+</html>

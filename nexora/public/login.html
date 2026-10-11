@@ -1,0 +1,26 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0A0A0F">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Vazirmatn:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script><link rel="stylesheet" href="css/app.css"><script src="js/app.js"></script><title>NEXORA</title></head><body><div class="auth"><section class="auth-form in"><div class="auth-top"><a href="index.html" class="brand" style="padding:0"><span class="logo">N</span><b>NEXORA</b></a><button id="lg" class="btn btn-sm" type="button">FA</button></div>
+<h1 data-i18n="login"></h1><p class="muted sub" data-i18n="sub_login"></p>
+<form id="f" novalidate class="space-y-3.5"><div><label class="lbl" for="email" data-i18n="email"></label><input id="email" name="email" type="email" autocomplete="email" dir="ltr" class="input"><p class="err" data-e="email"></p></div><div><label class="lbl" for="password" data-i18n="password"></label><div class="pw"><input id="password" name="password" type="password" autocomplete="current-password" dir="ltr" class="input"><button type="button" data-eye aria-label="show"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button></div><p class="err" data-e="password"></p></div>
+<div class="flex items-center justify-between text-sm"><label class="muted flex items-center gap-2"><input type="checkbox" name="remember"><span data-i18n="remember"></span></label><button type="button" id="fg" class="muted underline" data-i18n="forgot" style="background:none;border:0;cursor:pointer;font:inherit"></button></div>
+<button class="btn btn-grad w-full" style="height:2.9rem" data-i18n="login"></button></form>
+<p class="muted mt-5 text-sm"><span data-i18n="noacc"></span> <a href="signup.html" class="text-white underline" data-i18n="signup"></a></p></section><aside class="auth-art"><a href="index.html" class="brand"><span class="logo">N</span><b>NEXORA</b></a>
+  <div><h2 data-i18n="brand_h"></h2><p data-i18n="brand_s"></p></div>
+  <div class="glass prev" dir="ltr"><p class="muted" style="margin:0;font-size:.85rem" data-i18n="balance"></p><p class="big" style="margin:.2rem 0 .6rem">24,580,000</p>
+  <svg viewBox="0 0 300 70" style="width:100%;height:70px" preserveAspectRatio="none"><defs><linearGradient id="pg" x1="0" x2="1"><stop offset="0" stop-color="#6366F1"/><stop offset=".6" stop-color="#8B5CF6"/><stop offset="1" stop-color="#EC4899"/></linearGradient></defs><path d="M0 55 C40 50 60 58 100 40 S170 30 200 34 S260 12 300 8" fill="none" stroke="url(#pg)" stroke-width="3" stroke-linecap="round"/></svg></div></aside></div>
+<script>
+i18n(); initAuth();
+const f = document.getElementById('f');
+const show = (k, msg) => { f.querySelector('[data-e=' + k + ']').textContent = msg || ''; f[k].classList.toggle('bad', !!msg); };
+document.getElementById('fg').onclick = () => toast(t('forgot_msg'));
+f.onsubmit = async e => {
+  e.preventDefault();
+  ['email','password'].forEach(k => show(k));
+  const b = { email: f.email.value.trim(), password: f.password.value, remember: f.remember.checked };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(b.email)) return show('email', t('err_email'));
+  if (!b.password) return show('password', t('err_req'));
+  try { await api('/auth/login', { method: 'POST', body: b }); location.href = 'dashboard.html'; }
+  catch (er) { show('password', t('err_' + er.message)); }
+};
+</script></body></html>

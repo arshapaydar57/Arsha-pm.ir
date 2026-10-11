@@ -1,0 +1,46 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0A0A0F">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Vazirmatn:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script><link rel="stylesheet" href="css/app.css"><script src="js/app.js"></script><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><title>NEXORA</title></head>
+<body><script>
+(async () => {
+  const user = await guard(), m = shell('dashboard'), accs = (await api('/accounts')).accounts, nf = L === 'fa' ? 'fa-IR' : 'en-US';
+  m.innerHTML = `<header class="page-h in"><div><p class="muted">${t('welcome')}</p><h1>${esc(user.name)}</h1></div>
+      <div class="actions"><select id="acc" class="input sel">${accOptions(accs, true)}</select><button id="add" class="btn btn-grad">${ico('plus')}${t('add_btn')}</button></div></header>
+    <section class="hero in" style="--i:1"><div style="position:relative"><p class="muted" style="margin:0">${t('balance')}</p><p class="big" id="bal">…</p></div><div dir="ltr" id="sp" style="position:relative"></div></section>
+    <div id="kpi" class="grid3"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
+    <div class="charts"><div class="glass card in" style="--i:3"><h2>${t('trend')}<small>${t('trend_sub')}</small></h2><div style="height:260px"><canvas id="c1"></canvas></div></div>
+      <div class="glass card in" style="--i:4"><h2>${t('by_cat')}</h2><div style="height:260px"><canvas id="c2"></canvas></div><p id="nd" class="muted hidden" style="text-align:center">${t('no_data')}</p></div></div>
+    <div class="glass card in tw" style="--i:5;margin-top:1rem"><div style="display:flex;justify-content:space-between;padding:.9rem .6rem .4rem"><h2 style="margin:0">${t('recent')}</h2><a href="transactions.html" class="muted" style="font-size:.85rem">${t('view_all')}</a></div>
+      <table><thead><tr><th>${t('description')}</th><th>${t('category')}</th><th>${t('date')}</th><th style="text-align:end">${t('amount')}</th></tr></thead><tbody id="rec"></tbody></table></div>`;
+  Chart.defaults.color = 'rgba(235,235,245,.55)'; Chart.defaults.borderColor = 'rgba(255,255,255,.06)'; Chart.defaults.font.family = L === 'fa' ? 'Vazirmatn' : 'Inter';
+  let c1, c2;
+  async function load() {
+    const acc = document.getElementById('acc').value, s = await api('/reports/summary' + (acc ? '?account=' + acc : ''));
+    countTo(document.getElementById('bal'), s.balance, v => money(Math.round(v), s.currency));
+    const nets = s.trend.map(r => r.income - r.expense); let run = s.balance - nets.reduce((a, b) => a + b, 0);
+    document.getElementById('sp').innerHTML = spark(nets.map(n => (run += n)));
+    const inc = s.month.income, exp = s.month.expense, rate = inc > 0 ? Math.round((inc - exp) / inc * 100) + '%' : '—';
+    const K = (i, ic, cls, lb, v, raw) => `<div class="glass kpi in" style="--i:${i}"><span class="kico ${cls}">${ico(ic, 20)}</span><p class="muted">${lb}</p><p class="kv" ${raw === undefined ? '' : `data-n="${raw}" data-c="${s.currency}"`}>${v}</p></div>`;
+    document.getElementById('kpi').innerHTML = K(2, 'down', 'i', t('income_m'), money(inc, s.currency), inc) + K(3, 'up', 'e', t('expense_m'), money(exp, s.currency), exp) + K(4, 'pct', 's', t('savings'), L === 'fa' ? rate.replace(/\d+/, d => num(d)) : rate);
+    document.querySelectorAll('.kv[data-n]').forEach(e => countTo(e, +e.dataset.n, x => money(Math.round(x), e.dataset.c)));
+    c1 && c1.destroy(); c2 && c2.destroy();
+    const fill = rgb => c => { const { ctx, chartArea } = c.chart; if (!chartArea) return null; const g = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom); g.addColorStop(0, `rgba(${rgb},.32)`); g.addColorStop(1, `rgba(${rgb},0)`); return g; };
+    c1 = new Chart('c1', { type: 'line', data: { labels: s.trend.map(r => r.label), datasets: [
+      { label: t('income'), data: s.trend.map(r => r.income), borderColor: '#818CF8', backgroundColor: fill('99,102,241'), fill: true, tension: .4, borderWidth: 2.5, pointRadius: 0, pointHoverRadius: 5 },
+      { label: t('expense'), data: s.trend.map(r => r.expense), borderColor: '#F472B6', backgroundColor: fill('236,72,153'), fill: true, tension: .4, borderWidth: 2.5, pointRadius: 0, pointHoverRadius: 5 }] },
+      options: { animation: { duration: 1500, easing: 'easeOutQuart', delay: c => c.type === 'data' && c.mode === 'default' ? c.dataIndex * 110 + c.datasetIndex * 220 : 0 }, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } }, tooltip: { callbacks: { label: c => ' ' + c.dataset.label + ': ' + money(c.parsed.y, s.currency) } } },
+        scales: { x: { grid: { display: false } }, y: { beginAtZero: true, border: { display: false }, ticks: { maxTicksLimit: 5, callback: v => new Intl.NumberFormat(nf, { notation: 'compact' }).format(v) } } } } });
+    document.getElementById('nd').classList.toggle('hidden', s.categories.length > 0);
+    c2 = new Chart('c2', { type: 'doughnut', data: { labels: s.categories.map(c => catName(c.category)), datasets: [{ data: s.categories.map(c => c.total), borderWidth: 0, borderRadius: 6, spacing: 3, hoverOffset: 10,
+      backgroundColor: ['#6366F1','#8B5CF6','#EC4899','#38BDF8','#34D399','#FBBF24','#F87171','#A78BFA','#F472B6','#94A3B8'] }] },
+      options: { animation: { animateRotate: true, animateScale: true, duration: 1600, easing: 'easeOutQuart' }, maintainAspectRatio: false, cutout: '72%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 12 } }, tooltip: { callbacks: { label: c => ' ' + money(c.parsed, s.currency) } } } } });
+    const { transactions } = await api('/transactions?limit=8' + (acc ? '&account=' + acc : ''));
+    document.getElementById('rec').innerHTML = transactions.map(r => txRow(r)).join('') || `<tr><td colspan="4" class="muted" style="text-align:center;padding:2rem">${t('empty')}</td></tr>`;
+    stagger('rec');
+  }
+  window.refresh = load;
+  document.getElementById('add').onclick = () => txModal(null, load);
+  document.getElementById('acc').onchange = load;
+  load();
+})();
+</script></body></html>
