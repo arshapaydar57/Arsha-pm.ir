@@ -44,7 +44,7 @@ Object.assign(T.fa, { add_btn:'افزودن تراکنش', welcome:'خوش آم�
 const ICO = { dash:'<rect width="7" height="9" x="3" y="3" rx="1.5"/><rect width="7" height="5" x="14" y="3" rx="1.5"/><rect width="7" height="9" x="14" y="12" rx="1.5"/><rect width="7" height="5" x="3" y="16" rx="1.5"/>',
   swap:'<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>', chart:'<path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
   gear:'<path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/>', out:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
-  plus:'<path d="M5 12h14"/><path d="M12 5v14"/>', up:'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>', down:'<path d="M17 7 7 17"/><path d="M17 17H7V7"/>',
+  filter:'<path d="M3 5h18"/><path d="M6 12h12"/><path d="M10 19h4"/>', plus:'<path d="M5 12h14"/><path d="M12 5v14"/>', up:'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>', down:'<path d="M17 7 7 17"/><path d="M17 17H7V7"/>',
   wallet:'<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
   search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>', dl:'<path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>',
   eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>', pct:'<path d="m19 5-14 14"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>' };
@@ -91,7 +91,11 @@ function i18n(root = document) {
   root.querySelectorAll('[data-i18n]').forEach(e => e.textContent = t(e.dataset.i18n));
   root.querySelectorAll('[data-ph]').forEach(e => e.placeholder = t(e.dataset.ph));
 }
-function toast(msg) { const e = document.createElement('div'); e.className = 'toast'; e.textContent = msg; document.body.append(e); setTimeout(() => e.classList.add('out'), 2400); setTimeout(() => e.remove(), 2750); }
+function toast(msg, act) {
+  const e = document.createElement('div'); e.className = 'toast'; e.textContent = msg;
+  if (act) { const b = document.createElement('button'); b.textContent = act.label; b.onclick = () => { act.fn(); e.remove(); }; e.append(b); }
+  document.body.append(e); const ms = act ? 5200 : 2400; setTimeout(() => e.classList.add('out'), ms); setTimeout(() => e.remove(), ms + 350);
+}
 
 /* Currency: Toman and Rial (1 Toman = 10 Rial) */
 const CURS = { IRT: ['Toman', 'تومان'], IRR: ['Rial', 'ریال'] };
@@ -216,7 +220,18 @@ async function api(path, opt = {}) {
   const id = (p.match(/^\/transactions\/(\d+)$/) || [])[1];
   if (id && m === 'PUT') { const v = cleanTx(b, A); if (!mine.some(x => x.id == id)) fail('not_found'); DB.set('tx', all.map(x => x.id == id && x.user_id === me.id ? { ...x, ...v } : x)); return { ok: true }; }
   if (id && m === 'DELETE') { DB.set('tx', all.filter(x => !(x.id == id && x.user_id === me.id))); return { ok: true }; }
-  if (p === '/reports/summary') return summarize(Q.account ? mine.filter(x => x.account_id == Q.account) : mine, accs, Q.account || null);
+  if (p === '/reports/summary') return { ...summarize(Q.account ? mine.filter(x => x.account_id == Q.account) : mine, accs, Q.account || null),
+    accounts: accs.map(a => ({ id: a.id, name: a.name, currency: a.currency, balance: mine.filter(x => x.account_id === a.id).reduce((s, x) => s + (x.type === 'income' ? x.amount : -x.amount), 0) })) };
+  // Backup / restore (accounts + transactions only; never passwords)
+  if (p === '/backup') return { app: 'nexora', version: 1, exported: todayISO(), accounts: accs.map(({ user_id, ...a }) => a), transactions: mine.map(({ user_id, ...r }) => r) };
+  if (p === '/restore' && m === 'POST') {
+    if (!(b && b.app === 'nexora' && Array.isArray(b.accounts) && Array.isArray(b.transactions) && b.accounts.length && b.accounts.length < 200 && b.transactions.length < 200000)) fail('backup');
+    try {
+      const idMap = {}, na = b.accounts.map((a, i) => { if (!CURS[a.currency] || !String(a.name || '').trim()) throw 0; const id = nid() + i; idMap[a.id] = id; return { id, user_id: me.id, name: String(a.name).trim().slice(0, 40), currency: a.currency }; });
+      const NA = Object.fromEntries(na.map(a => [a.id, a])), nt = b.transactions.map((r, k) => { if (!idMap[r.account_id]) throw 0; return { id: nid() + 1000 + k, user_id: me.id, ...cleanTx({ ...r, account_id: idMap[r.account_id] }, NA) }; });
+      saveAcc(na); DB.set('tx', [...all.filter(x => x.user_id !== me.id), ...nt]); return { ok: true };
+    } catch (e) { fail('backup'); }
+  }
   fail('not_found');
 }
 async function guard() { try { return (await api('/auth/me')).user; } catch (e) { location.href = 'login.html'; await new Promise(() => {}); } }
@@ -246,6 +261,7 @@ function shell(active) {
   const btn = (id, ic, label) => `<button class="nav" id="${id}" aria-label="${label}">${ico(ic, 20)}<span>${label}</span></button>`;
   document.body.insertAdjacentHTML('afterbegin', `<div class="app"><aside class="side glass">
     <a href="index.html" class="brand"><span class="logo">N</span><b>NEXORA</b></a>
+    <button class="cmdk" id="cmdk">${ico('search', 16)}<span>${t('cmd_hint')}</span><kbd>Ctrl K</kbd></button>
     <nav class="menu">${item('dashboard', 'dashboard.html', 'dash', t('dashboard'))}${item('transactions', 'transactions.html', 'swap', t('transactions'))}${btn('nReports', 'chart', t('reports'))}${btn('nSettings', 'gear', t('settings'))}${btn('nLogout', 'out', t('logout'))}</nav>
     <div class="user"><span class="avatar">${esc((u.name || '?').trim().slice(0, 1).toUpperCase())}</span><div><b>${esc(u.name)}</b><small>${esc(u.email)}</small></div></div></aside>
     <main id="main" class="main"></main></div><button class="fab" id="fab" aria-label="${t('add_btn')}">${ico('plus', 24)}</button>`);
@@ -253,6 +269,7 @@ function shell(active) {
   document.getElementById('nSettings').onclick = settingsModal;
   document.getElementById('nLogout').onclick = async () => { await api('/auth/logout', { method: 'POST' }).catch(() => {}); location.href = 'login.html'; };
   document.getElementById('fab').onclick = () => txModal(null, () => window.refresh ? window.refresh() : location.reload());
+  document.getElementById('cmdk').onclick = palette;
   return document.getElementById('main');
 }
 
@@ -266,7 +283,8 @@ async function settingsModal() {
     <p class="lbl mt-4">${t('display_cur')} <span class="text-xs">(${t('rate_note')})</span></p>${seg('cur', CUR, [['IRT', t('toman')], ['IRR', t('rial')]])}
     <p class="lbl mt-4">${t('accounts')}</p><div class="space-y-2">${accs.map(a => `<div class="flex items-center justify-between gap-2"><span>${esc(a.name)} <span class="chip">${curName(a.currency)}</span></span>
       <span class="flex gap-1"><button class="btn" data-ren="${a.id}">${t('rename')}</button><button class="btn" data-dac="${a.id}">${t('delete')}</button></span></div>`).join('')}</div>
-    <div class="mt-3 flex gap-2"><input id="an" class="input" placeholder="${t('account_name')}"><select id="ac" class="input" style="width:8rem"><option value="IRT">${t('toman')}</option><option value="IRR">${t('rial')}</option></select><button id="aa" class="btn btn-grad">+</button></div>`);
+    <div class="mt-3 flex gap-2"><input id="an" class="input" placeholder="${t('account_name')}"><select id="ac" class="input" style="width:8rem"><option value="IRT">${t('toman')}</option><option value="IRR">${t('rial')}</option></select><button id="aa" class="btn btn-grad">+</button></div>
+    <p class="lbl mt-4">${t('backup')}</p><div class="flex flex-wrap gap-2"><button class="btn" id="bk">${ico('dl')}${t('dl_backup')}</button><button class="btn" id="rs">${t('restore')}</button><input type="file" id="rf" accept="application/json,.json" class="hidden"></div>`);
   const again = () => { m.remove(); settingsModal(); };
   m.onclick = async e => {
     try {
@@ -275,7 +293,14 @@ async function settingsModal() {
       if (r) { const n = prompt(t('account_name')); if (n) { await api('/accounts/' + r.dataset.ren, { method: 'PUT', body: { name: n } }); again(); } }
       if (d && confirm(t('confirm_del'))) { await api('/accounts/' + d.dataset.dac, { method: 'DELETE' }); again(); }
       if (e.target.id === 'aa') { await api('/accounts', { method: 'POST', body: { name: m.querySelector('#an').value, currency: m.querySelector('#ac').value } }); again(); }
+      if (e.target.closest('#bk')) { const d = await api('/backup'), a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(d)], { type: 'application/json' })); a.download = 'nexora-backup-' + todayISO() + '.json'; a.click(); }
+      if (e.target.closest('#rs')) m.querySelector('#rf').click();
     } catch (er) { toast(t('err_' + er.message)); }
+  };
+  m.querySelector('#rf').onchange = async ev => {
+    try { const f = ev.target.files[0]; if (!f) return; let d; try { d = JSON.parse(await f.text()); } catch (x) { fail('backup'); }
+      if (!confirm(t('restore_confirm'))) return; await api('/restore', { method: 'POST', body: d }); toast(t('restored')); setTimeout(() => location.reload(), 700); }
+    catch (er) { toast(t('err_' + er.message)); }
   };
 }
 
@@ -326,7 +351,7 @@ async function txModal(tx, done) {
   const m = modal(`<h2 class="mb-4 text-lg font-semibold">${tx ? t('edit') : t('new')}</h2><form id="tf" novalidate class="space-y-3">
     <input type="hidden" name="type" value="expense"><div class="seg" id="sg"><button type="button" data-v="expense">${ico('up', 16)}${t('expense')}</button><button type="button" data-v="income">${ico('down', 16)}${t('income')}</button></div>
     <div><label class="lbl">${t('account')}</label><select name="account_id" class="input">${accOptions(accs, false, tx ? tx.account_id : (accs.find(a => a.id == last) || accs[0]).id)}</select></div>
-    <div><label class="lbl">${t('amount')} <span id="cu" class="muted"></span></label><input name="amount" type="number" step="any" min="0" inputmode="decimal" class="input"><p class="err" data-e="amount"></p></div>
+    <div><label class="lbl">${t('amount')} <span id="cu" class="muted"></span></label><input name="amount" type="text" inputmode="decimal" autocomplete="off" dir="ltr" class="input" style="text-align:start"><p class="err" data-e="amount"></p></div>
     <div><label class="lbl">${t('category')}</label><select name="category" class="input"></select></div>
     <div><label class="lbl">${t('description')}</label><input name="description" maxlength="200" class="input"></div>
     <div><label class="lbl">${t('date')}</label>${dateField('dt', tx ? tx.date : todayISO())}<p class="err" data-e="date"></p></div>
@@ -335,15 +360,16 @@ async function txModal(tx, done) {
   const fillCats = keep => { const list = f.type.value === 'income' ? INC_CATS : EXP_CATS; if (keep && !list.includes(keep)) list.push(keep);
     f.category.innerHTML = list.map(c => `<option value="${c}">${catName(c)}</option>`).join(''); if (keep) f.category.value = keep; };
   const cur = () => { const a = accs.find(q => q.id == f.account_id.value); m.querySelector('#cu').textContent = a ? '(' + curName(a.currency) + ')' : ''; };
-  if (tx) { f.type.value = tx.type; f.amount.value = tx.amount; f.description.value = tx.description; }
+  if (tx) { f.type.value = tx.type; f.amount.value = Number(tx.amount).toLocaleString('en-US', { maximumFractionDigits: 2 }); f.description.value = tx.description; }
   fillCats(tx && tx.category); cur();
   const sg = m.querySelector('#sg'), sync = () => { sg.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === f.type.value)); segMove(sg); };
   sg.onclick = e => { const b = e.target.closest('button'); if (b) { f.type.value = b.dataset.v; sync(); fillCats(); } }; sync();
+  f.amount.oninput = () => fmtAmtInput(f.amount);
   f.account_id.onchange = cur;
   m.querySelector('#tc').onclick = () => m.remove();
   f.onsubmit = async e => {
     e.preventDefault();
-    const body = Object.fromEntries(new FormData(f)); body.date = readDate(m.querySelector('#dt')); let bad = false;
+    const body = Object.fromEntries(new FormData(f)); body.date = readDate(m.querySelector('#dt')); body.amount = parseAmt(body.amount); let bad = false;
     m.querySelectorAll('.err').forEach(q => q.textContent = '');
     if (!(Number(body.amount) > 0)) { m.querySelector('[data-e=amount]').textContent = t('err_amount'); bad = true; }
     if (!body.date) { m.querySelector('[data-e=date]').textContent = t('err_date'); bad = true; }
@@ -354,7 +380,7 @@ async function txModal(tx, done) {
 }
 
 /* One table row: icon + description, category, date, amount (+ edit/delete when `actions`) */
-const txRow = (r, actions) => `<tr class="row"><td><div class="cell"><span class="tico ${r.type}">${ico(r.type === 'income' ? 'down' : 'up', 16)}</span><div><b>${esc(r.description) || esc(catName(r.category))}</b><small>${esc(r.account || '')}</small></div></div></td>
+const txRow = (r, actions) => `<tr class="row"><td><div class="cell"><span class="tico ${r.type}">${ico(r.type === 'income' ? 'down' : 'up', 16)}</span><div><b>${esc(r.description) || esc(catName(r.category))}</b><small>${esc(r.account || '')}<span class="mcat"> · ${esc(catName(r.category))}</span></small></div></div></td>
   <td><span class="chip">${esc(catName(r.category))}</span></td><td class="muted">${fmtDate(r.date)}</td>
   <td class="amt ${r.type === 'income' ? 'inc' : 'exp'}">${r.type === 'income' ? '+' : '−'}${money(r.amount, r.currency)}</td>
   ${actions ? `<td class="acts"><button class="btn btn-sm" data-ed="${r.id}">${t('edit_b')}</button><button class="btn btn-sm" data-del="${r.id}">${t('delete')}</button></td>` : ''}</tr>`;
@@ -375,3 +401,43 @@ const txRow = (r, actions) => `<tr class="row"><td><div class="cell"><span class
   });
   addEventListener('pageshow', () => document.body.classList.remove('leaving'));
 })();
+
+/* ---------- amounts: Persian/Arabic digits accepted, thousands separators while typing ---------- */
+const digits = s => String(s).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+const parseAmt = s => Number(digits(s).replace(/[,٬\s]/g, '').replace('٫', '.'));
+function fmtAmtInput(el) {
+  const fromEnd = el.value.length - (el.selectionStart ?? el.value.length), raw = digits(el.value).replace(/[,٬\s]/g, '').replace('٫', '.').replace(/[^\d.]/g, ''), [i, ...f] = raw.split('.');
+  el.value = i.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (f.length ? '.' + f.join('').slice(0, 2) : '');
+  const p = Math.max(el.value.length - fromEnd, 0); try { el.setSelectionRange(p, p); } catch (e) {}
+}
+const yest = () => { const d = new Date(todayISO() + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() - 1); return d.toISOString().slice(0, 10); };
+
+/* ---------- command palette (Ctrl/Cmd + K) and shortcut N = new transaction ---------- */
+function palette() {
+  const done = () => window.refresh ? window.refresh() : location.reload();
+  const cmds = [[t('add_btn'), 'plus', () => txModal(null, done)], [t('dashboard'), 'dash', () => { location.href = 'dashboard.html'; }], [t('transactions'), 'swap', () => { location.href = 'transactions.html'; }],
+    [t('export_t'), 'dl', exportModal], [t('settings'), 'gear', settingsModal], [t('cmd_lang'), 'gear', () => setLang(L === 'fa' ? 'en' : 'fa')],
+    [t('cmd_cal'), 'gear', () => setPref('cal', CAL === 'jalali' ? 'gregorian' : 'jalali')], [t('cmd_cur'), 'gear', () => setPref('cur', CUR === 'IRT' ? 'IRR' : 'IRT')],
+    [t('logout'), 'out', async () => { await api('/auth/logout', { method: 'POST' }).catch(() => {}); location.href = 'login.html'; }]];
+  const m = modal(`<div class="search">${ico('search')}<input id="pq" class="input" placeholder="${t('cmd_ph')}" autocomplete="off"></div><div class="pl" id="pl"></div>`);
+  m.classList.add('palm'); let sel = 0, list = cmds; const q = m.querySelector('#pq');
+  const draw = () => { m.querySelector('#pl').innerHTML = list.map((c, i) => `<button class="pi ${i === sel ? 'on' : ''}" data-i="${i}">${ico(c[1], 18)}<span>${esc(c[0])}</span></button>`).join(''); };
+  const run = i => { const c = list[i]; if (c) { m.remove(); setTimeout(c[2], 150); } };
+  draw(); q.focus();
+  q.oninput = () => { const v = q.value.toLowerCase(); list = cmds.filter(c => c[0].toLowerCase().includes(v)); sel = 0; draw(); };
+  q.onkeydown = e => { if (e.key === 'ArrowDown') { sel = Math.min(sel + 1, list.length - 1); draw(); e.preventDefault(); } else if (e.key === 'ArrowUp') { sel = Math.max(sel - 1, 0); draw(); e.preventDefault(); } else if (e.key === 'Enter') run(sel); else if (e.key === 'Escape') m.remove(); };
+  m.querySelector('#pl').onclick = e => { const b = e.target.closest('[data-i]'); if (b) run(+b.dataset.i); };
+}
+addEventListener('keydown', e => {
+  if (!document.getElementById('nSettings') || document.querySelector('.modal')) return;
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); palette(); }
+  else if (e.key === 'n' && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) { e.preventDefault(); txModal(null, () => window.refresh ? window.refresh() : location.reload()); }
+});
+Object.assign(T.en, { today:'Today', yesterday:'Yesterday', undo:'Undo', backup:'Backup & restore', dl_backup:'Download backup', restore:'Restore from file', restore_confirm:'Replace ALL your accounts and transactions with the data in this file?',
+  restored:'Restored', err_backup:'This is not a valid NEXORA backup file.', vs_prev:'vs last month', top_spend:'Top spending', cmd_hint:'Search or jump to…', cmd_ph:'Type a command…',
+  cmd_lang:'Switch language (فارسی / English)', cmd_cal:'Switch calendar (Jalali / Gregorian)', cmd_cur:'Switch currency (Toman / Rial)', onb_t:"Let's get you set up", onb1:'Account created', onb2:'Add your first transaction', onb3:'Choose calendar and currency' });
+Object.assign(T.fa, { today:'امروز', yesterday:'دیروز', undo:'بازگرداندن', backup:'پشتیبان‌گیری و بازیابی', dl_backup:'دانلود نسخه پشتیبان', restore:'بازیابی از فایل', restore_confirm:'همه حساب‌ها و تراکنش‌های فعلی شما با اطلاعات این فایل جایگزین شود؟',
+  restored:'بازیابی شد', err_backup:'این فایل، نسخه پشتیبان معتبر نکسورا نیست.', vs_prev:'نسبت به ماه قبل', top_spend:'بیشترین هزینه', cmd_hint:'جستجو یا پرش به…', cmd_ph:'یک دستور بنویسید…',
+  cmd_lang:'تغییر زبان (فارسی / English)', cmd_cal:'تغییر تقویم (شمسی / میلادی)', cmd_cur:'تغییر واحد پول (تومان / ریال)', onb_t:'بیایید شروع کنیم', onb1:'حساب ساخته شد', onb2:'اولین تراکنش را اضافه کنید', onb3:'تقویم و واحد پول را انتخاب کنید' });
+// installable + works offline (network first, cache as fallback)
+if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));

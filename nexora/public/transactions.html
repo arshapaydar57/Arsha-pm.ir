@@ -1,4 +1,4 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0A0A0F">
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/icon-192.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0A0A0F">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Vazirmatn:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com/3.4.17"></script><link rel="stylesheet" href="css/app.css"><script src="js/app.js"></script><title>NEXORA</title></head>
 <body><script>
@@ -6,22 +6,26 @@
   await guard(); const m = shell('transactions'); const accs = (await api('/accounts')).accounts;
   const opts = [...new Set([...EXP_CATS, ...INC_CATS])].map(c => `<option value="${c}">${catName(c)}</option>`).join('');
   m.innerHTML = `<header class="page-h in"><div><p class="muted" id="cnt">&nbsp;</p><h1>${t('transactions')}</h1></div>
-      <div class="actions"><button id="ex" class="btn">${ico('dl')}${t('export')}</button><button id="add" class="btn btn-grad">${ico('plus')}${t('add_btn')}</button></div></header>
-    <div class="glass toolbar in" style="--i:1"><div class="search">${ico('search')}<input id="q" class="input" placeholder="${t('search')}"></div>
+      <div class="actions"><button id="ex" class="btn">${ico('dl')}${t('export')}</button><button id="add" class="btn btn-grad hm">${ico('plus')}${t('add_btn')}</button></div></header>
+    <div class="glass toolbar in" style="--i:1"><div class="srow"><div class="search">${ico('search')}<input id="q" class="input" placeholder="${t('search')}"></div><button id="ft" class="btn ftbtn" aria-label="Filters" aria-expanded="false">${ico('filter')}</button></div><div class="fw" id="fw">
       <select id="ty" class="input"><option value="">${t('type')}: ${t('all')}</option><option value="income">${t('income')}</option><option value="expense">${t('expense')}</option></select>
       <select id="ca" class="input"><option value="">${t('category')}: ${t('all')}</option>${opts}</select>
       <select id="ac" class="input">${accOptions(accs, true)}</select>
-      <div><label class="lbl">${t('from')}</label>${dateField('fr', '', true)}</div><div><label class="lbl">${t('to')}</label>${dateField('to', '', true)}</div></div>
+      <div><label class="lbl">${t('from')}</label>${dateField('fr', '', true)}</div><div><label class="lbl">${t('to')}</label>${dateField('to', '', true)}</div></div></div>
     <div class="glass card in tw" style="--i:2"><table><thead><tr><th>${t('description')}</th><th>${t('category')}</th><th>${t('date')}</th><th style="text-align:end">${t('amount')}</th><th></th></tr></thead><tbody id="rows"></tbody></table>
       <div id="empty" class="empty hidden"><span class="kico i">${ico('wallet', 24)}</span><p style="margin:0">${t('empty')}</p><button class="btn btn-grad" id="add2">${ico('plus')}${t('add_btn')}</button></div></div>`;
   initDates(m);
+  document.getElementById('ft').onclick = e => { const o = document.getElementById('fw').classList.toggle('open'); e.currentTarget.classList.toggle('on', o); e.currentTarget.setAttribute('aria-expanded', o); };
   let list = [];
   async function load() {
     const p = new URLSearchParams();
     [['q','q'],['ty','type'],['ca','category'],['ac','account']].forEach(([id, k]) => { const v = document.getElementById(id).value; if (v) p.set(k, v); });
     [['fr','from'],['to','to']].forEach(([id, k]) => { const v = readDate(document.getElementById(id)); if (v) p.set(k, v); });
     list = (await api('/transactions?' + p)).transactions;
-    document.getElementById('rows').innerHTML = list.map(r => txRow(r, true)).join(''); stagger('rows');
+    const sums = {}; list.forEach(x => { sums[x.date] = (sums[x.date] || 0) + (x.type === 'income' ? 1 : -1) * conv(x.amount, x.currency, CUR); });
+    const lab = dd => dd === todayISO() ? t('today') : dd === yest() ? t('yesterday') : fmtDate(dd); let html = '', cd = '';
+    list.forEach(r => { if (r.date !== cd) { cd = r.date; const n = sums[cd]; html += `<tr class="day"><td colspan="5"><div class="dayh"><span>${lab(cd)}</span><span class="num ${n >= 0 ? 'inc' : 'exp'}">${n >= 0 ? '+' : '−'}${money(Math.abs(n), CUR)}</span></div></td></tr>`; } html += txRow(r, true); });
+    document.getElementById('rows').innerHTML = html; stagger('rows');
     document.getElementById('empty').classList.toggle('hidden', list.length > 0);
     document.getElementById('cnt').textContent = num(list.length) + ' ' + t('transactions');
   }
@@ -33,7 +37,10 @@
   document.getElementById('rows').onclick = async e => {
     const ed = e.target.closest('[data-ed]'), del = e.target.closest('[data-del]');
     if (ed) txModal(list.find(r => r.id == ed.dataset.ed), load);
-    if (del && confirm(t('confirm_del'))) { await api('/transactions/' + del.dataset.del, { method: 'DELETE' }); toast(t('deleted')); load(); }
+    if (del) {   // delete right away, with a 5-second Undo
+      const old = list.find(r => r.id == del.dataset.del); await api('/transactions/' + del.dataset.del, { method: 'DELETE' }); load();
+      toast(t('deleted'), { label: t('undo'), fn: async () => { const { id, account, currency, ...rest } = old; await api('/transactions', { method: 'POST', body: rest }); load(); } });
+    }
   };
   load();
 })();

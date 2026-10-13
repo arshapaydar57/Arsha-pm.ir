@@ -1,15 +1,16 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0A0A0F">
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/icon-192.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0A0A0F">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Vazirmatn:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com/3.4.17"></script><link rel="stylesheet" href="css/app.css"><script src="js/app.js"></script><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><title>NEXORA</title></head>
 <body><script>
 (async () => {
   const user = await guard(), m = shell('dashboard'), accs = (await api('/accounts')).accounts, nf = L === 'fa' ? 'fa-IR' : 'en-US';
-  m.innerHTML = `<header class="page-h in"><div><p class="muted">${t('welcome')}</p><h1>${esc(user.name)}</h1></div>
-      <div class="actions"><select id="acc" class="input sel">${accOptions(accs, true)}</select><button id="add" class="btn btn-grad">${ico('plus')}${t('add_btn')}</button></div></header>
+  m.innerHTML = `<header class="page-h in"><div><p class="muted">${t('welcome')} · ${fmtDate(todayISO())}</p><h1>${esc(user.name)}</h1></div>
+      <div class="actions"><select id="acc" class="input sel">${accOptions(accs, true)}</select><button id="add" class="btn btn-grad hm">${ico('plus')}${t('add_btn')}</button></div></header>
     <section class="hero in" style="--i:1"><div style="position:relative"><p class="muted" style="margin:0">${t('balance')}</p><p class="big" id="bal">…</p></div><div dir="ltr" id="sp" style="position:relative"></div></section>
+    <div id="strip" class="strip"></div><div id="onb"></div>
     <div id="kpi" class="grid3"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
     <div class="charts"><div class="glass card in" style="--i:3"><h2>${t('trend')}<small>${t('trend_sub')}</small></h2><div style="height:260px"><canvas id="c1"></canvas></div></div>
-      <div class="glass card in" style="--i:4"><h2>${t('by_cat')}</h2><div style="height:260px"><canvas id="c2"></canvas></div><p id="nd" class="muted hidden" style="text-align:center">${t('no_data')}</p></div></div>
+      <div class="glass card in" style="--i:4"><h2>${t('by_cat')}</h2><div style="height:260px"><canvas id="c2"></canvas></div><p id="topc" class="muted" style="text-align:center;margin:.8rem 0 0;font-size:.85rem"></p><p id="nd" class="muted hidden" style="text-align:center">${t('no_data')}</p></div></div>
     <div class="glass card in tw" style="--i:5;margin-top:1rem"><div style="display:flex;justify-content:space-between;padding:.9rem .6rem .4rem"><h2 style="margin:0">${t('recent')}</h2><a href="transactions.html" class="muted" style="font-size:.85rem">${t('view_all')}</a></div>
       <table><thead><tr><th>${t('description')}</th><th>${t('category')}</th><th>${t('date')}</th><th style="text-align:end">${t('amount')}</th></tr></thead><tbody id="rec"></tbody></table></div>`;
   Chart.defaults.color = 'rgba(235,235,245,.55)'; Chart.defaults.borderColor = 'rgba(255,255,255,.06)'; Chart.defaults.font.family = L === 'fa' ? 'Vazirmatn' : 'Inter';
@@ -20,9 +21,14 @@
     const nets = s.trend.map(r => r.income - r.expense); let run = s.balance - nets.reduce((a, b) => a + b, 0);
     document.getElementById('sp').innerHTML = spark(nets.map(n => (run += n)));
     const inc = s.month.income, exp = s.month.expense, rate = inc > 0 ? Math.round((inc - exp) / inc * 100) + '%' : '—';
-    const K = (i, ic, cls, lb, v, raw) => `<div class="glass kpi in" style="--i:${i}"><span class="kico ${cls}">${ico(ic, 20)}</span><p class="muted">${lb}</p><p class="kv" ${raw === undefined ? '' : `data-n="${raw}" data-c="${s.currency}"`}>${v}</p></div>`;
-    document.getElementById('kpi').innerHTML = K(2, 'down', 'i', t('income_m'), money(inc, s.currency), inc) + K(3, 'up', 'e', t('expense_m'), money(exp, s.currency), exp) + K(4, 'pct', 's', t('savings'), L === 'fa' ? rate.replace(/\d+/, d => num(d)) : rate);
+    const prev = s.trend[4] || { income: 0, expense: 0 };
+    const dl = (c, p, good) => { if (!(p > 0)) return ''; const r = Math.round((c - p) / p * 100), up = r >= 0; return `<span class="delta ${(good ? up : !up) ? 'ok' : 'bad'}">${up ? '▲' : '▼'} ${num(Math.abs(r))}% <small>${t('vs_prev')}</small></span>`; };
+    const K = (i, ic, cls, lb, v, raw, dd) => `<div class="glass kpi in" style="--i:${i}"><span class="kico ${cls}">${ico(ic, 20)}</span><p class="muted">${lb}</p><p class="kv" ${raw === undefined ? '' : `data-n="${raw}" data-c="${s.currency}"`}>${v}</p>${dd || ''}</div>`;
+    document.getElementById('kpi').innerHTML = K(2, 'down', 'i', t('income_m'), money(inc, s.currency), inc, dl(inc, prev.income, true)) + K(3, 'up', 'e', t('expense_m'), money(exp, s.currency), exp, dl(exp, prev.expense, false)) + K(4, 'pct', 's', t('savings'), L === 'fa' ? rate.replace(/\d+/, q => num(q)) : rate);
     document.querySelectorAll('.kv[data-n]').forEach(e => countTo(e, +e.dataset.n, x => money(Math.round(x), e.dataset.c)));
+    document.getElementById('strip').innerHTML = s.accounts.length > 1 ? s.accounts.map(a => `<button class="acard glass ${a.id == acc ? 'on' : ''}" data-a="${a.id}"><span class="muted">${esc(a.name)}</span><b class="num">${money(a.balance, a.currency)}</b></button>`).join('') : '';
+    const tc = s.categories[0], tot = s.categories.reduce((q, c) => q + c.total, 0);
+    document.getElementById('topc').innerHTML = tc ? `${t('top_spend')}: <b style="color:#fff">${esc(catName(tc.category))}</b> · ${num(Math.round(tc.total / tot * 100))}%` : '';
     c1 && c1.destroy(); c2 && c2.destroy();
     const fill = rgb => c => { const { ctx, chartArea } = c.chart; if (!chartArea) return null; const g = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom); g.addColorStop(0, `rgba(${rgb},.32)`); g.addColorStop(1, `rgba(${rgb},0)`); return g; };
     c1 = new Chart('c1', { type: 'line', data: { labels: s.trend.map(r => r.label), datasets: [
@@ -37,10 +43,13 @@
     const { transactions } = await api('/transactions?limit=8' + (acc ? '&account=' + acc : ''));
     document.getElementById('rec').innerHTML = transactions.map(r => txRow(r)).join('') || `<tr><td colspan="4" class="muted" style="text-align:center;padding:2rem">${t('empty')}</td></tr>`;
     stagger('rec');
+    document.getElementById('onb').innerHTML = !transactions.length && !acc ? `<div class="glass card in" style="margin-top:1rem"><h2>${t('onb_t')}</h2><div class="onb"><div class="st done"><i>✓</i>${t('onb1')}</div><button class="st" id="o2"><i>2</i>${t('onb2')}</button><button class="st" id="o3"><i>3</i>${t('onb3')}</button></div></div>` : '';
+    const o2 = document.getElementById('o2'); if (o2) { o2.onclick = () => txModal(null, load); document.getElementById('o3').onclick = settingsModal; }
   }
   window.refresh = load;
   document.getElementById('add').onclick = () => txModal(null, load);
   document.getElementById('acc').onchange = load;
+  document.getElementById('strip').onclick = e => { const b = e.target.closest('[data-a]'); if (b) { const sl = document.getElementById('acc'); sl.value = sl.value == b.dataset.a ? '' : b.dataset.a; load(); } };
   load();
 })();
 </script></body></html>
