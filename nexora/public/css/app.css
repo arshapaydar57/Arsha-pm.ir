@@ -175,3 +175,15 @@ button.st{cursor:pointer}button.st:hover{background:rgba(255,255,255,.08);transf
 tr.day{animation:none}tr.day td{border:0!important;padding:0!important}.dayh{display:flex;justify-content:space-between;align-items:baseline;padding:1rem .6rem .35rem;font-size:.82rem;color:var(--muted)}.dayh .num{font-weight:600}
 @media(max-width:1023px){.cmdk{display:none}}
 @media(max-width:640px){tr.day{display:block}tr.day td{display:block}.dayh{padding:1rem 0 .3rem}.palm{padding-top:8vh!important}.palm .box{margin:0 .8rem}}
+
+/* ===== plan (budgets, goals), alerts, transfers ===== */
+.btn-icon{padding:.62rem .8rem}
+.sec{display:flex;justify-content:space-between;align-items:center;margin:2rem 0 1rem;font-size:1.1rem;font-weight:600}
+.cards{display:grid;gap:1rem;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}.pc{padding:1.25rem;display:grid;gap:.5rem}.pc .top{display:flex;justify-content:space-between;align-items:center;gap:.6rem}.pc p{margin:0}.pc .row{display:flex;gap:.5rem;margin-top:.4rem}.pc .row .btn{flex:1}
+.pbar{height:8px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}.pbar i{display:block;height:100%;width:0;border-radius:inherit;background:var(--grad);transition:width 1.2s var(--ease)}
+.pbar.warn i{background:linear-gradient(90deg,#F59E0B,#F97316)}.pbar.over i{background:linear-gradient(90deg,#F43F5E,#EC4899)}.pbar.done i{background:linear-gradient(90deg,#34D399,#10B981)}
+.alerts{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}.alerts:empty{display:none}
+.alert{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .9rem;border-radius:99px;background:rgba(245,158,11,.12);color:#FCD34D;font-size:.82rem;text-decoration:none;border:1px solid rgba(245,158,11,.25);animation:up .6s var(--ease) both}
+.alert.bad{background:rgba(244,63,94,.12);color:#FDA4AF;border-color:rgba(244,63,94,.28)}
+.menu>*:nth-child(6){--n:5}
+@media(max-width:1023px){.nav{font-size:.6rem}}

@@ -5,9 +5,9 @@
 (async () => {
   const user = await guard(), m = shell('dashboard'), accs = (await api('/accounts')).accounts, nf = L === 'fa' ? 'fa-IR' : 'en-US';
   m.innerHTML = `<header class="page-h in"><div><p class="muted">${t('welcome')} · ${fmtDate(todayISO())}</p><h1>${esc(user.name)}</h1></div>
-      <div class="actions"><select id="acc" class="input sel">${accOptions(accs, true)}</select><button id="add" class="btn btn-grad hm">${ico('plus')}${t('add_btn')}</button></div></header>
+      <div class="actions"><button id="hide" class="btn btn-icon" aria-label="Hide amounts">${ico('eye')}</button><select id="acc" class="input sel">${accOptions(accs, true)}</select><button id="add" class="btn btn-grad hm">${ico('plus')}${t('add_btn')}</button></div></header>
     <section class="hero in" style="--i:1"><div style="position:relative"><p class="muted" style="margin:0">${t('balance')}</p><p class="big" id="bal">…</p></div><div dir="ltr" id="sp" style="position:relative"></div></section>
-    <div id="strip" class="strip"></div><div id="onb"></div>
+    <div id="alerts" class="alerts"></div><div id="strip" class="strip"></div><div id="onb"></div>
     <div id="kpi" class="grid3"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
     <div class="charts"><div class="glass card in" style="--i:3"><h2>${t('trend')}<small>${t('trend_sub')}</small></h2><div style="height:260px"><canvas id="c1"></canvas></div></div>
       <div class="glass card in" style="--i:4"><h2>${t('by_cat')}</h2><div style="height:260px"><canvas id="c2"></canvas></div><p id="topc" class="muted" style="text-align:center;margin:.8rem 0 0;font-size:.85rem"></p><p id="nd" class="muted hidden" style="text-align:center">${t('no_data')}</p></div></div>
@@ -27,6 +27,8 @@
     document.getElementById('kpi').innerHTML = K(2, 'down', 'i', t('income_m'), money(inc, s.currency), inc, dl(inc, prev.income, true)) + K(3, 'up', 'e', t('expense_m'), money(exp, s.currency), exp, dl(exp, prev.expense, false)) + K(4, 'pct', 's', t('savings'), L === 'fa' ? rate.replace(/\d+/, q => num(q)) : rate);
     document.querySelectorAll('.kv[data-n]').forEach(e => countTo(e, +e.dataset.n, x => money(Math.round(x), e.dataset.c)));
     document.getElementById('strip').innerHTML = s.accounts.length > 1 ? s.accounts.map(a => `<button class="acard glass ${a.id == acc ? 'on' : ''}" data-a="${a.id}"><span class="muted">${esc(a.name)}</span><b class="num">${money(a.balance, a.currency)}</b></button>`).join('') : '';
+    const bd = (await api('/budgets')).budgets.filter(b => b.spent / b.limit >= .8).sort((a, b) => b.spent / b.limit - a.spent / a.limit);   // budget alerts at 80% and 100%
+    document.getElementById('alerts').innerHTML = bd.map(b => { const q = Math.round(b.spent / b.limit * 100); return `<a href="budgets.html" class="alert ${q >= 100 ? 'bad' : ''}">${ico('target', 16)}<span>${esc(catName(b.category))} · ${num(q)}% ${t('used')}</span></a>`; }).join('');
     const tc = s.categories[0], tot = s.categories.reduce((q, c) => q + c.total, 0);
     document.getElementById('topc').innerHTML = tc ? `${t('top_spend')}: <b style="color:#fff">${esc(catName(tc.category))}</b> · ${num(Math.round(tc.total / tot * 100))}%` : '';
     c1 && c1.destroy(); c2 && c2.destroy();
@@ -35,7 +37,7 @@
       { label: t('income'), data: s.trend.map(r => r.income), borderColor: '#818CF8', backgroundColor: fill('99,102,241'), fill: true, tension: .4, borderWidth: 2.5, pointRadius: 0, pointHoverRadius: 5 },
       { label: t('expense'), data: s.trend.map(r => r.expense), borderColor: '#F472B6', backgroundColor: fill('236,72,153'), fill: true, tension: .4, borderWidth: 2.5, pointRadius: 0, pointHoverRadius: 5 }] },
       options: { animation: { duration: 1500, easing: 'easeOutQuart', delay: c => c.type === 'data' && c.mode === 'default' ? c.dataIndex * 110 + c.datasetIndex * 220 : 0 }, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } }, tooltip: { callbacks: { label: c => ' ' + c.dataset.label + ': ' + money(c.parsed.y, s.currency) } } },
-        scales: { x: { grid: { display: false } }, y: { beginAtZero: true, border: { display: false }, ticks: { maxTicksLimit: 5, callback: v => new Intl.NumberFormat(nf, { notation: 'compact' }).format(v) } } } } });
+        scales: { x: { grid: { display: false } }, y: { beginAtZero: true, border: { display: false }, ticks: { maxTicksLimit: 5, callback: v => PREF.hide ? '' : new Intl.NumberFormat(nf, { notation: 'compact' }).format(v) } } } } });
     document.getElementById('nd').classList.toggle('hidden', s.categories.length > 0);
     c2 = new Chart('c2', { type: 'doughnut', data: { labels: s.categories.map(c => catName(c.category)), datasets: [{ data: s.categories.map(c => c.total), borderWidth: 0, borderRadius: 6, spacing: 3, hoverOffset: 10,
       backgroundColor: ['#6366F1','#8B5CF6','#EC4899','#38BDF8','#34D399','#FBBF24','#F87171','#A78BFA','#F472B6','#94A3B8'] }] },
@@ -49,6 +51,7 @@
   window.refresh = load;
   document.getElementById('add').onclick = () => txModal(null, load);
   document.getElementById('acc').onchange = load;
+  document.getElementById('hide').onclick = () => setPref('hide', !PREF.hide);
   document.getElementById('strip').onclick = e => { const b = e.target.closest('[data-a]'); if (b) { const sl = document.getElementById('acc'); sl.value = sl.value == b.dataset.a ? '' : b.dataset.a; load(); } };
   load();
 })();

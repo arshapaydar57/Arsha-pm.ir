@@ -1,0 +1,38 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/icon-192.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0A0A0F">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Vazirmatn:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script><link rel="stylesheet" href="css/app.css"><script src="js/app.js"></script><title>NEXORA</title></head>
+<body><script>
+(async () => {
+  await guard(); const m = shell('plan'), $ = id => document.getElementById(id);
+  m.innerHTML = `<header class="page-h in"><div><p class="muted">${fmtDate(todayISO())}</p><h1>${t('plan')}</h1></div></header>
+    <section class="in" style="--i:1"><h2 class="sec">${t('budgets')}<button id="ab" class="btn btn-sm">${ico('plus', 16)}${t('add_budget')}</button></h2><div id="bl" class="cards"></div></section>
+    <section class="in" style="--i:2"><h2 class="sec">${t('goals')}<button id="ag" class="btn btn-sm">${ico('plus', 16)}${t('new_goal')}</button></h2><div id="gl" class="cards"></div></section>`;
+  let B = [], G = [];
+  const empty = (txt, ic) => `<div class="glass empty" style="grid-column:1/-1"><span class="kico i">${ico(ic, 24)}</span><p style="margin:0">${txt}</p></div>`;
+  async function load() {
+    B = (await api('/budgets')).budgets; G = (await api('/goals')).goals;
+    $('bl').innerHTML = B.length ? B.map((b, i) => { const q = b.spent / b.limit, left = b.limit - b.spent, cls = q >= 1 ? 'over' : q >= .8 ? 'warn' : '';
+      return `<div class="glass pc in" style="--i:${i}"><div class="top"><b>${esc(catName(b.category))}</b><span class="chip">${num(Math.round(q * 100))}%</span></div><div class="pbar ${cls}"><i data-w="${Math.min(q * 100, 100)}"></i></div>
+        <p class="muted" style="font-size:.85rem">${money(b.spent, b.currency)} / ${money(b.limit, b.currency)}</p>
+        <p style="font-weight:600" class="${left < 0 ? 'exp' : ''}">${left < 0 ? t('over') + ' ' + money(-left, b.currency) : t('remaining') + ': ' + money(left, b.currency)}</p>
+        <div class="row"><button class="btn btn-sm" data-eb="${b.id}">${t('edit_b')}</button><button class="btn btn-sm" data-db="${b.id}">${t('delete')}</button></div></div>`; }).join('') : empty(t('no_budgets'), 'target');
+    $('gl').innerHTML = G.length ? G.map((g, i) => { const q = g.saved / g.target, done = q >= 1; let need = '';
+      if (done) need = t('reached'); else if (g.deadline) { const days = Math.ceil((new Date(g.deadline) - new Date(todayISO())) / 864e5);
+        need = days > 0 ? `${money((g.target - g.saved) / Math.max(1, Math.ceil(days / 30.4)), g.currency)} ${t('per_month')} · ${fmtDate(g.deadline)}` : t('past_deadline'); }
+      return `<div class="glass pc in" style="--i:${i}"><div class="top"><b>${esc(g.name)}</b><span class="chip">${num(Math.min(Math.round(q * 100), 100))}%</span></div><div class="pbar ${done ? 'done' : ''}"><i data-w="${Math.min(q * 100, 100)}"></i></div>
+        <p class="muted" style="font-size:.85rem">${money(g.saved, g.currency)} / ${money(g.target, g.currency)}</p>${need ? `<p style="font-size:.85rem">${need}</p>` : ''}
+        <div class="row"><button class="btn btn-sm btn-grad" data-fg="${g.id}">${t('add_funds')}</button><button class="btn btn-sm" data-dg="${g.id}">${t('delete')}</button></div></div>`; }).join('') : empty(t('no_goals'), 'wallet');
+    requestAnimationFrame(() => requestAnimationFrame(() => document.querySelectorAll('.pbar i').forEach(i => { i.style.width = i.dataset.w + '%'; })));   // bars grow after render
+  }
+  window.refresh = load;
+  $('ab').onclick = () => budgetModal(null, load); $('ag').onclick = () => goalModal(load);
+  m.onclick = async e => {
+    const eb = e.target.closest('[data-eb]'), db = e.target.closest('[data-db]'), fg = e.target.closest('[data-fg]'), dg = e.target.closest('[data-dg]');
+    if (eb) budgetModal(B.find(b => b.id == eb.dataset.eb), load);
+    if (db && confirm(t('confirm_del'))) { await api('/budgets/' + db.dataset.db, { method: 'DELETE' }); toast(t('deleted')); load(); }
+    if (fg) fundModal(G.find(g => g.id == fg.dataset.fg), load);
+    if (dg && confirm(t('confirm_del'))) { await api('/goals/' + dg.dataset.dg, { method: 'DELETE' }); toast(t('deleted')); load(); }
+  };
+  load();
+})();
+</script></body></html>

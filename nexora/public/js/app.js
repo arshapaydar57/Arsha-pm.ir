@@ -44,7 +44,7 @@ Object.assign(T.fa, { add_btn:'افزودن تراکنش', welcome:'خوش آم�
 const ICO = { dash:'<rect width="7" height="9" x="3" y="3" rx="1.5"/><rect width="7" height="5" x="14" y="3" rx="1.5"/><rect width="7" height="9" x="14" y="12" rx="1.5"/><rect width="7" height="5" x="3" y="16" rx="1.5"/>',
   swap:'<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>', chart:'<path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
   gear:'<path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/>', out:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
-  filter:'<path d="M3 5h18"/><path d="M6 12h12"/><path d="M10 19h4"/>', plus:'<path d="M5 12h14"/><path d="M12 5v14"/>', up:'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>', down:'<path d="M17 7 7 17"/><path d="M17 17H7V7"/>',
+  target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>', filter:'<path d="M3 5h18"/><path d="M6 12h12"/><path d="M10 19h4"/>', plus:'<path d="M5 12h14"/><path d="M12 5v14"/>', up:'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>', down:'<path d="M17 7 7 17"/><path d="M17 17H7V7"/>',
   wallet:'<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
   search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>', dl:'<path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>',
   eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>', pct:'<path d="m19 5-14 14"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>' };
@@ -65,13 +65,13 @@ function initAuth() {   // language switch + show/hide password on login/signup
 }
 
 /* ---------- categories: separate lists for expenses and income ---------- */
-const CAT = { groceries:['Groceries','خواربار'], restaurants:['Restaurants & cafes','رستوران و کافه'], food:['Food','خوراک'], rent:['Rent','اجاره'], bills:['Bills & utilities','قبوض'],
+const CAT = { transfer:['Transfer','انتقال'], fees:['Fees & commissions','کارمزد'], groceries:['Groceries','خواربار'], restaurants:['Restaurants & cafes','رستوران و کافه'], food:['Food','خوراک'], rent:['Rent','اجاره'], bills:['Bills & utilities','قبوض'],
   internet:['Internet & phone','اینترنت و تلفن'], transport:['Transport','حمل‌ونقل'], fuel:['Fuel','بنزین'], car:['Car & repairs','خودرو و تعمیرات'], health:['Health','سلامت'],
   education:['Education','آموزش'], shopping:['Shopping','خرید'], clothing:['Clothing','پوشاک'], entertainment:['Entertainment','سرگرمی'], travel:['Travel','سفر'], gifts:['Gifts','هدیه'],
   charity:['Charity','کمک خیریه'], insurance:['Insurance','بیمه'], loans:['Loans & installments','وام و قسط'], subscriptions:['Subscriptions','اشتراک‌ها'], other:['Other','سایر'],
   salary:['Salary','حقوق'], freelance:['Freelance','پروژه آزاد'], business:['Business','کسب‌وکار'], investment:['Investment','سرمایه‌گذاری'], interest:['Bank interest','سود بانکی'],
   rent_income:['Rental income','درآمد اجاره'], bonus:['Bonus','پاداش'], gift_in:['Gift received','هدیه دریافتی'], refund:['Refund','بازگشت وجه'], sale:['Sale','فروش'], other_in:['Other income','سایر درآمدها'] };
-const EXP_CATS = ['groceries','restaurants','food','rent','bills','internet','transport','fuel','car','health','education','shopping','clothing','entertainment','travel','gifts','charity','insurance','loans','subscriptions','other'];
+const EXP_CATS = ['groceries','restaurants','food','rent','bills','internet','transport','fuel','car','health','education','shopping','clothing','entertainment','travel','gifts','charity','insurance','loans','subscriptions','fees','other'];
 const INC_CATS = ['salary','freelance','business','investment','interest','rent_income','bonus','gift_in','refund','sale','other_in'];
 const catName = (c, l = typeof L === 'undefined' ? 'en' : L) => (CAT[c] || [c, c])[l === 'fa' ? 1 : 0];
 
@@ -101,7 +101,7 @@ function toast(msg, act) {
 const CURS = { IRT: ['Toman', 'تومان'], IRR: ['Rial', 'ریال'] };
 const curName = (c, l = L) => CURS[c][l === 'fa' ? 1 : 0];
 const conv = (v, from, to) => from === to ? v : from === 'IRT' ? v * 10 : v / 10;
-const money = (n, c = CUR, l = L) => new Intl.NumberFormat(l === 'fa' ? 'fa-IR' : 'en-US', { maximumFractionDigits: 2 }).format(n || 0) + ' ' + curName(c, l);
+const money = (n, c = CUR, l = L) => (PREF.hide ? '••••' : new Intl.NumberFormat(l === 'fa' ? 'fa-IR' : 'en-US', { maximumFractionDigits: 2 }).format(n || 0)) + ' ' + curName(c, l);   // PREF.hide = privacy mode
 
 /* Jalali (Persian) calendar via the browser's built-in Intl; dates are always stored as Gregorian YYYY-MM-DD */
 const JM = { fa: ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'], en: ['Farvardin','Ordibehesht','Khordad','Tir','Mordad','Shahrivar','Mehr','Aban','Azar','Dey','Bahman','Esfand'] };
@@ -169,7 +169,7 @@ function summarize(rows, accs, accId) {
   const [cy, cm] = J ? toJ(todayISO()) : todayISO().split('-').map(Number);
   const months = [...Array(6)].map((_, i) => { let y = cy, m = cm - 5 + i; while (m < 1) { m += 12; y--; } return [y, m]; });
   const lab = ([y, m]) => J ? JM[L][m - 1] : new Date(y, m - 1, 1).toLocaleDateString(L === 'fa' ? 'fa-u-ca-gregory' : 'en-US', { month: 'short' });
-  const ks = rows.map(x => [x, mk(x.date)]), inM = k => ks.filter(r => r[1] === k).map(r => r[0]), now = key(cy, cm), all = sum(rows), cats = {};
+  const ks = rows.filter(x => x.category !== 'transfer').map(x => [x, mk(x.date)]), inM = k => ks.filter(r => r[1] === k).map(r => r[0]), now = key(cy, cm), all = sum(rows), cats = {};
   inM(now).filter(x => x.type === 'expense').forEach(x => cats[x.category] = (cats[x.category] || 0) + v(x));
   return { currency: cur, balance: all.income - all.expense, month: sum(inM(now)), trend: months.map(mm => ({ label: lab(mm), ...sum(inM(key(...mm))) })),
     categories: Object.entries(cats).map(([category, total]) => ({ category, total })).sort((a, b) => b.total - a.total) };
@@ -215,21 +215,51 @@ async function api(path, opt = {}) {
     if (accs.length < 2) fail('last_account'); if (mine.some(x => x.account_id == aid)) fail('account_has_tx');
     saveAcc(accs.filter(a => a.id != aid)); return { ok: true };
   }
+  // Transfers: both sides (and the optional fee) are written in ONE save, so balances can never be half-updated
+  if (p === '/transfers' && m === 'POST') {
+    const f = A[b.from], to = A[b.to], amt = Number(b.amount), fee = Number(b.fee || 0);
+    if (!f || !to || f.id === to.id) fail('same_account'); if (!(amt > 0) || !(fee >= 0) || !RE_DATE.test(b.date || '')) fail('invalid');
+    const tid = nid(), got = Math.round(conv(amt, f.currency, to.currency) * 100) / 100, base = { user_id: me.id, category: 'transfer', date: b.date, transfer_id: tid };
+    const legs = [{ id: nid(), ...base, type: 'expense', account_id: f.id, amount: amt, description: '→ ' + to.name }, { id: nid() + 1, ...base, type: 'income', account_id: to.id, amount: got, description: '← ' + f.name }];
+    if (fee > 0) legs.push({ id: nid() + 2, user_id: me.id, type: 'expense', account_id: f.id, amount: fee, category: 'fees', description: '→ ' + to.name, date: b.date, transfer_id: tid });
+    DB.set('tx', [...all, ...legs]); return { ok: true };
+  }
+  // Budgets: one monthly limit per expense category
+  const budgets = (DB.get('bud') || []).filter(x => x.user_id === me.id), mkey = iso => { if (CAL !== 'jalali') return iso.slice(0, 7); const q = toJ(iso); return q[0] + '-' + String(q[1]).padStart(2, '0'); };
+  if (p === '/budgets' && m === 'GET') { const nowK = mkey(todayISO());
+    return { budgets: budgets.map(({ user_id, ...x }) => ({ ...x, spent: mine.filter(r => r.type === 'expense' && r.category === x.category && mkey(r.date) === nowK).reduce((s, r) => s + conv(r.amount, (A[r.account_id] || { currency: 'IRT' }).currency, x.currency), 0) })) }; }
+  if (p === '/budgets' && m === 'POST') { const lim = Number(b.limit); if (!CAT[b.category] || !(lim > 0) || !CURS[b.currency]) fail('invalid');
+    DB.set('bud', [...(DB.get('bud') || []).filter(x => !(x.user_id === me.id && x.category === b.category)), { id: nid(), user_id: me.id, category: b.category, limit: lim, currency: b.currency }]); return { ok: true }; }
+  const bid = (p.match(/^\/budgets\/(\d+)$/) || [])[1];
+  if (bid && m === 'DELETE') { DB.set('bud', (DB.get('bud') || []).filter(x => !(x.id == bid && x.user_id === me.id))); return { ok: true }; }
+  // Savings goals
+  const goals = (DB.get('goals') || []).filter(x => x.user_id === me.id), saveG = l => DB.set('goals', [...(DB.get('goals') || []).filter(x => x.user_id !== me.id), ...l]);
+  if (p === '/goals' && m === 'GET') return { goals: goals.map(({ user_id, ...g }) => g) };
+  if (p === '/goals' && m === 'POST') { const name = String(b.name || '').trim().slice(0, 60), target = Number(b.target);
+    if (!name || !(target > 0) || !CURS[b.currency] || (b.deadline && !RE_DATE.test(b.deadline))) fail('invalid');
+    saveG([...goals, { id: nid(), user_id: me.id, name, target, saved: 0, currency: b.currency, deadline: b.deadline || '' }]); return { ok: true }; }
+  const gm = p.match(/^\/goals\/(\d+)(\/fund)?$/) || [];
+  if (gm[1] && gm[2] && m === 'POST') { const amt = Number(b.amount), g = goals.find(x => x.id == gm[1]); if (!g || !Number.isFinite(amt) || !amt || g.saved + amt < 0) fail('invalid');
+    saveG(goals.map(x => x.id == g.id ? { ...x, saved: Math.round((x.saved + amt) * 100) / 100 } : x)); return { ok: true }; }
+  if (gm[1] && !gm[2] && m === 'DELETE') { saveG(goals.filter(x => x.id != gm[1])); return { ok: true }; }
   if (p === '/transactions' && m === 'GET') return { transactions: filterTx(mine, Q, A).slice(0, +Q.limit || 5000) };
   if (p === '/transactions' && m === 'POST') { DB.set('tx', [...all, { id: nid(), user_id: me.id, ...cleanTx(b, A) }]); return { ok: true }; }
   const id = (p.match(/^\/transactions\/(\d+)$/) || [])[1];
-  if (id && m === 'PUT') { const v = cleanTx(b, A); if (!mine.some(x => x.id == id)) fail('not_found'); DB.set('tx', all.map(x => x.id == id && x.user_id === me.id ? { ...x, ...v } : x)); return { ok: true }; }
-  if (id && m === 'DELETE') { DB.set('tx', all.filter(x => !(x.id == id && x.user_id === me.id))); return { ok: true }; }
+  if (id && m === 'PUT') { const v = cleanTx(b, A), c0 = mine.find(x => x.id == id); if (!c0 || c0.transfer_id) fail(c0 ? 'invalid' : 'not_found'); DB.set('tx', all.map(x => x.id == id && x.user_id === me.id ? { ...x, ...v } : x)); return { ok: true }; }
+  if (id && m === 'DELETE') { const c0 = mine.find(x => x.id == id); DB.set('tx', all.filter(x => !(x.user_id === me.id && (x.id == id || (c0 && c0.transfer_id && x.transfer_id === c0.transfer_id))))); return { ok: true }; }   // deleting a transfer removes both sides
   if (p === '/reports/summary') return { ...summarize(Q.account ? mine.filter(x => x.account_id == Q.account) : mine, accs, Q.account || null),
     accounts: accs.map(a => ({ id: a.id, name: a.name, currency: a.currency, balance: mine.filter(x => x.account_id === a.id).reduce((s, x) => s + (x.type === 'income' ? x.amount : -x.amount), 0) })) };
   // Backup / restore (accounts + transactions only; never passwords)
-  if (p === '/backup') return { app: 'nexora', version: 1, exported: todayISO(), accounts: accs.map(({ user_id, ...a }) => a), transactions: mine.map(({ user_id, ...r }) => r) };
+  if (p === '/backup') return { app: 'nexora', version: 1, exported: todayISO(), accounts: accs.map(({ user_id, ...a }) => a), transactions: mine.map(({ user_id, ...r }) => r), budgets: budgets.map(({ user_id, ...x }) => x), goals: goals.map(({ user_id, ...x }) => x) };
   if (p === '/restore' && m === 'POST') {
     if (!(b && b.app === 'nexora' && Array.isArray(b.accounts) && Array.isArray(b.transactions) && b.accounts.length && b.accounts.length < 200 && b.transactions.length < 200000)) fail('backup');
     try {
       const idMap = {}, na = b.accounts.map((a, i) => { if (!CURS[a.currency] || !String(a.name || '').trim()) throw 0; const id = nid() + i; idMap[a.id] = id; return { id, user_id: me.id, name: String(a.name).trim().slice(0, 40), currency: a.currency }; });
-      const NA = Object.fromEntries(na.map(a => [a.id, a])), nt = b.transactions.map((r, k) => { if (!idMap[r.account_id]) throw 0; return { id: nid() + 1000 + k, user_id: me.id, ...cleanTx({ ...r, account_id: idMap[r.account_id] }, NA) }; });
-      saveAcc(na); DB.set('tx', [...all.filter(x => x.user_id !== me.id), ...nt]); return { ok: true };
+      const NA = Object.fromEntries(na.map(a => [a.id, a])), nt = b.transactions.map((r, k) => { if (!idMap[r.account_id]) throw 0; return { id: nid() + 1000 + k, user_id: me.id, ...cleanTx({ ...r, account_id: idMap[r.account_id] }, NA), ...(r.transfer_id ? { transfer_id: r.transfer_id } : {}) }; });
+      saveAcc(na); DB.set('tx', [...all.filter(x => x.user_id !== me.id), ...nt]);
+      if (Array.isArray(b.budgets)) DB.set('bud', [...(DB.get('bud') || []).filter(x => x.user_id !== me.id), ...b.budgets.filter(x => CAT[x.category] && x.limit > 0 && CURS[x.currency]).map(x => ({ id: nid(), user_id: me.id, category: x.category, limit: +x.limit, currency: x.currency }))]);
+      if (Array.isArray(b.goals)) saveG(b.goals.filter(x => x.name && x.target > 0 && CURS[x.currency]).map(x => ({ id: nid(), user_id: me.id, name: String(x.name).slice(0, 60), target: +x.target, saved: Math.max(+x.saved || 0, 0), currency: x.currency, deadline: RE_DATE.test(x.deadline || '') ? x.deadline : '' })));
+      return { ok: true };
     } catch (e) { fail('backup'); }
   }
   fail('not_found');
@@ -262,7 +292,7 @@ function shell(active) {
   document.body.insertAdjacentHTML('afterbegin', `<div class="app"><aside class="side glass">
     <a href="index.html" class="brand"><span class="logo">N</span><b>NEXORA</b></a>
     <button class="cmdk" id="cmdk">${ico('search', 16)}<span>${t('cmd_hint')}</span><kbd>Ctrl K</kbd></button>
-    <nav class="menu">${item('dashboard', 'dashboard.html', 'dash', t('dashboard'))}${item('transactions', 'transactions.html', 'swap', t('transactions'))}${btn('nReports', 'chart', t('reports'))}${btn('nSettings', 'gear', t('settings'))}${btn('nLogout', 'out', t('logout'))}</nav>
+    <nav class="menu">${item('dashboard', 'dashboard.html', 'dash', t('dashboard'))}${item('transactions', 'transactions.html', 'swap', t('transactions'))}${item('plan', 'budgets.html', 'target', t('plan'))}${btn('nReports', 'chart', t('reports'))}${btn('nSettings', 'gear', t('settings'))}${btn('nLogout', 'out', t('logout'))}</nav>
     <div class="user"><span class="avatar">${esc((u.name || '?').trim().slice(0, 1).toUpperCase())}</span><div><b>${esc(u.name)}</b><small>${esc(u.email)}</small></div></div></aside>
     <main id="main" class="main"></main></div><button class="fab" id="fab" aria-label="${t('add_btn')}">${ico('plus', 24)}</button>`);
   document.getElementById('nReports').onclick = exportModal;
@@ -383,7 +413,7 @@ async function txModal(tx, done) {
 const txRow = (r, actions) => `<tr class="row"><td><div class="cell"><span class="tico ${r.type}">${ico(r.type === 'income' ? 'down' : 'up', 16)}</span><div><b>${esc(r.description) || esc(catName(r.category))}</b><small>${esc(r.account || '')}<span class="mcat"> · ${esc(catName(r.category))}</span></small></div></div></td>
   <td><span class="chip">${esc(catName(r.category))}</span></td><td class="muted">${fmtDate(r.date)}</td>
   <td class="amt ${r.type === 'income' ? 'inc' : 'exp'}">${r.type === 'income' ? '+' : '−'}${money(r.amount, r.currency)}</td>
-  ${actions ? `<td class="acts"><button class="btn btn-sm" data-ed="${r.id}">${t('edit_b')}</button><button class="btn btn-sm" data-del="${r.id}">${t('delete')}</button></td>` : ''}</tr>`;
+  ${actions ? `<td class="acts">${r.transfer_id ? '' : `<button class="btn btn-sm" data-ed="${r.id}">${t('edit_b')}</button>`}<button class="btn btn-sm" data-del="${r.id}">${t('delete')}</button></td>` : ''}</tr>`;
 
 /* ---------- motion: cursor spotlight on glass cards, subtle 3D tilt on KPI cards, page transitions ---------- */
 (function () {
@@ -418,6 +448,7 @@ function palette() {
   const cmds = [[t('add_btn'), 'plus', () => txModal(null, done)], [t('dashboard'), 'dash', () => { location.href = 'dashboard.html'; }], [t('transactions'), 'swap', () => { location.href = 'transactions.html'; }],
     [t('export_t'), 'dl', exportModal], [t('settings'), 'gear', settingsModal], [t('cmd_lang'), 'gear', () => setLang(L === 'fa' ? 'en' : 'fa')],
     [t('cmd_cal'), 'gear', () => setPref('cal', CAL === 'jalali' ? 'gregorian' : 'jalali')], [t('cmd_cur'), 'gear', () => setPref('cur', CUR === 'IRT' ? 'IRR' : 'IRT')],
+    [t('cmd_transfer'), 'swap', () => transferModal(done)], [t('plan'), 'target', () => { location.href = 'budgets.html'; }], [t('cmd_hide'), 'eye', () => setPref('hide', !PREF.hide)],
     [t('logout'), 'out', async () => { await api('/auth/logout', { method: 'POST' }).catch(() => {}); location.href = 'login.html'; }]];
   const m = modal(`<div class="search">${ico('search')}<input id="pq" class="input" placeholder="${t('cmd_ph')}" autocomplete="off"></div><div class="pl" id="pl"></div>`);
   m.classList.add('palm'); let sel = 0, list = cmds; const q = m.querySelector('#pq');
@@ -441,3 +472,66 @@ Object.assign(T.fa, { today:'امروز', yesterday:'دیروز', undo:'بازگ
   cmd_lang:'تغییر زبان (فارسی / English)', cmd_cal:'تغییر تقویم (شمسی / میلادی)', cmd_cur:'تغییر واحد پول (تومان / ریال)', onb_t:'بیایید شروع کنیم', onb1:'حساب ساخته شد', onb2:'اولین تراکنش را اضافه کنید', onb3:'تقویم و واحد پول را انتخاب کنید' });
 // installable + works offline (network first, cache as fallback)
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+
+/* ---------- transfer between accounts ---------- */
+async function transferModal(done) {
+  const accs = (await api('/accounts')).accounts; if (accs.length < 2) return toast(t('need2'));
+  const m = modal(`<h2 class="mb-4 text-lg font-semibold">${t('transfer')}</h2><form id="xf" novalidate class="space-y-3">
+    <div><label class="lbl">${t('from_acc')}</label><select name="from" class="input">${accOptions(accs, false, accs[0].id)}</select></div>
+    <div><label class="lbl">${t('to_acc')}</label><select name="to" class="input">${accOptions(accs, false, accs[1].id)}</select></div>
+    <div><label class="lbl">${t('amount')} <span id="xc" class="muted"></span></label><input name="amount" type="text" inputmode="decimal" autocomplete="off" dir="ltr" class="input" style="text-align:start"><p class="err" data-e="amount"></p><p id="xp" class="muted" style="font-size:.8rem;margin:.2rem 0 0"></p></div>
+    <div><label class="lbl">${t('fee')} <span class="muted">(${t('optional')})</span></label><input name="fee" type="text" inputmode="decimal" autocomplete="off" dir="ltr" class="input" style="text-align:start"></div>
+    <div><label class="lbl">${t('date')}</label>${dateField('xd', todayISO())}</div>
+    <div class="flex justify-end gap-2 pt-2"><button type="button" class="btn" id="xcn">${t('cancel')}</button><button class="btn btn-grad">${t('save')}</button></div></form>`);
+  const f = m.querySelector('#xf'), A = Object.fromEntries(accs.map(a => [a.id, a]));
+  const info = () => { const a = A[f.from.value], b = A[f.to.value], v = parseAmt(f.amount.value);
+    m.querySelector('#xc').textContent = '(' + curName(a.currency) + ')';
+    m.querySelector('#xp').textContent = v > 0 && a.currency !== b.currency ? '≈ ' + money(conv(v, a.currency, b.currency), b.currency) : ''; };
+  f.amount.oninput = () => { fmtAmtInput(f.amount); info(); }; f.fee.oninput = () => fmtAmtInput(f.fee); f.from.onchange = f.to.onchange = info; info();
+  m.querySelector('#xcn').onclick = () => m.remove();
+  f.onsubmit = async e => { e.preventDefault(); m.querySelector('[data-e=amount]').textContent = '';
+    const body = { from: f.from.value, to: f.to.value, amount: parseAmt(f.amount.value), fee: parseAmt(f.fee.value) || 0, date: readDate(m.querySelector('#xd')) };
+    if (!(body.amount > 0)) { m.querySelector('[data-e=amount]').textContent = t('err_amount'); return; }
+    try { await api('/transfers', { method: 'POST', body }); m.remove(); toast(t('saved')); done(); } catch (er) { toast(t('err_' + er.message)); } };
+}
+/* ---------- budgets and goals ---------- */
+function budgetModal(b, done) {
+  const m = modal(`<h2 class="mb-4 text-lg font-semibold">${t('add_budget')}</h2><form id="bf" novalidate class="space-y-3">
+    <div><label class="lbl">${t('category')}</label><select name="category" class="input">${EXP_CATS.filter(c => c !== 'fees').map(c => `<option value="${c}">${catName(c)}</option>`).join('')}</select></div>
+    <div><label class="lbl">${t('limit')}</label><input name="limit" type="text" inputmode="decimal" autocomplete="off" dir="ltr" class="input" style="text-align:start"><p class="err" data-e="limit"></p></div>
+    <div><label class="lbl">${t('currency')}</label><select name="currency" class="input"><option value="IRT">${t('toman')}</option><option value="IRR">${t('rial')}</option></select></div>
+    <div class="flex justify-end gap-2 pt-2"><button type="button" class="btn" id="bc">${t('cancel')}</button><button class="btn btn-grad">${t('save')}</button></div></form>`);
+  const f = m.querySelector('#bf'); f.currency.value = b ? b.currency : CUR; if (b) { f.category.value = b.category; f.limit.value = Number(b.limit).toLocaleString('en-US'); }
+  f.limit.oninput = () => fmtAmtInput(f.limit); m.querySelector('#bc').onclick = () => m.remove();
+  f.onsubmit = async e => { e.preventDefault(); const limit = parseAmt(f.limit.value); if (!(limit > 0)) { m.querySelector('[data-e=limit]').textContent = t('err_amount'); return; }
+    try { await api('/budgets', { method: 'POST', body: { category: f.category.value, limit, currency: f.currency.value } }); m.remove(); toast(t('saved')); done(); } catch (er) { toast(t('err_' + er.message)); } };
+}
+function goalModal(done) {
+  const m = modal(`<h2 class="mb-4 text-lg font-semibold">${t('new_goal')}</h2><form id="gf" novalidate class="space-y-3">
+    <div><label class="lbl">${t('goal_name')}</label><input name="name" maxlength="60" class="input"><p class="err" data-e="name"></p></div>
+    <div><label class="lbl">${t('target')}</label><input name="target" type="text" inputmode="decimal" autocomplete="off" dir="ltr" class="input" style="text-align:start"><p class="err" data-e="target"></p></div>
+    <div><label class="lbl">${t('currency')}</label><select name="currency" class="input"><option value="IRT">${t('toman')}</option><option value="IRR">${t('rial')}</option></select></div>
+    <div><label class="lbl">${t('deadline')} <span class="muted">(${t('optional')})</span></label>${dateField('gd', '', true)}</div>
+    <div class="flex justify-end gap-2 pt-2"><button type="button" class="btn" id="gc">${t('cancel')}</button><button class="btn btn-grad">${t('save')}</button></div></form>`);
+  const f = m.querySelector('#gf'); f.currency.value = CUR; f.target.oninput = () => fmtAmtInput(f.target); m.querySelector('#gc').onclick = () => m.remove();
+  f.onsubmit = async e => { e.preventDefault(); m.querySelectorAll('.err').forEach(x => x.textContent = ''); const target = parseAmt(f.target.value); let bad = false;
+    if (!f.name.value.trim()) { m.querySelector('[data-e=name]').textContent = t('err_req'); bad = true; } if (!(target > 0)) { m.querySelector('[data-e=target]').textContent = t('err_amount'); bad = true; } if (bad) return;
+    try { await api('/goals', { method: 'POST', body: { name: f.name.value, target, currency: f.currency.value, deadline: readDate(m.querySelector('#gd')) } }); m.remove(); toast(t('saved')); done(); } catch (er) { toast(t('err_' + er.message)); } };
+}
+function fundModal(g, done) {
+  const m = modal(`<h2 class="mb-1 text-lg font-semibold">${esc(g.name)}</h2><p class="muted mb-4" style="margin-top:.2rem">${money(g.saved, g.currency)} / ${money(g.target, g.currency)}</p>
+    <label class="lbl">${t('amount')} <span class="muted">(${curName(g.currency)})</span></label><input id="fa" type="text" inputmode="decimal" autocomplete="off" dir="ltr" class="input" style="text-align:start"><p class="err" id="fe"></p>
+    <div class="flex justify-end gap-2 pt-3"><button class="btn" id="fw">${t('withdraw')}</button><button class="btn btn-grad" id="fd">${t('add_funds')}</button></div>`);
+  const i = m.querySelector('#fa'); i.oninput = () => fmtAmtInput(i); i.focus();
+  const go = async sign => { const v = parseAmt(i.value); if (!(v > 0)) { m.querySelector('#fe').textContent = t('err_amount'); return; }
+    try { await api(`/goals/${g.id}/fund`, { method: 'POST', body: { amount: sign * v } }); m.remove(); toast(t('saved')); done(); } catch (er) { toast(t('err_invalid_amt')); } };
+  m.querySelector('#fd').onclick = () => go(1); m.querySelector('#fw').onclick = () => go(-1);
+}
+Object.assign(T.en, { plan:'Plan', budgets:'Budgets', goals:'Savings goals', add_budget:'Add budget', new_goal:'New goal', limit:'Monthly limit', remaining:'Left', over:'Over by', target:'Target amount', deadline:'Deadline',
+  add_funds:'Add funds', withdraw:'Withdraw', per_month:'needed per month', past_deadline:'Deadline passed', goal_name:'Goal name', used:'used', reached:'Goal reached', no_budgets:'No budgets yet. Set a monthly limit for a category.', no_goals:'No goals yet. Start saving for something.',
+  transfer:'Transfer', from_acc:'From account', to_acc:'To account', fee:'Fee', optional:'optional', need2:'You need at least two accounts to make a transfer.', err_same_account:'Choose two different accounts.', err_invalid_amt:'Not enough saved to withdraw that amount.',
+  show_more:'Show more', cmd_hide:'Hide / show amounts', cmd_transfer:'Transfer between accounts' });
+Object.assign(T.fa, { plan:'برنامه‌ریزی', budgets:'بودجه‌ها', goals:'اهداف پس‌انداز', add_budget:'افزودن بودجه', new_goal:'هدف جدید', limit:'سقف ماهانه', remaining:'باقیمانده', over:'بیشتر از سقف', target:'مبلغ هدف', deadline:'موعد',
+  add_funds:'افزودن پول', withdraw:'برداشت', per_month:'در هر ماه لازم است', past_deadline:'موعد گذشته است', goal_name:'نام هدف', used:'مصرف‌شده', reached:'به هدف رسیدید', no_budgets:'هنوز بودجه‌ای نیست. برای یک دسته سقف ماهانه تعیین کنید.', no_goals:'هنوز هدفی نیست. برای چیزی پس‌انداز را شروع کنید.',
+  transfer:'انتقال', from_acc:'از حساب', to_acc:'به حساب', fee:'کارمزد', optional:'اختیاری', need2:'برای انتقال حداقل دو حساب لازم است.', err_same_account:'دو حساب متفاوت انتخاب کنید.', err_invalid_amt:'موجودی هدف برای این برداشت کافی نیست.',
+  show_more:'نمایش بیشتر', cmd_hide:'مخفی / نمایش مبلغ‌ها', cmd_transfer:'انتقال بین حساب‌ها' });
