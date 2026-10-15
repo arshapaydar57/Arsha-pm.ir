@@ -44,7 +44,7 @@ Object.assign(T.fa, { add_btn:'افزودن تراکنش', welcome:'خوش آم�
 const ICO = { dash:'<rect width="7" height="9" x="3" y="3" rx="1.5"/><rect width="7" height="5" x="14" y="3" rx="1.5"/><rect width="7" height="9" x="14" y="12" rx="1.5"/><rect width="7" height="5" x="3" y="16" rx="1.5"/>',
   swap:'<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>', chart:'<path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
   gear:'<path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/>', out:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
-  target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>', filter:'<path d="M3 5h18"/><path d="M6 12h12"/><path d="M10 19h4"/>', plus:'<path d="M5 12h14"/><path d="M12 5v14"/>', up:'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>', down:'<path d="M17 7 7 17"/><path d="M17 17H7V7"/>',
+  target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>', x:'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>', check:'<path d="M20 6 9 17l-5-5"/>', filter:'<path d="M3 5h18"/><path d="M6 12h12"/><path d="M10 19h4"/>', plus:'<path d="M5 12h14"/><path d="M12 5v14"/>', up:'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>', down:'<path d="M17 7 7 17"/><path d="M17 17H7V7"/>',
   wallet:'<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
   search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>', dl:'<path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>',
   eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>', pct:'<path d="m19 5-14 14"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>' };
@@ -77,6 +77,11 @@ const catName = (c, l = typeof L === 'undefined' ? 'en' : L) => (CAT[c] || [c, c
 
 /* ---------- language, calendar and currency preferences ---------- */
 const PREF = (() => { try { return JSON.parse(localStorage.getItem('nexora:prefs')) || {}; } catch (e) { return {}; } })();
+const THEME = (() => {   // light / dark / auto (follows the device). The landing page locks itself to dark.
+  const h = document.documentElement; if (h.hasAttribute('data-lock')) return 'dark';
+  const th = PREF.theme === 'light' || PREF.theme === 'dark' ? PREF.theme : (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  h.dataset.theme = th; const mt = document.querySelector && document.querySelector('meta[name=theme-color]'); if (mt) mt.content = th === 'light' ? '#F4F5F9' : '#09090E'; return th;
+})();
 const L = (() => { let s; try { s = localStorage.getItem('nexora-lang'); } catch (e) {}
   return s === 'fa' || s === 'en' ? s : (navigator.language || '').toLowerCase().startsWith('fa') ? 'fa' : 'en'; })();
 const CAL = PREF.cal || (L === 'fa' ? 'jalali' : 'gregorian');
@@ -268,9 +273,22 @@ async function guard() { try { return (await api('/auth/me')).user; } catch (e) 
 
 function modal(html) {
   const m = document.createElement('div'); m.className = 'modal';
-  m.innerHTML = `<div class="glass box" role="dialog">${html}</div>`;
+  m.innerHTML = `<div class="glass box" role="dialog" aria-modal="true"><div class="mb">${html}</div></div>`;
+  const box = m.firstChild, mb = box.firstChild, rm = m.remove.bind(m); let closing = false;
+  m.remove = () => { if (closing) return; closing = true; m.classList.add('out'); setTimeout(rm, 200); };   // animated close
   m.addEventListener('mousedown', e => { if (e.target === m) m.remove(); });
-  const rm = m.remove.bind(m); m.remove = () => { m.classList.add('out'); setTimeout(rm, 200); };   // animated close
+  const h = mb.querySelector(':scope > h2');
+  if (h) {   // top bar: title + close button, stays visible while the form scrolls
+    const bar = document.createElement('div'), x = document.createElement('button'); bar.className = 'mh'; x.type = 'button'; x.className = 'mx'; x.setAttribute('aria-label', 'Close'); x.innerHTML = ico('x', 18); x.onclick = () => m.remove();
+    h.replaceWith(bar); bar.append(h, x); box.prepend(bar);
+  }
+  [mb, mb.querySelector(':scope > form')].forEach(c => c && [...c.children].forEach((el, i) => el.style.setProperty('--k', i)));   // staggered entrance
+  // swipe down on the handle / top bar to dismiss (phones)
+  let y0 = null, dy = 0;
+  box.addEventListener('pointerdown', e => { if (innerWidth > 1023 || e.target.closest('button,input,select,textarea,a')) return; if (!(e.target.closest('.mh') || e.clientY - box.getBoundingClientRect().top < 40)) return; y0 = e.clientY; dy = 0; box.style.transition = 'none'; box.setPointerCapture(e.pointerId); });
+  box.addEventListener('pointermove', e => { if (y0 === null) return; dy = Math.max(e.clientY - y0, 0); box.style.transform = `translateY(${dy}px)`; });
+  const end = () => { if (y0 === null) return; y0 = null; box.style.transition = 'transform .4s cubic-bezier(.2,.8,.2,1)'; if (dy > 110) m.remove(); else box.style.transform = ''; };
+  box.addEventListener('pointerup', end); box.addEventListener('pointercancel', end);
   document.body.append(m); i18n(m); initDates(m); m.querySelectorAll('.seg').forEach(segMove); return m;
 }
 function segMove(sg) {   // sliding highlight behind the active option
@@ -309,6 +327,7 @@ async function settingsModal() {
   const seg = (k, cur, items) => `<div class="seg">${items.map(([v, l]) => `<button type="button" class="${cur === v ? 'on' : ''}" data-s="${k}:${v}">${l}</button>`).join('')}</div>`;
   const m = modal(`<h2 class="mb-3 text-lg font-semibold">${t('settings')}</h2>
     <p class="lbl">${t('language')}</p>${seg('lang', L, [['en', 'English'], ['fa', 'فارسی']])}
+    <p class="lbl mt-4">${t('theme')}</p>${seg('theme', PREF.theme || 'auto', [['auto', t('auto')], ['light', t('light')], ['dark', t('dark')]])}
     <p class="lbl mt-4">${t('calendar')}</p>${seg('cal', CAL, [['jalali', t('jalali')], ['gregorian', t('gregorian')]])}
     <p class="lbl mt-4">${t('display_cur')} <span class="text-xs">(${t('rate_note')})</span></p>${seg('cur', CUR, [['IRT', t('toman')], ['IRR', t('rial')]])}
     <p class="lbl mt-4">${t('accounts')}</p><div class="space-y-2">${accs.map(a => `<div class="flex items-center justify-between gap-2"><span>${esc(a.name)} <span class="chip">${curName(a.currency)}</span></span>
@@ -375,37 +394,46 @@ async function exportLocal(kind, from, to, lang, acc) {
   w.document.close();
 }
 
-/* Add / edit transaction: asks which account; categories depend on income vs expense */
+/* Add / edit transaction: type switch, big amount, account, category pills, quick dates */
 async function txModal(tx, done) {
   const accs = (await api('/accounts')).accounts, last = DB.get('lastAcc');
-  const m = modal(`<h2 class="mb-4 text-lg font-semibold">${tx ? t('edit') : t('new')}</h2><form id="tf" novalidate class="space-y-3">
-    <input type="hidden" name="type" value="expense"><div class="seg" id="sg"><button type="button" data-v="expense">${ico('up', 16)}${t('expense')}</button><button type="button" data-v="income">${ico('down', 16)}${t('income')}</button></div>
+  const m = modal(`<h2>${tx ? t('edit') : t('new')}</h2><form id="tf" novalidate class="stack">
+    <input type="hidden" name="type" value="expense"><input type="hidden" name="category" value="">
+    <div class="seg typed" id="sg"><button type="button" data-v="expense">${ico('up', 16)}${t('expense')}</button><button type="button" data-v="income">${ico('down', 16)}${t('income')}</button></div>
+    <div><div class="amtbox"><span class="sgn" id="sgn">−</span><input name="amount" type="text" inputmode="decimal" autocomplete="off" dir="ltr" class="amtin" placeholder="0" aria-label="${t('amount')}"></div><p class="cur" id="cu"></p><p class="err" data-e="amount" style="text-align:center"></p></div>
     <div><label class="lbl">${t('account')}</label><select name="account_id" class="input">${accOptions(accs, false, tx ? tx.account_id : (accs.find(a => a.id == last) || accs[0]).id)}</select></div>
-    <div><label class="lbl">${t('amount')} <span id="cu" class="muted"></span></label><input name="amount" type="text" inputmode="decimal" autocomplete="off" dir="ltr" class="input" style="text-align:start"><p class="err" data-e="amount"></p></div>
-    <div><label class="lbl">${t('category')}</label><select name="category" class="input"></select></div>
+    <div><label class="lbl">${t('category')}</label><div class="pills" id="pc"></div></div>
     <div><label class="lbl">${t('description')}</label><input name="description" maxlength="200" class="input"></div>
-    <div><label class="lbl">${t('date')}</label>${dateField('dt', tx ? tx.date : todayISO())}<p class="err" data-e="date"></p></div>
-    <div class="flex justify-end gap-2 pt-2"><button type="button" class="btn" id="tc">${t('cancel')}</button><button class="btn btn-grad">${t('save')}</button></div></form>`);
-  const f = m.querySelector('#tf');
-  const fillCats = keep => { const list = f.type.value === 'income' ? INC_CATS : EXP_CATS; if (keep && !list.includes(keep)) list.push(keep);
-    f.category.innerHTML = list.map(c => `<option value="${c}">${catName(c)}</option>`).join(''); if (keep) f.category.value = keep; };
-  const cur = () => { const a = accs.find(q => q.id == f.account_id.value); m.querySelector('#cu').textContent = a ? '(' + curName(a.currency) + ')' : ''; };
+    <div><div class="lblrow"><label class="lbl">${t('date')}</label><span class="qd"><button type="button" class="pill sm" data-d="0">${t('today')}</button><button type="button" class="pill sm" data-d="1">${t('yesterday')}</button></span></div>${dateField('dt', tx ? tx.date : todayISO())}<p class="err" data-e="date"></p></div>
+    <div class="mf"><button type="button" class="btn" id="tc">${t('cancel')}</button><button class="btn btn-grad" id="ts">${t('save')}</button></div></form>`);
+  const f = m.querySelector('#tf'), pc = m.querySelector('#pc'), sg = m.querySelector('#sg');
+  const fillCats = keep => {
+    const list = [...(f.type.value === 'income' ? INC_CATS : EXP_CATS)]; if (keep && !list.includes(keep)) list.push(keep);
+    const sel = keep || (list.includes(f.category.value) ? f.category.value : list[0]);
+    pc.innerHTML = list.map(c => `<button type="button" class="pill ${c === sel ? 'on' : ''}" data-c="${c}">${esc(catName(c))}</button>`).join(''); f.category.value = sel;
+    const on = pc.querySelector('.on'); if (on) setTimeout(() => on.scrollIntoView({ inline: 'center', block: 'nearest' }), 80);
+  };
+  const cur = () => { const a = accs.find(q => q.id == f.account_id.value); m.querySelector('#cu').textContent = a ? curName(a.currency) : ''; };
+  const sync = () => { const v = f.type.value; sg.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === v)); sg.dataset.v = f.dataset.v = v; m.querySelector('#sgn').textContent = v === 'income' ? '+' : '−'; segMove(sg); };
   if (tx) { f.type.value = tx.type; f.amount.value = Number(tx.amount).toLocaleString('en-US', { maximumFractionDigits: 2 }); f.description.value = tx.description; }
-  fillCats(tx && tx.category); cur();
-  const sg = m.querySelector('#sg'), sync = () => { sg.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === f.type.value)); segMove(sg); };
-  sg.onclick = e => { const b = e.target.closest('button'); if (b) { f.type.value = b.dataset.v; sync(); fillCats(); } }; sync();
-  f.amount.oninput = () => fmtAmtInput(f.amount);
-  f.account_id.onchange = cur;
+  fillCats(tx && tx.category); cur(); sync();
+  sg.onclick = e => { const b = e.target.closest('button'); if (b && b.dataset.v !== f.type.value) { f.type.value = b.dataset.v; sync(); fillCats(); navigator.vibrate && navigator.vibrate(8); } };
+  pc.onclick = e => { const b = e.target.closest('.pill'); if (!b) return; f.category.value = b.dataset.c; pc.querySelectorAll('.pill').forEach(x => x.classList.toggle('on', x === b)); b.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' }); };
+  m.querySelector('.qd').onclick = e => { const b = e.target.closest('[data-d]'); if (!b) return; const dp = m.querySelector('#dt'); dp.dataset.iso = b.dataset.d === '0' ? todayISO() : yest(); initDates(dp.parentNode); };
+  f.amount.oninput = () => fmtAmtInput(f.amount); f.account_id.onchange = cur;
   m.querySelector('#tc').onclick = () => m.remove();
+  if (matchMedia('(hover:hover)').matches) setTimeout(() => f.amount.focus(), 280);
   f.onsubmit = async e => {
     e.preventDefault();
     const body = Object.fromEntries(new FormData(f)); body.date = readDate(m.querySelector('#dt')); body.amount = parseAmt(body.amount); let bad = false;
     m.querySelectorAll('.err').forEach(q => q.textContent = '');
-    if (!(Number(body.amount) > 0)) { m.querySelector('[data-e=amount]').textContent = t('err_amount'); bad = true; }
+    if (!(body.amount > 0)) { m.querySelector('[data-e=amount]').textContent = t('err_amount'); bad = true; }
     if (!body.date) { m.querySelector('[data-e=date]').textContent = t('err_date'); bad = true; }
     if (bad) return;
-    try { await api(tx ? '/transactions/' + tx.id : '/transactions', { method: tx ? 'PUT' : 'POST', body }); DB.set('lastAcc', +body.account_id); m.remove(); toast(t('saved')); done(); }
-    catch (er) { toast(t('err_' + er.message)); }
+    const sb = m.querySelector('#ts'); sb.disabled = true;
+    try { await api(tx ? '/transactions/' + tx.id : '/transactions', { method: tx ? 'PUT' : 'POST', body }); DB.set('lastAcc', +body.account_id);
+      sb.innerHTML = ico('check', 20); await new Promise(r => setTimeout(r, 380)); m.remove(); toast(t('saved')); done(); }
+    catch (er) { sb.disabled = false; toast(t('err_' + er.message)); }
   };
 }
 
@@ -448,7 +476,7 @@ function palette() {
   const cmds = [[t('add_btn'), 'plus', () => txModal(null, done)], [t('dashboard'), 'dash', () => { location.href = 'dashboard.html'; }], [t('transactions'), 'swap', () => { location.href = 'transactions.html'; }],
     [t('export_t'), 'dl', exportModal], [t('settings'), 'gear', settingsModal], [t('cmd_lang'), 'gear', () => setLang(L === 'fa' ? 'en' : 'fa')],
     [t('cmd_cal'), 'gear', () => setPref('cal', CAL === 'jalali' ? 'gregorian' : 'jalali')], [t('cmd_cur'), 'gear', () => setPref('cur', CUR === 'IRT' ? 'IRR' : 'IRT')],
-    [t('cmd_transfer'), 'swap', () => transferModal(done)], [t('plan'), 'target', () => { location.href = 'budgets.html'; }], [t('cmd_hide'), 'eye', () => setPref('hide', !PREF.hide)],
+    [t('cmd_theme'), 'gear', () => setPref('theme', THEME === 'light' ? 'dark' : 'light')], [t('cmd_transfer'), 'swap', () => transferModal(done)], [t('plan'), 'target', () => { location.href = 'budgets.html'; }], [t('cmd_hide'), 'eye', () => setPref('hide', !PREF.hide)],
     [t('logout'), 'out', async () => { await api('/auth/logout', { method: 'POST' }).catch(() => {}); location.href = 'login.html'; }]];
   const m = modal(`<div class="search">${ico('search')}<input id="pq" class="input" placeholder="${t('cmd_ph')}" autocomplete="off"></div><div class="pl" id="pl"></div>`);
   m.classList.add('palm'); let sel = 0, list = cmds; const q = m.querySelector('#pq');
@@ -482,7 +510,7 @@ async function transferModal(done) {
     <div><label class="lbl">${t('amount')} <span id="xc" class="muted"></span></label><input name="amount" type="text" inputmode="decimal" autocomplete="off" dir="ltr" class="input" style="text-align:start"><p class="err" data-e="amount"></p><p id="xp" class="muted" style="font-size:.8rem;margin:.2rem 0 0"></p></div>
     <div><label class="lbl">${t('fee')} <span class="muted">(${t('optional')})</span></label><input name="fee" type="text" inputmode="decimal" autocomplete="off" dir="ltr" class="input" style="text-align:start"></div>
     <div><label class="lbl">${t('date')}</label>${dateField('xd', todayISO())}</div>
-    <div class="flex justify-end gap-2 pt-2"><button type="button" class="btn" id="xcn">${t('cancel')}</button><button class="btn btn-grad">${t('save')}</button></div></form>`);
+    <div class="mf"><button type="button" class="btn" id="xcn">${t('cancel')}</button><button class="btn btn-grad">${t('save')}</button></div></form>`);
   const f = m.querySelector('#xf'), A = Object.fromEntries(accs.map(a => [a.id, a]));
   const info = () => { const a = A[f.from.value], b = A[f.to.value], v = parseAmt(f.amount.value);
     m.querySelector('#xc').textContent = '(' + curName(a.currency) + ')';
@@ -500,7 +528,7 @@ function budgetModal(b, done) {
     <div><label class="lbl">${t('category')}</label><select name="category" class="input">${EXP_CATS.filter(c => c !== 'fees').map(c => `<option value="${c}">${catName(c)}</option>`).join('')}</select></div>
     <div><label class="lbl">${t('limit')}</label><input name="limit" type="text" inputmode="decimal" autocomplete="off" dir="ltr" class="input" style="text-align:start"><p class="err" data-e="limit"></p></div>
     <div><label class="lbl">${t('currency')}</label><select name="currency" class="input"><option value="IRT">${t('toman')}</option><option value="IRR">${t('rial')}</option></select></div>
-    <div class="flex justify-end gap-2 pt-2"><button type="button" class="btn" id="bc">${t('cancel')}</button><button class="btn btn-grad">${t('save')}</button></div></form>`);
+    <div class="mf"><button type="button" class="btn" id="bc">${t('cancel')}</button><button class="btn btn-grad">${t('save')}</button></div></form>`);
   const f = m.querySelector('#bf'); f.currency.value = b ? b.currency : CUR; if (b) { f.category.value = b.category; f.limit.value = Number(b.limit).toLocaleString('en-US'); }
   f.limit.oninput = () => fmtAmtInput(f.limit); m.querySelector('#bc').onclick = () => m.remove();
   f.onsubmit = async e => { e.preventDefault(); const limit = parseAmt(f.limit.value); if (!(limit > 0)) { m.querySelector('[data-e=limit]').textContent = t('err_amount'); return; }
@@ -512,7 +540,7 @@ function goalModal(done) {
     <div><label class="lbl">${t('target')}</label><input name="target" type="text" inputmode="decimal" autocomplete="off" dir="ltr" class="input" style="text-align:start"><p class="err" data-e="target"></p></div>
     <div><label class="lbl">${t('currency')}</label><select name="currency" class="input"><option value="IRT">${t('toman')}</option><option value="IRR">${t('rial')}</option></select></div>
     <div><label class="lbl">${t('deadline')} <span class="muted">(${t('optional')})</span></label>${dateField('gd', '', true)}</div>
-    <div class="flex justify-end gap-2 pt-2"><button type="button" class="btn" id="gc">${t('cancel')}</button><button class="btn btn-grad">${t('save')}</button></div></form>`);
+    <div class="mf"><button type="button" class="btn" id="gc">${t('cancel')}</button><button class="btn btn-grad">${t('save')}</button></div></form>`);
   const f = m.querySelector('#gf'); f.currency.value = CUR; f.target.oninput = () => fmtAmtInput(f.target); m.querySelector('#gc').onclick = () => m.remove();
   f.onsubmit = async e => { e.preventDefault(); m.querySelectorAll('.err').forEach(x => x.textContent = ''); const target = parseAmt(f.target.value); let bad = false;
     if (!f.name.value.trim()) { m.querySelector('[data-e=name]').textContent = t('err_req'); bad = true; } if (!(target > 0)) { m.querySelector('[data-e=target]').textContent = t('err_amount'); bad = true; } if (bad) return;
@@ -521,7 +549,7 @@ function goalModal(done) {
 function fundModal(g, done) {
   const m = modal(`<h2 class="mb-1 text-lg font-semibold">${esc(g.name)}</h2><p class="muted mb-4" style="margin-top:.2rem">${money(g.saved, g.currency)} / ${money(g.target, g.currency)}</p>
     <label class="lbl">${t('amount')} <span class="muted">(${curName(g.currency)})</span></label><input id="fa" type="text" inputmode="decimal" autocomplete="off" dir="ltr" class="input" style="text-align:start"><p class="err" id="fe"></p>
-    <div class="flex justify-end gap-2 pt-3"><button class="btn" id="fw">${t('withdraw')}</button><button class="btn btn-grad" id="fd">${t('add_funds')}</button></div>`);
+    <div class="mf"><button class="btn" id="fw">${t('withdraw')}</button><button class="btn btn-grad" id="fd">${t('add_funds')}</button></div>`);
   const i = m.querySelector('#fa'); i.oninput = () => fmtAmtInput(i); i.focus();
   const go = async sign => { const v = parseAmt(i.value); if (!(v > 0)) { m.querySelector('#fe').textContent = t('err_amount'); return; }
     try { await api(`/goals/${g.id}/fund`, { method: 'POST', body: { amount: sign * v } }); m.remove(); toast(t('saved')); done(); } catch (er) { toast(t('err_invalid_amt')); } };
@@ -535,3 +563,8 @@ Object.assign(T.fa, { plan:'برنامه‌ریزی', budgets:'بودجه‌ها
   add_funds:'افزودن پول', withdraw:'برداشت', per_month:'در هر ماه لازم است', past_deadline:'موعد گذشته است', goal_name:'نام هدف', used:'مصرف‌شده', reached:'به هدف رسیدید', no_budgets:'هنوز بودجه‌ای نیست. برای یک دسته سقف ماهانه تعیین کنید.', no_goals:'هنوز هدفی نیست. برای چیزی پس‌انداز را شروع کنید.',
   transfer:'انتقال', from_acc:'از حساب', to_acc:'به حساب', fee:'کارمزد', optional:'اختیاری', need2:'برای انتقال حداقل دو حساب لازم است.', err_same_account:'دو حساب متفاوت انتخاب کنید.', err_invalid_amt:'موجودی هدف برای این برداشت کافی نیست.',
   show_more:'نمایش بیشتر', cmd_hide:'مخفی / نمایش مبلغ‌ها', cmd_transfer:'انتقال بین حساب‌ها' });
+
+Object.assign(T.en, { theme:'Theme', auto:'Auto', light:'Light', dark:'Dark', cmd_theme:'Switch theme (light / dark)' });
+Object.assign(T.fa, { theme:'پوسته', auto:'خودکار', light:'روشن', dark:'تیره', cmd_theme:'تغییر پوسته (روشن / تیره)' });
+
+addEventListener('keydown', e => { if (e.key === 'Escape') { const ms = document.querySelectorAll('.modal:not(.out)'); if (ms.length) ms[ms.length - 1].remove(); } });

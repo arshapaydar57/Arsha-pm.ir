@@ -13,7 +13,7 @@
       <div class="glass card in" style="--i:4"><h2>${t('by_cat')}</h2><div style="height:260px"><canvas id="c2"></canvas></div><p id="topc" class="muted" style="text-align:center;margin:.8rem 0 0;font-size:.85rem"></p><p id="nd" class="muted hidden" style="text-align:center">${t('no_data')}</p></div></div>
     <div class="glass card in tw" style="--i:5;margin-top:1rem"><div style="display:flex;justify-content:space-between;padding:.9rem .6rem .4rem"><h2 style="margin:0">${t('recent')}</h2><a href="transactions.html" class="muted" style="font-size:.85rem">${t('view_all')}</a></div>
       <table><thead><tr><th>${t('description')}</th><th>${t('category')}</th><th>${t('date')}</th><th style="text-align:end">${t('amount')}</th></tr></thead><tbody id="rec"></tbody></table></div>`;
-  Chart.defaults.color = 'rgba(235,235,245,.55)'; Chart.defaults.borderColor = 'rgba(255,255,255,.06)'; Chart.defaults.font.family = L === 'fa' ? 'Vazirmatn' : 'Inter';
+  Chart.defaults.color = THEME === 'light' ? '#646B7E' : '#9696A6'; Chart.defaults.borderColor = THEME === 'light' ? '#E9EBF2' : 'rgba(255,255,255,.06)'; Chart.defaults.font.family = L === 'fa' ? 'Vazirmatn' : 'Inter';
   let c1, c2;
   async function load() {
     const acc = document.getElementById('acc').value, s = await api('/reports/summary' + (acc ? '?account=' + acc : ''));
@@ -30,17 +30,17 @@
     const bd = (await api('/budgets')).budgets.filter(b => b.spent / b.limit >= .8).sort((a, b) => b.spent / b.limit - a.spent / a.limit);   // budget alerts at 80% and 100%
     document.getElementById('alerts').innerHTML = bd.map(b => { const q = Math.round(b.spent / b.limit * 100); return `<a href="budgets.html" class="alert ${q >= 100 ? 'bad' : ''}">${ico('target', 16)}<span>${esc(catName(b.category))} · ${num(q)}% ${t('used')}</span></a>`; }).join('');
     const tc = s.categories[0], tot = s.categories.reduce((q, c) => q + c.total, 0);
-    document.getElementById('topc').innerHTML = tc ? `${t('top_spend')}: <b style="color:#fff">${esc(catName(tc.category))}</b> · ${num(Math.round(tc.total / tot * 100))}%` : '';
+    document.getElementById('topc').innerHTML = tc ? `${t('top_spend')}: <b style="color:var(--text)">${esc(catName(tc.category))}</b> · ${num(Math.round(tc.total / tot * 100))}%` : '';
     c1 && c1.destroy(); c2 && c2.destroy();
     const fill = rgb => c => { const { ctx, chartArea } = c.chart; if (!chartArea) return null; const g = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom); g.addColorStop(0, `rgba(${rgb},.32)`); g.addColorStop(1, `rgba(${rgb},0)`); return g; };
     c1 = new Chart('c1', { type: 'line', data: { labels: s.trend.map(r => r.label), datasets: [
-      { label: t('income'), data: s.trend.map(r => r.income), borderColor: '#818CF8', backgroundColor: fill('99,102,241'), fill: true, tension: .4, borderWidth: 2.5, pointRadius: 0, pointHoverRadius: 5 },
-      { label: t('expense'), data: s.trend.map(r => r.expense), borderColor: '#F472B6', backgroundColor: fill('236,72,153'), fill: true, tension: .4, borderWidth: 2.5, pointRadius: 0, pointHoverRadius: 5 }] },
+      { label: t('income'), data: s.trend.map(r => r.income), borderColor: '#10B981', backgroundColor: fill('16,185,129'), fill: true, tension: .4, borderWidth: 2.5, pointRadius: 0, pointHoverRadius: 5 },
+      { label: t('expense'), data: s.trend.map(r => r.expense), borderColor: '#F43F5E', backgroundColor: fill('244,63,94'), fill: true, tension: .4, borderWidth: 2.5, pointRadius: 0, pointHoverRadius: 5 }] },
       options: { animation: { duration: 1500, easing: 'easeOutQuart', delay: c => c.type === 'data' && c.mode === 'default' ? c.dataIndex * 110 + c.datasetIndex * 220 : 0 }, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } }, tooltip: { callbacks: { label: c => ' ' + c.dataset.label + ': ' + money(c.parsed.y, s.currency) } } },
         scales: { x: { grid: { display: false } }, y: { beginAtZero: true, border: { display: false }, ticks: { maxTicksLimit: 5, callback: v => PREF.hide ? '' : new Intl.NumberFormat(nf, { notation: 'compact' }).format(v) } } } } });
     document.getElementById('nd').classList.toggle('hidden', s.categories.length > 0);
     c2 = new Chart('c2', { type: 'doughnut', data: { labels: s.categories.map(c => catName(c.category)), datasets: [{ data: s.categories.map(c => c.total), borderWidth: 0, borderRadius: 6, spacing: 3, hoverOffset: 10,
-      backgroundColor: ['#6366F1','#8B5CF6','#EC4899','#38BDF8','#34D399','#FBBF24','#F87171','#A78BFA','#F472B6','#94A3B8'] }] },
+      backgroundColor: ['#6366F1','#0EA5E9','#10B981','#F59E0B','#F43F5E','#8B5CF6','#14B8A6','#EC4899','#A78BFA','#94A3B8'] }] },
       options: { animation: { animateRotate: true, animateScale: true, duration: 1600, easing: 'easeOutQuart' }, maintainAspectRatio: false, cutout: '72%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 12 } }, tooltip: { callbacks: { label: c => ' ' + money(c.parsed, s.currency) } } } } });
     const { transactions } = await api('/transactions?limit=8' + (acc ? '&account=' + acc : ''));
     document.getElementById('rec').innerHTML = transactions.map(r => txRow(r)).join('') || `<tr><td colspan="4" class="muted" style="text-align:center;padding:2rem">${t('empty')}</td></tr>`;
