@@ -1,5 +1,5 @@
 const Store={key:'gradeflow.v1',
- def(){return{profile:null,settings:{appName:'GradeFlow',theme:'light',max:20,pass:10,target:17},subjects:[],grades:[]}},
+ def(){return{profile:null,settings:{appName:'GradeFlow',theme:'light',max:20,pass:10,target:17},subjects:[],grades:[],exams:[],tasks:[]}},
  load(){try{return Object.assign(this.def(),JSON.parse(localStorage.getItem(this.key)||'{}'))}catch(e){return this.def()}},
  save(){localStorage.setItem(this.key,JSON.stringify(db))},
  wipe(){localStorage.removeItem(this.key);db=this.def()}};

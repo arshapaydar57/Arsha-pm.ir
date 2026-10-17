@@ -62,3 +62,9 @@ dialog::backdrop{background:rgba(3,8,24,.6);backdrop-filter:blur(4px)}dialog[ope
 #view{padding:66px 14px 24px}.hero{flex-direction:column;text-align:center;padding:24px}.two{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media print{body{background:#fff}body *{visibility:hidden}#printArea,#printArea *{visibility:visible}#printArea{position:absolute;inset:0;color:#000;background:#fff}@page{size:A4;margin:15mm}tr{break-inside:avoid}.tbl td,.tbl th{border-bottom:1px solid #ccc}}
+.sub{margin:-2px 0 18px;color:var(--mu)}
+.item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bd)}.item:last-child{border:0}.item>div{flex:1;min-width:0}.item small{display:block;color:var(--mu)}.item.done b{text-decoration:line-through;opacity:.5}
+.item input[type=checkbox]{width:20px;height:20px;accent-color:var(--ac)}.item .ghost{padding:4px 12px;font-size:.8rem}
+.alert.warn{border-color:rgba(245,166,35,.5);background:rgba(245,166,35,.1);color:#c27c0a}
+#view>h1{padding-bottom:2px}.card h3{font-weight:700}.tbl tr:nth-child(even) td{background:rgba(31,107,255,.025)}
+textarea{min-height:64px;resize:vertical}
