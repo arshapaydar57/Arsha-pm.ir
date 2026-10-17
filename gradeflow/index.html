@@ -1,0 +1,17 @@
+<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>GradeFlow</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script></head>
+<body><div id="toasts"></div>
+<main id="auth" hidden><form class="card auth" id="authForm"><h1 class="brand">GradeFlow</h1>
+<p id="authHint">برای شروع یک حساب محلی بساز. اطلاعات فقط روی همین مرورگر می‌ماند.</p>
+<div id="regFields"><label>نام و نام خانوادگی<input name="name"></label><label>نام مدرسه<input name="school"></label>
+<div class="row"><label>پایه<input name="grade"></label><label>کلاس<input name="klass"></label><label>سال تحصیلی<input name="year" placeholder="۱۴۰۵-۱۴۰۶"></label></div></div>
+<label>نام کاربری<input name="user" required></label><label>رمز عبور (حداقل ۴ نویسه)<input name="pass" type="password" required></label>
+<button class="btn" id="authBtn">ورود</button><small>این ورود فقط برای استفاده شخصی روی همین دستگاه است و جایگزین احراز هویت امن آنلاین نیست.</small></form></main>
+<div id="app" hidden><aside id="side"><h2 class="brand" id="appName">GradeFlow</h2><nav id="nav"></nav><button class="ghost" id="logout">خروج</button></aside>
+<button id="burger" aria-label="منو">☰</button><section id="view"></section></div>
+<dialog id="dlg"></dialog>
+<script src="js/storage.js"></script><script src="js/auth.js"></script><script src="js/grades.js"></script><script src="js/reports.js"></script><script src="js/app.js"></script></body></html>
